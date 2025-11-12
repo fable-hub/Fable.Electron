@@ -18,6 +18,7 @@
         <Content Include="docs\dev\parser\_category_.yml" />
       <Content Include="docs\dev\introduction.md" />
       <Content Include="docs\dev\ci\README.md" />
+      <Content Include="docs\dev\ci\testing.md" />
       <Content Include="docs\dev\fable-electron-remoting\README.md" />
       <Content Include="docs\dev\fable-electron-remoting\_category_.yml" />
       <Content Include="docs\dev\generator\README.md" />

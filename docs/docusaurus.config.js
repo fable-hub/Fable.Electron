@@ -7,10 +7,10 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-const prodUrl = 'https://your-docusaurus-site.example.com'
-const organizationName = 'Fable'
-const projectName = 'Fable.Electron'
-const projectUrl = 'https://github.com/Fable'
+const prodUrl = 'https://fable-hub.github.io'
+const organizationName = 'fable-hub'
+const projectName = 'fable-electron'
+const projectUrl = 'https://github.com/fable-hub/fable-electron'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -27,7 +27,8 @@ const config = {
   url: prodUrl,
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/fable-electron',
+    trailingSlash: false,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -54,7 +55,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/',
+            'https://github.com/fable-hub/fable-electron',
         },
         blog: {
           showReadingTime: true,
@@ -65,7 +66,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/',
+            'https://github.com/fable-hub/fable-electron',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -144,10 +145,10 @@ const config = {
           {
             title: 'Community',
             items: [
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
+              // {
+              //   label: 'Discord',
+              //   href: 'https://discordapp.com/invite/docusaurus',
+              // },
                 {
                     label: 'GitHub',
                     href: projectUrl,
@@ -177,7 +178,7 @@ const config = {
           //   ],
           // },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Fable.Electron contributors`,
+        copyright: `Copyright © ${new Date().getFullYear()} Shayan Habibi & Fable.Electron contributors`,
       },
       prism: {
         theme: prismThemes.github,
