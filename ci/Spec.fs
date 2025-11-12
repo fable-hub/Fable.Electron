@@ -15,6 +15,7 @@ module Projects =
     let Generator = Root.src.``ElectronApi.Json.Parser``.``ElectronApi.Json.Parser.fsproj``
     let Build = Root.``Build.fsproj``
     let Electron = Root.src.``Fable.Electron``.``Fable.Electron.fsproj``
+    let Forge = Root.src.``Fable.Electron.Forge``.``Fable.Electron.Forge.fsproj``
 module Solutions =
     let Electron = Root.``Fable.Electron.sln``
 module Files =
@@ -36,6 +37,9 @@ module Ops =
     let [<Literal>] build = "build"
     let [<Literal>] pack = "pack"
     let [<Literal>] push = "push"
+    let [<Literal>] test = "test"
+    let [<Literal>] checkChangeLogGen = "check-changelog-gen"
+    let [<Literal>] changeLogGen = "changelog-gen"
 
 let [<Literal>] githubUsername = "GitHub Action"
 let [<Literal>] githubEmail = "41898282+github-actions[bot]@users.noreply.github.com"

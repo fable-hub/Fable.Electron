@@ -18,7 +18,7 @@ exports.config = {
         }
     }],
 
-    logLevel: 'info',
+    logLevel: 'warn',
     //
     // Set specific log levels per logger
     // loggers:
