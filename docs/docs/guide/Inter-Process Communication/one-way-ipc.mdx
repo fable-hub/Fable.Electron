@@ -1,0 +1,136 @@
+﻿---
+sidebar_position: 3
+title: Main to Renderer IPC
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# One Way Main-Renderer IPC
+
+:::note
+See the [Electron-Documentation](https://www.electronjs.org/docs/latest/tutorial/ipc) for a more indepth explanation of the reasons for,
+and how the IPC works between the Main process, the Renderer process, and why
+the preload step is required.
+:::
+
+:::note To Share Or Not To Share
+Unlike typical `Fable.Remoting`, the entire stack is compiled to JavaScript, so there is no
+_requirement_ to define your API types in a _Shared_ project. You can choose to do this or not.
+:::
+
+## Example
+
+The One-Way `Main` - `Renderer` IPC channel allows the `Main` electron process to communicate
+messages to a `Renderer` process.
+
+To do so, you must pass the `BrowserWindow`'s that you wish to be acted on to
+the `RemotingConfig` before building it. Failing to do so will cause an error
+to log to console (and incorrect behaviour).
+
+The example below should log 'Move' when the browser window is moved.
+
+:::note Synchronous Signatures
+Unlike the Two-Way IPC, the signatures for One-Way are treated synchronously.
+:::
+
+<Tabs>
+<TabItem value={"shared"} label={"Shared.fs"}>
+```fsharp showLineNumbers
+type ExampleMainToRenderer = {
+    // Dummy parameter to demonstrate multi param functions
+    LogMove: string -> int -> unit
+}
+```
+</TabItem>
+<TabItem value={"main"} label={"main.fs"}>
+```fsharp showLineNumbers
+open Fable.Electron
+open Fable.Core
+open Fable.Core.JsInterop
+open Fable.Core.JS
+open Node.Api
+open Node.Base
+open Fable.Electron.Main
+open Fable.Electron.Remoting.Main
+
+
+if SquirrelStartup.started then
+    app.quit()
+
+let createWindow() =
+    let mainWindowOptions =
+        BrowserWindowConstructorOptions(
+            width = 800,
+            height = 600,
+            webPreferences = WebPreferences(
+            preload = path.join(__dirname, "preload.js")
+        )
+    )
+    let mainWindow = BrowserWindow(mainWindowOptions)
+    if isNullOrUndefined MAIN_WINDOW_VITE_DEV_SERVER_URL
+    then mainWindow.loadFile(path.join(__dirname, $"../renderer/{MAIN_WINDOW_VITE_NAME}/index.html"))
+    else mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
+    |> ignore
+
+    mainWindow.webContents.openDevTools(Enums.WebContents.OpenDevTools.Options.Mode.Right)
+    // highlight-start
+    let sendMsg =
+        Remoting.init
+        |> Remoting.withWindow mainWindow
+        |> Remoting.buildClient<Shared.ExampleMainToRenderer>
+    mainWindow.onMove(fun _ ->
+        sendMsg.LogMove "Moved!" 0
+    )
+    // highlight-end
+
+app.whenReady().``then``(fun () ->
+    createWindow()
+
+    app.onActivate(fun _ ->
+        if BrowserWindow.getAllWindows().Length = 0 then
+            createWindow()
+        )
+)
+|> ignore
+
+app.onWindowAllClosed(fun () ->
+    if not Node.Api.process.platform.IsDarwin then
+        app.quit()
+)
+```
+</TabItem>
+<TabItem value={"preload"} label={"preload.fs"}>
+```fsharp showLineNumbers
+open Fable.Electron.Playground.Shared
+open Fable.Electron.Remoting.Preload
+    
+// highlight-start
+Remoting.init
+|> Remoting.buildBridge<ExampleMainToRenderer>
+// highlight-end
+```
+</TabItem>
+<TabItem value={"renderer"} label={"renderer.fs"}>
+```fsharp showLineNumbers
+open Fable.Core.JsInterop
+open Fable.Electron.Remoting.Renderer
+open Browser.Dom
+
+importSideEffects "./index.css"
+
+console.log "This message is being logged by 'renderer.js', included via VITE"
+    
+// highlight-start
+let handler = { Shared.LogMove = fun t i -> console.log t }
+Remoting.init
+|> Remoting.buildHandler handler
+// highlight-end
+```
+</TabItem>
+</Tabs>
+
+:::warning
+The API for `Fable.Electron.Remoting` is highly likely to change
+according to user preference at the beginning.
+:::

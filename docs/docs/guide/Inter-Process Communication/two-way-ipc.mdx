@@ -1,0 +1,163 @@
+﻿---
+sidebar_position: 2
+title: Two-Way IPC
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Two-Way Main-Renderer IPC
+
+:::note
+See the [Electron-Documentation](https://www.electronjs.org/docs/latest/tutorial/ipc) for a more indepth explanation of the reasons for,
+and how the IPC works between the Main process, the Renderer process, and why
+the preload step is required.
+:::
+
+:::note To Share Or Not To Share
+Unlike typical `Fable.Remoting`, the entire stack is compiled to JavaScript, so there is no
+_requirement_ to define your API types in a _Shared_ project. You can choose to do this or not.
+:::
+
+## Example
+
+The Two-Way `Main`-`Renderer` IPC channel allows the client/renderer process to
+send a message to the main process, and to then receive a response asynchronously.
+
+This is required due to the `Renderer` processes not having access to the `Node.js` API, nor
+the full `Electron` API.
+
+A full example is provided below:
+
+<Tabs>
+<TabItem value={"shared"} label={"Shared.fs"}>
+```fsharp showLineNumbers
+open Fable.Core.JS // Promise type
+    
+// highlight-start
+type ExampleRouting = {
+    SayHelloWorld: string -> Promise<Result<string, unit>>
+}
+// highlight-end
+```
+</TabItem>
+<TabItem value={"main"} label={"main.fs"}>
+```fsharp showLineNumbers
+open Fable.Electron
+open Fable.Core
+open Fable.Core.JsInterop
+open Fable.Core.JS
+open Node.Api
+open Node.Base
+open Fable.Electron.Main
+open Fable.Electron.Remoting.Main
+
+
+if SquirrelStartup.started then
+    app.quit()
+    
+let createWindow() =
+    let mainWindowOptions =
+        BrowserWindowConstructorOptions(
+            width = 800,
+            height = 600,
+            webPreferences = WebPreferences(
+                preload = path.join(__dirname, "preload.js")
+                )
+            )
+    let mainWindow = BrowserWindow(mainWindowOptions)
+    
+    if isNullOrUndefined MAIN_WINDOW_VITE_DEV_SERVER_URL
+    then mainWindow.loadFile(path.join(__dirname, $"../renderer/{MAIN_WINDOW_VITE_NAME}/index.html"))
+    else mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
+    |> ignore
+    
+    mainWindow.webContents.openDevTools(Enums.WebContents.OpenDevTools.Options.Mode.Right)
+    
+app.whenReady().``then``(fun () ->
+    // highlight-start
+    let api: Shared.ExampleRouting = {
+        SayHelloWorld = fun text -> promise {
+            if text = "hello" then
+                return Ok <| text + " world!"
+            else
+                return Error()
+        }
+    }
+    Remoting.init
+    |> Remoting.buildHandler(api)
+    // highlight-end
+    createWindow()
+    
+    app.onActivate(fun _ ->
+        if BrowserWindow.getAllWindows().Length = 0 then
+            createWindow()
+        )
+    )
+|> ignore
+
+app.onWindowAllClosed(fun () ->
+    if not Node.Api.process.platform.IsDarwin then
+        app.quit()
+    )
+```
+</TabItem>
+<TabItem value={"preload"} label={"preload.fs"}>
+```fsharp showLineNumbers
+open Fable.Electron.Playground.Shared
+open Fable.Electron.Remoting.Preload
+
+// highlight-start
+Remoting.init
+|> Remoting.buildTwoWayBridge<ExampleRouting>
+// highlight-end
+```
+</TabItem>
+<TabItem value={"renderer"} label={"renderer.fs"}>
+```fsharp showLineNumbers
+open Fable.Core.JsInterop
+open Fable.Electron.Remoting.Renderer
+open Browser.Dom
+
+importSideEffects "./index.css"
+
+console.log "This message is being logged by 'renderer.js', included via VITE"
+
+// highlight-start
+let api =
+    Remoting.init
+    |> Remoting.buildClient<Shared.ExampleRouting>
+    
+(api.SayHelloWorld "hello").``then``(function
+    | Ok v -> console.log v
+    | Error _ -> console.log "Didn't say hello back :(")
+|> ignore
+// highlight-end
+```
+</TabItem>
+</Tabs>
+
+:::warning
+The API for `Fable.Electron.Remoting` is highly likely to change
+according to user preference at the beginning.
+:::
+
+## `IpcMainEvent`
+
+If you are familiar with Electron, or have checked the documentation, you'll notice
+that there is no inherent inclusion of the IpcMainEvent argument which is
+usually received as the first parameter for the Main process.
+
+This is intentional, naturally, as including it destroys the type safety of our function
+signatures in F#, and renders us unable to use one API type as the source of truth.
+
+Under the hood, we use an intermediary lambda which discards the first argument on the Receiver (Main process).
+
+:::important
+If you want to keep and use the `IpcMainEvent`, just include it as the __FIRST__ parameter
+of your function signature. Pass `null` for this value (or `Unchecked.defaultof<_>`, or `undefined`) on the renderer side.
+
+The preload script will ignore the first argument it receives from the Renderer 
+if it is of the type `IpcMainEvent`, and you will have the correct types on
+the receivers (Main) end.
+:::

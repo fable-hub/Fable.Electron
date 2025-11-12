@@ -1,0 +1,48 @@
+{
+  "name": "fable.electron.remoting.tests",
+  "productName": "fable.electron.remoting.tests",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "prestart": "dotnet fable -e .js",
+    "start": "electron-forge start",
+    "watch": "dotnet fable watch -e .js --run electron-forge start",
+    "prepack": "dotnet fable -e .js",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "pretest": "dotnet fable -e .js --noCache --run electron-forge package",
+    "test": "wdio run ./wdio.conf.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "cabboose",
+    "email": "shayanftw@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.10.2",
+    "@electron-forge/maker-deb": "^7.10.2",
+    "@electron-forge/maker-rpm": "^7.10.2",
+    "@electron-forge/maker-squirrel": "^7.10.2",
+    "@electron-forge/maker-zip": "^7.10.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
+    "@electron-forge/plugin-fuses": "^7.10.2",
+    "@electron-forge/plugin-vite": "^7.10.2",
+    "@electron/fuses": "^1.8.0",
+    "@vitest/browser-playwright": "^4.0.8",
+    "@wdio/browser-runner": "^9.20.0",
+    "@wdio/cli": "^9.20.0",
+    "@wdio/local-runner": "^9.20.0",
+    "@wdio/mocha-framework": "^9.20.0",
+    "@wdio/spec-reporter": "^9.20.0",
+    "electron": "39.1.2",
+    "vite": "^5.4.21",
+    "vitest": "^4.0.8",
+    "wdio-electron-service": "^9.2.1"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  }
+}

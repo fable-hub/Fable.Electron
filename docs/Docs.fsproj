@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+      <Content Include="docs\guide\intro.md" />
+      <Content Include="docs\guide\api-naming-style.md" />
+      <Content Include="docs\guide\features.mdx" />
+      <Content Include="docs\guide\electron-docs.md" />
+      <Content Include="docs\guide\Inter-Process Communication\intro.md" />
+      <Content Include="docs\guide\Inter-Process Communication\two-way-ipc.mdx" />
+      <Content Include="docs\guide\Inter-Process Communication\one-way-ipc.mdx" />
+      <Content Include="docs\guide\Inter-Process Communication\config.md" />
+        <Content Include="docs\dev\parser\_category_.yml" />
+      <Content Include="docs\dev\introduction.md" />
+      <Content Include="docs\dev\ci\README.md" />
+      <Content Include="docs\dev\fable-electron-remoting\README.md" />
+      <Content Include="docs\dev\fable-electron-remoting\_category_.yml" />
+      <Content Include="docs\dev\generator\README.md" />
+      <Content Include="docs\dev\generator\_category_.yml" />
+      <Content Include="docs\dev\common\README.md" />
+      <Content Include="docs\dev\common\_category_.yml" />
+      <Content Include="docs\dev\spec-util\README.md" />
+      <Content Include="docs\dev\spec-util\1-spec.md" />
+      <Content Include="docs\dev\spec-util\2-utils.md" />
+      <Content Include="docs\dev\spec-util\3-fantomas-utils.md" />
+      <Content Include="docs\dev\spec-util\_category_.yml" />
+      <Content Include="docs\dev\parser\README.md" />
+      <Content Include="docs\dev\parser\1-type-scheme.md" />
+      <Content Include="docs\dev\parser\2-extensions.md" />
+      <Content Include="blog\2021-08-26-welcome\index.md" />
+      <Content Include="blog\2021-08-26-welcome\docusaurus-plushie-banner.jpeg" />
+      <Content Include="blog\tags.yml" />
+      <Content Include="blog\authors.yml" />
+      <Content Include="blog\2021-08-01-mdx-blog-post.mdx" />
+      <Content Include="blog\2019-05-29-long-blog-post.md" />
+      <Content Include="blog\2019-05-28-first-blog-post.md" />
+      <Content Include="src\pages\markdown-page.md" />
+      <Content Include="src\pages\index.module.css" />
+      <Content Include="src\pages\index.js" />
+      <Content Include="src\css\custom.css" />
+      <Content Include="src\components\HomepageFeatures\styles.module.css" />
+      <Content Include="src\components\HomepageFeatures\index.js" />
+      <Content Include="static\img\undraw_docusaurus_tree.svg" />
+      <Content Include="static\img\undraw_docusaurus_react.svg" />
+      <Content Include="static\img\undraw_docusaurus_mountain.svg" />
+      <Content Include="static\img\logo.svg" />
+      <Content Include="static\img\feleico.png" />
+      <Content Include="static\img\favicon.ico" />
+      <Content Include="static\img\electronlogo.svg" />
+      <Content Include="static\img\docusaurus.png" />
+      <Content Include="static\img\docusaurus-social-card.jpg" />
+      <Content Include="static\img\feleico-dark.png" />
+      <Content Include="static\.nojekyll" />
+      <Content Include="README.md" />
+      <Content Include="sidebars.js" />
+      <Content Include="package.json" />
+      <Content Include="docusaurus.config.js" />
+    </ItemGroup>
+
+</Project>

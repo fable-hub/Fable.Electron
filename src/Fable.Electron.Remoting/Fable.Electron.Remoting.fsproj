@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Renderer.fs" />
+        <Compile Include="Preload.fs" />
+        <Compile Include="Main.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Fable.Electron\Fable.Electron.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Fable.SimpleJson" Version="3.24.0" />
+    </ItemGroup>
+
+</Project>

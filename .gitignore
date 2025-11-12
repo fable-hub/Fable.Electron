@@ -255,3 +255,6 @@ paket-files/
 docs/public/*
 !docs/public/assets/
 temp/
+
+# fable
+**/fable_modules/
