@@ -21,9 +21,9 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fable.Electron.Remoting", "src\Fable.Electron.Remoting\Fable.Electron.Remoting.fsproj", "{71181E42-1CE3-441B-8949-F570E3E9F851}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{4EE75CB4-3CF5-487B-9B3E-71E5D566FA91}"
-    ProjectSection(SolutionItems) = preProject
-        workflows = .github/workflows/
-    EndProjectSection
+				ProjectSection(SolutionItems) = preProject
+								workflows = .github/workflows/
+				EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Build", "Build.fsproj", "{240F3BA4-9B54-4D58-8100-1092FD709DF9}"
 EndProject

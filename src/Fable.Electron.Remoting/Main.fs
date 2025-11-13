@@ -11,7 +11,7 @@ open FSharp.Reflection
 open Fable.Electron
 open Fable.Electron.Main
 open Fable.SimpleJson
-
+//%REMOTING_TYPE%START%
 /// <summary>
 /// Configuration for a Remoting proxy.
 /// </summary>
@@ -37,7 +37,8 @@ type RemotingConfig =
         /// </summary>
         Windows: BrowserWindow array
     }
-
+//%REMOTING_TYPE%END%
+//%REMOTING_MODULE%START%
 [<Erase>]
 module Remoting =
     let init =
@@ -60,6 +61,7 @@ module Remoting =
             Windows = config.Windows |> Array.insertAt 0 window }
 
     let setWindows windows config = { config with Windows = windows }
+//%REMOTING_MODULE%END%
 
 [<EditorBrowsable(EditorBrowsableState.Never)>]
 module internal Proxy =
@@ -72,6 +74,7 @@ module internal Proxy =
 
 [<Erase>]
 type Remoting =
+//%TWO_WAY%START%
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     static member buildReceiverProxy(config: RemotingConfig, impl, resolvedType: Type) =
         let schemaType = createTypeInfo resolvedType
@@ -138,17 +141,21 @@ type Remoting =
             failwithf
                 $"Cannot build proxy. Expected type %s{resolvedType.FullName} to be \
                 a valid protocol definition which is a record of functions"
-
+//%TWO_WAY%END%
+//%IMPL%START%
     [<EditorBrowsable(EditorBrowsableState.Never)>]
+//%CLIENT_START%START%
     static member buildSenderProxy(config: RemotingConfig, resolvedType: Type) =
         let schemaType = createTypeInfo resolvedType
-
+//%CLIENT_START%END%
+//%CLIENT_TWO%START%
         match schemaType with
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
             let makeChannelName = config.ChannelNameMap
             let windows = config.Windows
-
+//%CLIENT_TWO%END%
+//%CLIENT_THREE%START%
             let recordFields =
                 [| for field in fields do
                        let returnType = Proxy.getReturnType field.PropertyInfo.PropertyType
@@ -176,14 +183,16 @@ type Remoting =
                            |> box
 
                        func |]
-
+//%CLIENT_THREE%END%
+            
             let proxy = FSharpValue.MakeRecord(recordType, recordFields)
             unbox proxy
         | _ ->
             failwithf
                 $"Cannot build proxy. Expected type %s{resolvedType.FullName} to be \
                 a valid protocol definition which is a record of functions"
-
+//%IMPL%END%
+//%INLINE_ENTRY%START%
     /// <summary>
     /// Builds the receiver for the two way <c>Main &lt;-> Renderer</c> IPC proxy router.
     /// </summary>
@@ -204,3 +213,4 @@ type Remoting =
                         Please add windows to the config before building the proxy."
 
         Remoting.buildSenderProxy (config, typeof<'T>)
+//%INLINE_ENTRY%END%

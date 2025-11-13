@@ -19,7 +19,7 @@
       <Content Include="docs\dev\introduction.md" />
       <Content Include="docs\dev\ci\README.md" />
       <Content Include="docs\dev\ci\testing.md" />
-      <Content Include="docs\dev\fable-electron-remoting\README.md" />
+      <Content Include="docs\dev\fable-electron-remoting\README.mdx" />
       <Content Include="docs\dev\fable-electron-remoting\_category_.yml" />
       <Content Include="docs\dev\generator\README.md" />
       <Content Include="docs\dev\generator\_category_.yml" />
@@ -40,6 +40,7 @@
       <Content Include="blog\2021-08-01-mdx-blog-post.mdx" />
       <Content Include="blog\2019-05-29-long-blog-post.md" />
       <Content Include="blog\2019-05-28-first-blog-post.md" />
+      <Content Include="src\components\LineRegions.js" />
       <Content Include="src\pages\markdown-page.md" />
       <Content Include="src\pages\index.module.css" />
       <Content Include="src\pages\index.js" />
@@ -56,6 +57,7 @@
       <Content Include="static\img\docusaurus.png" />
       <Content Include="static\img\docusaurus-social-card.jpg" />
       <Content Include="static\img\feleico-dark.png" />
+      <Content Include="static\img\cleaninstall-example.PNG" />
       <Content Include="static\.nojekyll" />
       <Content Include="README.md" />
       <Content Include="sidebars.js" />

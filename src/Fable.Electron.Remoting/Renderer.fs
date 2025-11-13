@@ -9,7 +9,7 @@ open Fable.Core.DynamicExtensions
 open FSharp.Reflection
 open Fable.Core.JsInterop
 open Fable.SimpleJson
-
+//%REMOTING_TYPE%START%
 /// <summary>
 /// Config for a proxy IPC router.
 /// </summary>
@@ -31,7 +31,7 @@ type RemotingConfig =
         /// </summary>
         ChannelNameMap: string -> string -> string
     }
-
+//%REMOTING_TYPE%END%
 [<Erase>]
 module Remoting =
     let init =

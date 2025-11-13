@@ -17,7 +17,7 @@ open FSharp.Reflection
 open Fable.Electron
 open Fable.Electron.Renderer
 open Fable.SimpleJson
-
+//%REMOTING_TYPE%START%
 /// <summary>
 /// Configuration of Proxy routers
 /// </summary>
@@ -39,7 +39,7 @@ type RemotingConfig =
         /// </summary>
         ChannelNameMap: string -> string -> string
     }
-
+//%REMOTING_TYPE%END%
 [<Erase>]
 module Remoting =
     let init =
