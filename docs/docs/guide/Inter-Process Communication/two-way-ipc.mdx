@@ -156,8 +156,41 @@ Under the hood, we use an intermediary lambda which discards the first argument 
 :::important
 If you want to keep and use the `IpcMainEvent`, just include it as the __FIRST__ parameter
 of your function signature. Pass `null` for this value (or `Unchecked.defaultof<_>`, or `undefined`) on the renderer side.
+ 
+```fsharp title="Shared.fs"
+type ExampleRouting = {
+        SayHelloWorld: IpcMainEvent -> string -> Promise<Result<string, unit>>
+    }
+```
+
+```fsharp title="Renderer.fs"
+let api =
+Remoting.init
+|> Remoting.buildClient<Shared.ExampleRouting>
+
+//highlight-start
+(api.SayHelloWorld JS.undefined "hello").``then``(function
+//highlight-end
+| Ok v -> console.log v
+| Error _ -> console.log "Didn't say hello back :(")
+|> ignore
+```
 
 The preload script will ignore the first argument it receives from the Renderer 
 if it is of the type `IpcMainEvent`, and you will have the correct types on
 the receivers (Main) end.
+
+```fsharp title="Main.fs"
+
+let api: Shared.ExampleRouting = {
+    //highlight-start
+    SayHelloWorld = fun (event: IpcMainEvent) (text: string) -> promise {
+    //highlight-end
+    if text = "hello" then
+        return Ok <| text + " world!"
+    else
+        return Error()
+    }
+}
+```
 :::
