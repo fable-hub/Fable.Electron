@@ -44,6 +44,7 @@ Target.create Ops.apiDocs <| fun _ ->
                 Projects.Forge
                 Projects.Remoting
             ]
+            Properties = Some "Configuration=Release"
     })
 
 Target.create Ops.docs <| fun _ ->
