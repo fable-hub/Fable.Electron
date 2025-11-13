@@ -47,9 +47,9 @@ Target.create Ops.apiDocs <| fun _ ->
     })
 
 Target.create Ops.docs <| fun _ ->
-    Npm.install (fun p -> {
-        p with WorkingDirectory = Root.docs.``.``
-    })
+    if Args.npmCi
+    then Npm.cleanInstall (fun p -> { p with WorkingDirectory = Root.docs.``.`` })
+    else Npm.install (fun p -> { p with WorkingDirectory = Root.docs.``.`` })
     Npm.run "start" (fun p -> {
         p with WorkingDirectory = Root.docs.``.``
     })
@@ -321,7 +321,9 @@ Target.create Ops.gitCommit
 Target.create Ops.test
 <| fun _ ->
     let workDir = Root.tests.``Fable.Electron.Remoting.Tests``.``.``
-    Npm.cleanInstall (fun p -> { p with WorkingDirectory = workDir })
+    if Args.npmCi
+    then Npm.cleanInstall (fun p -> { p with WorkingDirectory = workDir })
+    else Npm.install (fun p -> { p with WorkingDirectory = workDir })
     Npm.runTest "test" (fun p -> { p with WorkingDirectory = workDir })
 
 // =========================================================

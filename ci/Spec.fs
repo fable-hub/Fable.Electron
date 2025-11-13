@@ -59,6 +59,7 @@ Options [options]:
     -f, --format                Force formatting instead of failing before making commits if required.
     --git-bot                   Set the local git config to use the GitHubBot details
     --clean                     Can use to clean directories outside of the normal build commands.
+    --npm-ci                    Use `npm ci` instead of `npm i`.
 
 Api Options [api-options]:
     --detailed                  When listing releases, will provide detailed meta-data
@@ -153,6 +154,7 @@ type Args =
     static member listReleases = Args.hasFlag "--choose-release"
     static member format = Args.hasFlag "--format"
     static member clean = Args.hasFlag "--clean"
+    static member npmCi = Args.hasFlag "--npm-ci"
     static member setReleaseVersion value = _release <- Some value
 
     static member setArgs argsv =
