@@ -1432,19 +1432,19 @@ let private ifExtensionThenUnify: ParsedDocumentation -> ParsedDocumentation =
         ExtensionAssistant.tryGet name
         |> function
             | ExtensionSearchResult.OkResult extensionDoc ->
-// #if DEBUG
-//                 printfn $"Found extension named {name} for {docName}"
-// #endif
+                // #if DEBUG
+                //                 printfn $"Found extension named {name} for {docName}"
+                // #endif
                 parsedDocumentation |> replaceExtendsWith None |> unifyWith extensionDoc
             | ExtensionSearchResult.OkParentResult(extensionDoc, _) ->
-// #if DEBUG
-//                 printfn $"Found extension named {name} for {docName}"
-// #endif
+                // #if DEBUG
+                //                 printfn $"Found extension named {name} for {docName}"
+                // #endif
                 parsedDocumentation |> replaceExtendsWith None |> unifyWith extensionDoc
             | NotFound value ->
-// #if DEBUG
-//                 printfn $"Unable to find extension type named {value} for {docName}"
-// #endif
+                // #if DEBUG
+                //                 printfn $"Unable to find extension type named {value} for {docName}"
+                // #endif
                 parsedDocumentation
     | parsedDocumentation -> parsedDocumentation
 

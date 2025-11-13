@@ -144,7 +144,7 @@ type Remoting =
                        normalize argumentCount |]
 
             let proxy = FSharpValue.MakeRecord(recordType, recordFields)
-            contextBridge.exposeInMainWorld (config.ApiNameMap config.ApiNameBase resolvedType.Name , proxy)
+            contextBridge.exposeInMainWorld (config.ApiNameMap config.ApiNameBase resolvedType.Name, proxy)
         | _ ->
             failwithf
                 $"Cannot build proxy. Exepected type %s{resolvedType.FullName} to be \

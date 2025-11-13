@@ -146,6 +146,7 @@ module Spec =
           "virtual"
           "params" ]
             .ToFrozenSet()
+
     [<AutoOpen>]
     module private Helpers =
         let makeTextNode = fun text -> SingleTextNode(text, Range.Zero)
