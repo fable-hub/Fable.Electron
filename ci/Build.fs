@@ -351,8 +351,13 @@ let dependencyMapping =
       Ops.downloadApi =?> (Ops.generateBinding, Args.releaseVersion.IsSome)
 
       Ops.restoreTools ==> Ops.generateBinding ?=> Ops.test
+      
+      Ops.test ?=> Ops.build
+      Ops.test ?=> Ops.fableClean
+      Ops.test ==> Ops.pack
+      Ops.test ==> Ops.push
 
-      Ops.test ==> Ops.fableClean ==> Ops.build ==> Ops.pack ==> Ops.push
+      Ops.fableClean ==> Ops.build ==> Ops.pack ==> Ops.push
       
       Ops.restoreTools ==> Ops.build ==> Ops.apiDocs
 
