@@ -46,7 +46,7 @@ Usage:
     build.exe pack [options | api-options]
     build.exe push [options | api-options]
     build.exe fantomas
-    build.exe docs
+    build.exe docs [options]
     build.exe build-api-docs
     build.exe [options]
 
