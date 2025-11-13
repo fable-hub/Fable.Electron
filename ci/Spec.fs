@@ -46,6 +46,7 @@ Usage:
     build.exe push [options | api-options]
     build.exe fantomas
     build.exe docs
+    build.exe build-api-docs
     build.exe [options]
 
 Options [options]:
@@ -123,6 +124,9 @@ module Ops =
     
     [<Literal>]
     let docs = "docs"
+    
+    [<Literal>]
+    let apiDocs = "build-api-docs"
 
 [<Literal>]
 let githubUsername = "GitHub Action"

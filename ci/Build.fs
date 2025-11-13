@@ -1,6 +1,7 @@
 ﻿module Build.ci.Build
 
 open EasyBuild.Tools
+open EasyBuild.Tools.Git
 open Fake.Api
 open Fake.Core
 open Fake.IO
@@ -24,6 +25,20 @@ let mutable _fableElectronNewVersion = None
 
 // ========================================================
 // Laundry
+
+Target.create Ops.apiDocs <| fun _ ->
+    Fsdocs.build (fun p -> {
+        p with
+            SourceRepository = Some "https://github.com/fable-hub/fable-electron"
+            SaveImages = Some true
+            Input = Some Root.fsdocs.``.``
+            MdComments = Some true
+            Projects = Some [
+                Projects.Electron
+                Projects.Forge
+                Projects.Remoting
+            ]
+    })
 
 Target.create Ops.docs <| fun _ ->
     Npm.install (fun p -> {
@@ -330,6 +345,8 @@ let dependencyMapping =
       Ops.restoreTools ==> Ops.generateBinding ?=> Ops.test
 
       Ops.test ==> Ops.fableClean ==> Ops.build ==> Ops.pack ==> Ops.push
+      
+      Ops.restoreTools ==> Ops.build ==> Ops.apiDocs
 
       Ops.clean ==> Ops.fableClean ==> Ops.gitPull ]
 
@@ -345,12 +362,17 @@ let main argsv =
         Target.runSimple Ops.listReleases [] |> ignore
 
         let rec getInput () =
-            UserInput.getUserInput "Choose a release or quit (q):"
-            |> function
-                | "q" -> ()
-                | version ->
-                    version.TrimStart('v') |> Args.setReleaseVersion
+            let input = UserInput.getUserInput "Choose a release or quit (q):"
+            match input with
+            | "q" -> ()
+            | version ->
+                let inputVersion = version.TrimStart('v')
+                if inputVersion |> SemVer.isValid then
+                    inputVersion |> Args.setReleaseVersion
                     argsv[0] |> Target.runOrDefaultWithArguments
+                else
+                    printfn $"Input version %s{inputVersion} is not a valid SemVer; try again."
+                    getInput()
 
         getInput ()
     elif Args.clean && argsv[0].StartsWith("-") then

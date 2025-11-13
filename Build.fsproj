@@ -17,6 +17,7 @@
       <PackageReference Include="Fake.Core.Target" Version="6.1.4" />
       <PackageReference Include="Fake.Core.UserInput" Version="6.1.4" />
       <PackageReference Include="Fake.DotNet.Cli" Version="6.1.4" />
+      <PackageReference Include="Fake.DotNet.Fsdocs" Version="6.1.4" />
       <PackageReference Include="Fake.JavaScript.Npm" Version="6.1.4" />
       <PackageReference Include="Fake.Tools.Git" Version="6.1.4" />
     </ItemGroup>
