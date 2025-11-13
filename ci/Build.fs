@@ -318,6 +318,8 @@ Target.create Ops.gitCommit
 // ========================================================
 // Test
 
+// Note that workflow might need to download/install chromium
+// try https://dev.to/slashgear_/how-to-setup-end-to-end-tests-with-webdriverio-on-github-action-f9n
 Target.create Ops.test
 <| fun _ ->
     let workDir = Root.tests.``Fable.Electron.Remoting.Tests``.``.``
