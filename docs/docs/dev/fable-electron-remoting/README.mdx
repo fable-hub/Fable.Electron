@@ -196,3 +196,12 @@ The `Main` handler no longer has to manually send the renderer process the
 message back (as this is abstracted away by electrons `handle`) so there is
 no longer a necessity to handle the `IpcMainEvent` (ie don't feel bad about 
 disposing of the poor thing).
+
+## Renderer & Preload
+
+Hopefully, the above explanation of the `Main` remoting handler/client
+provides the context necessary to understand the `Preload` and `Renderer`
+implementations.
+
+> If you have further questions, feel free to raise an issue and we can
+> answer/explain further :)
