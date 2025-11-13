@@ -113,6 +113,11 @@ const config = {
                 label: 'Dev',
             },
           // {to: '/blog', label: 'Blog', position: 'left'},
+            {
+                label: 'API',
+                href: 'https://shayanhabibi.github.io/fable-electron-docs-api/reference/',
+                position: 'left',
+            },
           {
             href: projectUrl,
             label: 'GitHub',
@@ -139,7 +144,11 @@ const config = {
                 {
                     label: 'Dev',
                     to: '/docs/dev/intro',
-                }
+                },
+                {
+                    label: 'API',
+                    href: 'https://shayanhabibi.github.io/fable-electron-docs-api/reference/',
+                },
             ],
           },
           {
