@@ -1,0 +1,26 @@
+name: CI
+on:
+  workflow_call:
+  workflow_dispatch:
+  push: 
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        # This is critical to allow WDIO tests to function appropriately
+      - name: Install Chromium
+        run: sudo apt-get install chromium-browser
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        # Everything will be handled within our build script
+      - name: Run FAKE CI
+        # We can change this to any target we want
+        run: dotnet run -- test
+        
+        # We can then trigger subsequent jobs
