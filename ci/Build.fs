@@ -112,7 +112,7 @@ Target.create Ops.clean
 
 Target.create Ops.fantomas
 <| fun _ ->
-    !!"**/*.fs" -- "bin/*.fs" -- "src/Fable.Electron/Program.fs"
+    sourceFiles
     |> Seq.map (sprintf "\"%s\"")
     |> String.concat " "
     |> DotNet.exec id "fantomas"
