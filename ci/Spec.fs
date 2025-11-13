@@ -45,6 +45,7 @@ Usage:
     build.exe pack [options | api-options]
     build.exe push [options | api-options]
     build.exe fantomas
+    build.exe docs
     build.exe [options]
 
 Options [options]:
@@ -119,6 +120,9 @@ module Ops =
 
     [<Literal>]
     let changeLogGen = "changelog-gen"
+    
+    [<Literal>]
+    let docs = "docs"
 
 [<Literal>]
 let githubUsername = "GitHub Action"

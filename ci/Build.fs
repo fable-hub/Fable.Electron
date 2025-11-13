@@ -11,6 +11,7 @@ open Spec
 open Fake.Tools
 open Fake.DotNet
 open EasyBuild.Tools.ChangelogGen
+open Fake.JavaScript
 
 initializeContext ()
 
@@ -24,6 +25,14 @@ let mutable _fableElectronNewVersion = None
 // ========================================================
 // Laundry
 
+Target.create Ops.docs <| fun _ ->
+    Npm.install (fun p -> {
+        p with WorkingDirectory = Root.docs.``.``
+    })
+    Npm.run "start" (fun p -> {
+        p with WorkingDirectory = Root.docs.``.``
+    })
+    
 // Generate changelog for FABLE.ELECTRON. Make major and minor match the release we are
 // generating for. Internal patches can only bump patch number.
 // Make sure this runs before we commit any files so the current hash is not updated
@@ -287,8 +296,6 @@ Target.create Ops.gitCommit
 
 // ========================================================
 // Test
-
-open Fake.JavaScript
 
 Target.create Ops.test
 <| fun _ ->
