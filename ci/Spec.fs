@@ -13,6 +13,7 @@ type VirtualRoot =
     VirtualFileSystem<
         _rootPath,
         """
+fsdocs/
 temp
     electron-api.json
 """

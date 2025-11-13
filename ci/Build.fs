@@ -1,5 +1,6 @@
 ﻿module Build.ci.Build
 
+open System.IO
 open EasyBuild.Tools
 open EasyBuild.Tools.Git
 open Fake.Api
@@ -27,11 +28,16 @@ let mutable _fableElectronNewVersion = None
 // Laundry
 
 Target.create Ops.apiDocs <| fun _ ->
+    DirectoryInfo(VirtualRoot.fsdocs.``.``)
+    |> DirectoryInfo.exists
+    |> function
+        | false -> Directory.create VirtualRoot.fsdocs.``.``
+        | _ -> ()
     Fsdocs.build (fun p -> {
         p with
             SourceRepository = Some "https://github.com/fable-hub/fable-electron"
             SaveImages = Some true
-            Input = Some Root.fsdocs.``.``
+            Input = Some VirtualRoot.fsdocs.``.``
             MdComments = Some true
             Projects = Some [
                 Projects.Electron
