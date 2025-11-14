@@ -14,7 +14,7 @@ const projectUrl = 'https://github.com/fable-hub/fable-electron'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: projectName,
+  title: 'Fable.Electron',
   tagline: 'Full suite of bindings and helpers for creating ElectronJS apps entirely in F# with Fable!',
   favicon: 'img/favicon.ico',
 
@@ -93,7 +93,7 @@ const config = {
       },
       navbar: {
           hideOnScroll: true,
-        title: projectName,
+        title: 'Fable.Electron',
         logo: {
           alt: 'Fable.Electron Logo',
           src: 'img/feleico.png',
@@ -112,7 +112,7 @@ const config = {
                 position: 'left',
                 label: 'Dev',
             },
-          // {to: '/blog', label: 'Blog', position: 'left'},
+            {to: '/blog', label: 'Blog', position: 'left'},
             {
                 label: 'API',
                 href: 'https://shayanhabibi.github.io/fable-electron-docs-api/reference/',
@@ -176,16 +176,16 @@ const config = {
                         href: 'https://electron.io',
                     },
                 ]
-            }
-          // {
-          //   title: 'More',
-          //   items: [
-          //     {
-          //       label: 'Blog',
-          //       to: '/blog',
-          //     },
-          //   ],
-          // },
+            },
+          {
+            title: 'More',
+            items: [
+              {
+                label: 'Blog',
+                to: '/blog',
+              },
+            ],
+          },
         ],
         copyright: `Copyright © ${new Date().getFullYear()} Shayan Habibi & Fable.Electron contributors`,
       },

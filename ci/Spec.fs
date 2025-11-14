@@ -41,10 +41,10 @@ module Cli =
         """
 Usage:
     build.exe list-releases [--detailed | --help]
-    build.exe generate-binding [api-options]
-    build.exe test [options | api-options]
-    build.exe pack [options | api-options]
-    build.exe push [options | api-options]
+    build.exe generate-binding [options]
+    build.exe test [options]
+    build.exe pack [options]
+    build.exe push [options]
     build.exe fantomas
     build.exe docs [options]
     build.exe build-api-docs
@@ -60,11 +60,10 @@ Options [options]:
     --git-bot                   Set the local git config to use the GitHubBot details
     --clean                     Can use to clean directories outside of the normal build commands.
     --npm-ci                    Use `npm ci` instead of `npm i`.
-
-Api Options [api-options]:
     --detailed                  When listing releases, will provide detailed meta-data
     -r, --release <tag>         When generating bindings, the specific release to target (latest if not set)
     --choose                    When generating bindings, list the releases and ask which release to target.
+    --skip-test                 Skip tests (for packing/build etc)
 """
 
     let parser = Docopt(spec)
@@ -151,10 +150,11 @@ type Args =
     static member apiKey = Args.getFlag "--nuget-key"
     static member releaseVersion = Args.getFlag "--release" |> Option.orElse _release
     static member gitClientToken = Args.getFlag "--gh-key"
-    static member listReleases = Args.hasFlag "--choose-release"
+    static member listReleases = Args.hasFlag "--choose"
     static member format = Args.hasFlag "--format"
     static member clean = Args.hasFlag "--clean"
     static member npmCi = Args.hasFlag "--npm-ci"
+    static member skipTest = Args.hasFlag "--skip-test"
     static member setReleaseVersion value = _release <- Some value
 
     static member setArgs argsv =

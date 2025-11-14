@@ -37,6 +37,9 @@
       <Content Include="blog\2021-08-26-welcome\docusaurus-plushie-banner.jpeg" />
       <Content Include="blog\tags.yml" />
       <Content Include="blog\authors.yml" />
+      <Content Include="blog\2025-11-14-generating-a-binding\index.md" />
+      <Content Include="blog\2025-11-14-generating-a-binding\help.PNG" />
+      <Content Include="blog\2025-11-14-generating-a-binding\choose.PNG" />
       <Content Include="blog\2021-08-01-mdx-blog-post.mdx" />
       <Content Include="blog\2019-05-29-long-blog-post.md" />
       <Content Include="blog\2019-05-28-first-blog-post.md" />

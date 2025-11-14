@@ -184,6 +184,13 @@ Target.create Ops.listReleases
 // Download the api of the release marked 'latest'
 Target.create Ops.downloadLatestApi
 <| fun _ ->
+    // Reroute if we're choosing the release
+    if Args.releaseVersion.IsSome then
+        Target.runSimple Ops.downloadApi []
+        |> _.Error |> function
+            | Some ex -> raise ex
+            | None -> ()
+    else
     Electron.getReleases ()
     |> List.tryFind _.isLatest
     |> function
@@ -341,36 +348,35 @@ Target.create Ops.generateBinding
 // Set what operations of the CI must precede other operations
 open Fake.Core.TargetOperators
 
-let dependencyMapping =
-    [ Ops.clean ==> Ops.downloadLatestApi
-      Ops.clean ==> Ops.downloadApi
-      
-      Ops.configGitBot =?> (Ops.gitCommit, Args.gitBot)
-      Ops.configGitBot =?> (Ops.gitPull, Args.gitBot)
-      Ops.configGitBot =?> (Ops.changeLogGen, Args.gitBot)
-
-      Ops.downloadLatestApi =?> (Ops.generateBinding, Args.releaseVersion.IsNone)
-
-      Ops.downloadApi =?> (Ops.generateBinding, Args.releaseVersion.IsSome)
-
-      Ops.restoreTools ==> Ops.generateBinding ?=> Ops.test
-      
-      Ops.test ?=> Ops.build
-      Ops.test ?=> Ops.fableClean
-      Ops.test ==> Ops.pack
-      Ops.test ==> Ops.push
-
-      Ops.fableClean ==> Ops.build ==> Ops.pack ==> Ops.push
-      
-      Ops.restoreTools ==> Ops.build ==> Ops.apiDocs
-
-      Ops.clean ==> Ops.fableClean ==> Ops.gitPull ]
-
 // ==========================================================
 // CI entry point
 [<EntryPoint>]
 let main argsv =
     argsv |> Args.setArgs
+    let dependencyMapping =
+        [ Ops.clean ==> Ops.downloadLatestApi
+          Ops.clean ==> Ops.downloadApi
+          
+          Ops.configGitBot =?> (Ops.gitCommit, Args.gitBot)
+          Ops.configGitBot =?> (Ops.gitPull, Args.gitBot)
+          Ops.configGitBot =?> (Ops.changeLogGen, Args.gitBot)
+
+          Ops.downloadLatestApi =?> (Ops.generateBinding, Args.releaseVersion.IsNone)
+
+          Ops.downloadApi =?> (Ops.generateBinding, Args.releaseVersion.IsSome)
+
+          Ops.restoreTools ==> Ops.generateBinding ?=> Ops.test
+          
+          Ops.test ?=> Ops.build
+          Ops.test ?=> Ops.fableClean
+          Ops.test =?> (Ops.pack, not Args.skipTest)
+          Ops.test =?> (Ops.push, not Args.skipTest)
+
+          Ops.fableClean ==> Ops.build ==> Ops.pack ==> Ops.push
+          
+          Ops.restoreTools ==> Ops.build ==> Ops.apiDocs
+
+          Ops.clean ==> Ops.fableClean ==> Ops.gitPull ]
 
     if Args.help then
         printfn $"%s{Cli.spec}"
