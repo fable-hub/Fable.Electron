@@ -31,6 +31,23 @@ let inline getInt (ele: JS.Promise<IWdioElement>) =
 describe "App loads correctly"
 <| fun _ ->
     promise {
+        it "Switch window if required"
+        <| fun _ ->
+            promise {
+                let! dec= getDecButton ()
+                let dec = dec 
+                if dec?error then
+                    let! handles = browser.getWindowHandles()
+                    let! currentHandle = browser.getWindowHandle()
+                    do!
+                        handles
+                        |> Array.filter ((<>) currentHandle)
+                        |> Array.head
+                        |> browser.switchToWindow
+                    let! dec = getDecButton()
+                    do! expect(dec).toBeExisting()
+                else do! expect(dec).toBeExisting()
+            }
         it "Buttons and label exist"
         <| fun _ ->
             promise {
