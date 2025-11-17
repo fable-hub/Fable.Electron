@@ -1,5 +1,8 @@
 process.env.TEST = 'true';
 exports.config = {
+    autoXvfb: true,
+    xvfbAutoInstall: true,
+    xvfbAutoInstallMode: 'sudo',
     runner: 'local',
     specs: [
         './test/specs/**/*.js'
