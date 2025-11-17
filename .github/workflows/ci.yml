@@ -18,7 +18,7 @@ jobs:
           cache: npm
         # This is critical to allow WDIO tests to function appropriately
       - name: Install Chromium
-        run: sudo apt-get install chromium-browser
+        run: sudo apt-get install -qq chromium-browser
         
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
