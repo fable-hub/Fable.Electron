@@ -5,6 +5,7 @@
         <OutputType>Library</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IsPackable>true</IsPackable>
         
         <PackageId>Fable.Electron.Forge</PackageId>
         <Title>Fable.Electron.Forge</Title>

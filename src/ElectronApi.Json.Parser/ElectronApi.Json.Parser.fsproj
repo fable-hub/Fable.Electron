@@ -4,6 +4,7 @@
         <OutputType>Library</OutputType>
         <Trimming>false</Trimming>
         <TargetFramework>net9.0</TargetFramework>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
