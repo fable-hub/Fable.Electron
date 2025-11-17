@@ -1,8 +1,8 @@
 process.env.TEST = 'true';
 exports.config = {
-    autoXvfb: true,
-    xvfbAutoInstall: true,
-    xvfbAutoInstallMode: 'sudo',
+    // autoXvfb: true,
+    // xvfbAutoInstall: true,
+    // xvfbAutoInstallMode: 'sudo',
     runner: 'local',
     specs: [
         './test/specs/**/*.js'
@@ -10,6 +10,7 @@ exports.config = {
     exclude: [
         // 'path/to/excluded/files'
     ],
+    injectGlobals: true,
     maxInstances: 10,
     capabilities: [{
         browserName: 'electron',
