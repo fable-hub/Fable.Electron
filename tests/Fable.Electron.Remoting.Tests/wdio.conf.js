@@ -1,5 +1,8 @@
 process.env.TEST = 'true';
 exports.config = {
+    // autoXvfb: true,
+    // xvfbAutoInstall: true,
+    // xvfbAutoInstallMode: 'sudo',
     runner: 'local',
     specs: [
         './test/specs/**/*.js'
@@ -7,18 +10,19 @@ exports.config = {
     exclude: [
         // 'path/to/excluded/files'
     ],
+    injectGlobals: true,
     maxInstances: 10,
     capabilities: [{
         browserName: 'electron',
         // Electron service options
         // see https://webdriver.io/docs/desktop-testing/electron/configuration/#service-options
         'wdio:electronServiceOptions': {
-            appArgs: [ '--headless' ]
-            // appArgs: [ ]
+            // appArgs: [ '--headless' ]
+            appArgs: [ '--headless', '--no-sandbox' ]
         }
     }],
 
-    logLevel: 'warn',
+    logLevel: 'info',
     //
     // Set specific log levels per logger
     // loggers:

@@ -12,10 +12,13 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-        # This is critical to allow WDIO tests to function appropriately
       - name: Install Chromium
-        run: sudo apt-get install chromium-browser
-        
+        uses: nanasess/setup-chromedriver@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+        # This is critical to allow WDIO tests to function appropriately
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         # Everything will be handled within our build script

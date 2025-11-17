@@ -16,6 +16,7 @@ type IBrowser =
     abstract waitUntil: bool -> Promise<unit>
     abstract url: string -> Promise<unit>
     abstract getWindowHandles: unit -> Promise<string[]>
+    abstract getWindowHandle: unit -> Promise<string>
     abstract switchToWindow: string -> Promise<unit>
 
 type IBrowser with

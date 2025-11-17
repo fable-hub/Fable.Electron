@@ -375,6 +375,7 @@ let main argsv =
           Ops.downloadApi =?> (Ops.generateBinding, Args.releaseVersion.IsSome)
 
           Ops.restoreTools ==> Ops.generateBinding ?=> Ops.test
+          Ops.restoreTools ==> Ops.test
 
           Ops.test ?=> Ops.build
           Ops.test ?=> Ops.fableClean

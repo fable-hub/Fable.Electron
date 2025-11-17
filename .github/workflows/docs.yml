@@ -20,7 +20,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
-        working-directory: ./docs
         with:
           node-version: 20
           cache: npm
@@ -33,7 +32,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: docs/build
 
   deploy:
     name: Deploy to GitHub Pages
