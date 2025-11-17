@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "fantomas": {
+      "version": "7.0.3",
+      "commands": [
+        "fantomas"
+      ],
+      "rollForward": false
+    },
+    "fable": {
+      "version": "5.0.0-alpha.14",
+      "commands": [
+        "fable"
+      ],
+      "rollForward": false
+    },
+    "easybuild.changeloggen": {
+      "version": "5.1.0",
+      "commands": [
+        "changelog-gen"
+      ],
+      "rollForward": false
+    },
+    "fsdocs-tool": {
+      "version": "21.0.0",
+      "commands": [
+        "fsdocs"
+      ],
+      "rollForward": false
+    }
+  }
+}

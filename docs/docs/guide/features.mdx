@@ -1,0 +1,260 @@
+﻿---
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Features
+
+## Event Abstractions
+
+Events can be listened to the same way as the source material
+
+<Tabs>
+<TabItem value={"js"} label={"JavaScript"}>
+```js
+emitter.on('event-name', () => { return null })
+```
+</TabItem>
+<TabItem value={"fs"} label={"FSharp"}>
+```fsharp
+emitter.on("event-name", fun _ -> ())
+```
+</TabItem>
+</Tabs>
+
+But you are also provided abstractions which convert these into IDE explorable methods
+
+```fsharp title="Named event methods"
+emitter.onEventName(fun () -> ())
+// Compiles to `emitter.on('event-name', () => { return defaultof() })`
+```
+
+These abstractions are provided for the most common event patterns, which is <code>on</code>,
+<code>once</code>, and <code>off</code>.
+
+```fsharp
+emitter.onEventName
+emitter.offEventName
+emitter.onceEventName
+```
+
+### Event Literals
+
+In the event that you want, or need, to utilise the standard method, you can also find helpful
+predefined literals to the event names that are IDE explorable.
+
+```fsharp
+// Renderer related
+module Renderer =
+    // Constants (event names)
+    module Constants =
+        module WebviewTag =
+            // Pascal case name
+            [<Literal; Erase>]
+            let DevtoolsSearchQuery = "devtools-search-query"
+
+            [<Literal; Erase>]
+            let IpcMessage = "ipc-message"
+```
+
+
+## Callback Interfaces
+
+Where we have a callback signature for a parameter such as <code>(event: Event, senderId: number): unit</code>, in Fable we would typically create a curried signature such as
+
+```fsharp
+type Emitter =
+    static member callbackExample (handler: Event -> float -> unit): unit
+```
+
+This creates a scenario where there is a loss of information in the name of the parameters,
+and an inability to provide documentation for each parameter.
+
+In this case, we automatically generate an interface which provides named access to the fields,
+along with their documentation. These interfaces are hidden from IDEs to prevent polluting
+the namespace.
+
+[//]: # (<details>)
+[//]: # (<summary>Example interface definition</summary>)
+    
+```fsharp showLineNumbers
+/// <summary>
+/// Emitted when any frame navigation is done.<br/><br/> This event is not emitted for in-page navigations, such as clicking anchor links or
+/// updating the <c>window.location.hash</c>, Use <c>did-navigate-in-page</c> event for this purpose.
+/// </summary>
+[<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+    AllowNullLiteral;
+    Interface>]
+type IOnDidFrameNavigate =
+    [<Emit("$0[0]")>]
+    abstract member url: string with get, set
+
+    /// <summary>
+    /// -1 for non HTTP navigations
+    /// </summary>
+    [<Emit("$0[1]")>]
+    abstract member httpResponseCode: int with get, set
+
+    /// <summary>
+    /// empty for non HTTP navigations,
+    /// </summary>
+    [<Emit("$0[2]")>]
+    abstract member httpStatusText: string with get, set
+
+    [<Emit("$0[3]")>]
+    abstract member isMainFrame: bool with get, set
+
+    [<Emit("$0[4]")>]
+    abstract member frameProcessId: int with get, set
+
+    [<Emit("$0[5]")>]
+    abstract member frameRoutingId: int with get, set
+```
+
+[//]: # (</details>)
+
+
+We then provide the original binding two overloads; one with the typical Fable curried syntax, and one with the interface.
+
+This coincides with the stipulation that the interface is only generated in the event that the
+lambda has more than 1 argument/parameter.
+
+> Notice that we use index access for the parameters. In the event that you have a greedy
+> parameter using the triple dot syntax such as <code>...args</code>, then we emit a slice
+> from that parameter index.
+
+## String Enums
+
+Like previous bindings, fieldless unions are used to represent string enums from JS.
+
+```fsharp
+[<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+type MediaType =
+    | [<CompiledName("none")>] None
+    | [<CompiledName("image")>] Image
+    | [<CompiledName("audio")>] Audio
+    | [<CompiledName("video")>] Video
+    | [<CompiledName("canvas")>] Canvas
+    | [<CompiledName("file")>] File
+    | [<CompiledName("plugin")>] Plugin
+```
+
+There are cases where the <tooltip term="electron-api">electron-api document</tooltip>
+does not populate the fields for the values of an enum, and only includes it in the
+documentation.
+
+This can't really be managed safely by us in the generator. The onus is on the user to either
+create a helper using the values suggested by the documentation of the parameter, or
+use strings in coordination with the generated docs or the electron source docs themselves.
+
+## Inlined Objects
+
+Consider a common method typing from TypeScript where a parameter takes an object as options.
+Where it is safe to do so, we automatically inline the properties of the object as optional
+parameters/arguments of the method, and use the Fable attribute <code>ParamObject</code> to
+have it compile the option object.
+
+
+```fsharp
+    /// <summary>
+    /// Creates a new <c>NativeImage</c> instance from <c>buffer</c>. Tries to decode as PNG or JPEG first.
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="width">Required for bitmap buffers.</param>
+    /// <param name="height">Required for bitmap buffers.</param>
+    /// <param name="scaleFactor">Defaults to 1.0.</param>
+    // highlight-next-line
+    [<Erase; ParamObject(1)>]
+    static member inline createFromBuffer
+        // highlight-next-line
+        (buffer: Buffer, ?width: int, ?height: int, ?scaleFactor: float)
+        : Main.NativeImage =
+        Unchecked.defaultof<_>
+```
+
+> Notice that the documentation of the properties that are inlined are also lifted.
+
+Where this is not possible, a class is created to allow the optional assignment of properties
+in a type safe manner.
+
+## Electron Deprecated/Experimental tagging
+
+Where the bindings indicate an obsolete or experimental API, this is a direct reflection from
+the Electron source material.
+
+There is usually a reason provided in the comments of the API itself, but not always.
+
+## OS Compatibility
+
+There are a variety of electron APIs that are only available on specific operating systems.
+We provide a small header in the comments where this is indicated
+
+```fsharp
+    /// <summary>
+    /// <para>
+    // highlight-next-line
+    /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+    /// </para>
+    /// </summary>
+    [<Emit("$0.on('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
+    static member inline onAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+```
+
+We also wrap these in conditional directives, allowing the visibility of incompatible APIs to be
+hidden from the IDE completely.
+
+This is purely opt in, via a constant definition in your project files.
+
+```fsharp
+    // highlight-next-line
+    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+    /// <summary>
+    /// <para>
+    /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+    /// </para>
+    /// </summary>
+    [<Emit("$0.on('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
+    static member inline onAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+    // highlight-next-line
+    #endif
+```
+
+:::warning
+    If you have no target OS set, then all of the API is compiled.
+
+    If you have a target OS set, then incompatible API will not be compiled/included.
+:::
+
+It also would provide compiler safety when targetting multiple platforms, as it forces you to satisfy the compiler for the various conditions using your own conditional compilation.
+
+Currently, we use the following definition names
+* <code>ELECTRON_OS_LIN</code> for linux 
+* <code>ELECTRON_OS_WIN</code> for windows 
+* <code>ELECTRON_OS_MAC</code> for MacOS
+* <code>ELECTRON_OS_MAS</code> for mas
+
+## Process Availability as Modules
+
+If you follow the Electron guidelines, you will respect the separation of API availabilities by
+the default configuration of sandboxing Renderer processes.
+
+To assist with this, the API is wrapped in modules to help restrict the API you have available,
+while also providing the process compatibility in the documentation (similar to OS compatibility
+comments).
+
+```fsharp
+    open Fable.Electron.Main
+    open Fable.Electron.Renderer
+    open Fable.Electron.Utility
+```
+
+Where an API is available in multiple processes, then we duplicate them to both (as this provides
+the best IDE suggestion experience; for example, abbrev types do not show the inherited members
+when exploring the definition of the type).
+
+However, due to the current nature of our path resolution system, we may end up referencing the
+type from a different process within a type signature, in the scenario where it exists in both.
+
+There is no effect on end outcomes, and this is an issue that will be resolved at a later time.

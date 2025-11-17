@@ -1,0 +1,207 @@
+﻿---
+title: Fable.Electron.Remoting
+---
+
+import RawPreload from '!!raw-loader!../../../../src/Fable.Electron.Remoting/Preload.fs';
+import RawRenderer from '!!raw-loader!../../../../src/Fable.Electron.Remoting/Renderer.fs';
+import RawMain from '!!raw-loader!../../../../src/Fable.Electron.Remoting/Main.fs';
+import GetRegion from '@site/src/components/LineRegions';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Fable.Electron.Remoting
+
+
+The package that provides the `Fable.Remoting` experience for electron IPC.
+
+This is heavily based off `Fable.Remoting`, using the same dependency for
+the reflection helpers - `Fable.SimpleJson`.
+
+## DotNet RPC vs JS IPC
+
+Unlike `Fable.Remoting`, there is no communication between different languages/frameworks/runtimes. All processes in electron run on a javascript/node
+runtime.
+
+This means we do not have to involve the serialisation/deserialisation steps of
+`Fable.Remoting`, and we are solely concerned with abstracting away the IPC
+boilerplate event handling/sending.
+
+> This also means we do not have to follow the same architecture of separating
+> our API types into a separate Shared project.
+> 
+> The decision to do so is a matter of style/developer preference.
+
+## Main - Preload - Renderer
+
+:::note
+Please [see the docs](https://www.electronjs.org/docs/latest/tutorial/ipc)
+to understand the concepts and reasoning behind the `Main` and `Renderer` process,
+and the use of the `Preload` scripts.
+:::
+
+The `Main` and `Renderer` processes have their own `Fable.Electron.Remoting`
+module; the `Preload` module pertains to the bridge that exposes the relevant
+API to the `Renderer` process.
+
+### Config
+
+Each Process implements its own config, to allow each process to have exclusive
+fields.
+
+> At the moment, only the `Main` process utilises this.
+
+<Tabs>
+    <TabItem value={'preload'} label={'Preload'}>
+        <CodeBlock language="fsharp">{GetRegion(RawPreload, 'REMOTING_TYPE')}</CodeBlock>
+    </TabItem>
+    <TabItem value={'main'} label={'Main'}>
+        <CodeBlock language="fsharp">{GetRegion(RawMain, 'REMOTING_TYPE')}</CodeBlock>
+    </TabItem>
+    <TabItem value={'renderer'} label={'Renderer'}>
+        <CodeBlock language="fsharp">{GetRegion(RawRenderer, 'REMOTING_TYPE')}</CodeBlock>
+    </TabItem>
+</Tabs>
+
+We provide uniform module functions to initialise and modify the configs.
+
+> For example only the main is provided - with the additional functions for its unique field.
+
+<CodeBlock language="fsharp" title="Main - Remoting module">
+    {GetRegion(RawMain, 'REMOTING_MODULE')}
+</CodeBlock>
+
+### Reflection
+
+The entry point for the `build` functions __MUST__ be an inline function/method
+so that we can utilise compiled reflection by `Fable`.
+
+:::note
+These methods are attached to a type named `Remoting`
+:::
+
+<Tabs>
+    <TabItem value={'entry'} label={'Entry'}>
+        <CodeBlock language={'fsharp'}>{GetRegion(RawMain, 'INLINE_ENTRY')}</CodeBlock>
+    </TabItem>
+    <TabItem value={'impl'} label={'Implementation'}>
+        
+        :::tip
+        The implementation methods hide these methods from compatible IDEs using
+        the `System.Component.EditorBrowsable` attribute.
+        
+        The methods __CANNOT__ be private/internal since they are being referenced
+        by publicly available inline methods.
+        
+        > However, we CAN refer to private bindings within the implementation methods.
+        :::
+        
+        <CodeBlock language={'fsharp'} title={'Example of an implementation'}>{GetRegion(RawMain, 'IMPL')}</CodeBlock>
+        
+    </TabItem>
+</Tabs>
+
+### Implications for Usage
+
+You must ensure that each of the processes/scripts refer to their individual
+module while building the proxies, as their internal implementations are
+different and incompatible.
+
+We essentially build an object of functions with the same names as the fields of
+the record when we are building a client. The functions send whatever arguments
+are passed through the channel determined by the field name and the type name.
+The handlers create an abstraction over our API/handler implementations, which
+handle the message receival, and reroute the arguments to our implementation
+based on the field name.
+
+We can rely on the safety of FCS, and dispose of the checks and validation of
+argument counts etc, as these are not openly accessible APIs outside of our
+application.
+
+## Main
+
+:::important
+This documentation process can laden the source code with tags.
+
+This is the cost of binding the source to the documentation so it is
+always up to date.
+
+Only the `Main` One-Way will have a step by step explanation.
+:::
+
+### One-Way Main-Renderer
+
+The `Client` build process receives the resolved type and config from
+the inlined entry point, and uses a `Fable.SimpleJson` utility function
+to get a DU for its type.
+
+<CodeBlock language={'fsharp'}>{GetRegion(RawMain, 'CLIENT_START')}</CodeBlock>
+
+We pattern match and ensure the type is `TypeInfo.Record`; the field value
+is a function which, on evaluation, provides us details of the fields.
+
+<CodeBlock language={'fsharp'}>{GetRegion(RawMain, 'CLIENT_TWO')}</CodeBlock>
+
+We then map the fields, and check:
+* That their types are functions
+* That their functions return unit (since it is a one way communication).
+
+<CodeBlock language={'fsharp'}>{GetRegion(RawMain, 'CLIENT_THREE')}</CodeBlock>
+
+The value (or _return value_) is the replacement function that will fill
+the field.
+
+In the case of the `Main` `Client`, it follows the signature [prescribed
+by the IPC documentation](https://www.electronjs.org/docs/latest/tutorial/ipc#pattern-3-main-to-renderer) -
+just mapped to all the browser windows that were passed to the config.
+
+```js title="Source JS one way IPC"
+{
+  click: () => mainWindow.webContents.send('update-counter', 1),
+  label: 'Increment'
+},
+```
+
+:::important
+Since we have FCS to provide type safety, we simply collect __ALL__ arguments
+passed via `...args`, and then _spread_ the array into the `send` call using
+`...args` again.
+
+This will allows the receiving function to access the parameters in standard
+curried form, mirroring the input function signature.
+:::
+
+### Two-Way
+
+<details>
+    <summary>Code</summary>
+    <CodeBlock language={'fsharp'}>{GetRegion(RawMain, 'TWO_WAY')}</CodeBlock>
+</details>
+
+For the Two-Way `Main` `Handler`, we have to account for an additional problem.
+
+The type signature of the handler, is not the same as the client signature, in the
+`electron-js` implementation. The handler also receives the renderer process that
+the message was sent from - of type `IpcMainEvent`.
+
+To mitigate this, we use a lambda as a middle man. We either emit a lambda
+that passes all the arguments to the record field function, or only the slice
+of arguments from index 1.
+
+The `Main` handler checks the type of the first parameter.
+If it __IS__ of type `IpcMainEvent`, then we can safely just pass all the
+arguments. If it is not, then we pass the slice from index 1.
+
+The `Main` handler no longer has to manually send the renderer process the
+message back (as this is abstracted away by electrons `handle`) so there is
+no longer a necessity to handle the `IpcMainEvent` (ie don't feel bad about 
+disposing of the poor thing).
+
+## Renderer & Preload
+
+Hopefully, the above explanation of the `Main` remoting handler/client
+provides the context necessary to understand the `Preload` and `Renderer`
+implementations.
+
+> If you have further questions, feel free to raise an issue and we can
+> answer/explain further :)

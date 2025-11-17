@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <Trimming>false</Trimming>
+        <TargetFramework>net9.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="ApiDecoder.fs" />
+        <Compile Include="Spec.fs" />
+        <Compile Include="Utils.fs" />
+        <Compile Include="Types.fs" />
+        <Compile Include="Fantomas.Utils.fs" />
+        <Compile Include="Prelude.fs" />
+        <Compile Include="SourceMapper.fs" />
+        <Compile Include="Generator.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Fantomas.Core" Version="7.0.3" />
+      <PackageReference Include="Fantomas.FCS" Version="7.0.3" />
+      <PackageReference Include="Thoth.Json.Net" Version="12.0.0" />
+    </ItemGroup>
+
+</Project>

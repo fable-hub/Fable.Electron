@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <TargetFramework>net9.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="index.html" />
+        <Content Include="package.json" />
+        <Content Include="forge.config.js" />
+        <Content Include="vite.main.config.mjs" />
+        <Content Include="README.md" />
+        <Content Include="vite.preload.config.mjs" />
+        <Content Include="vite.renderer.config.mjs" />
+        <Content Include="src\index.css" />
+        <Compile Include="src\shared.fs" />
+        <Compile Include="src\main.fs" />
+        <Compile Include="src\preload.fs" />
+        <Compile Include="src\renderer.fs" />
+        <Compile Include="test\specs\test.e2e.fs" />
+        <Content Include="wdio.conf.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Fable.Electron.Forge\Fable.Electron.Forge.fsproj" />
+      <ProjectReference Include="..\..\src\Fable.Electron.Remoting\Fable.Electron.Remoting.fsproj" />
+      <ProjectReference Include="..\..\src\Fable.Electron\Fable.Electron.fsproj" />
+      <ProjectReference Include="..\Tests.Common\Tests.Common.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Fable.Mocha" Version="2.17.0" />
+      <PackageReference Include="Fable.Promise" Version="3.2.0" />
+    </ItemGroup>
+
+</Project>

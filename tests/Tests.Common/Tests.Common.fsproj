@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Program.fs"/>
+        <Compile Include="Mocha.fs" />
+        <Content Include="README.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Fable.Electron.Forge\Fable.Electron.Forge.fsproj" />
+      <ProjectReference Include="..\..\src\Fable.Electron.Remoting\Fable.Electron.Remoting.fsproj" />
+      <ProjectReference Include="..\..\src\Fable.Electron\Fable.Electron.fsproj" />
+    </ItemGroup>
+
+</Project>

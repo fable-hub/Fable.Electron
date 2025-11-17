@@ -7,10 +7,10 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IsPackable>true</IsPackable>
         
-        <PackageId>Fable.Electron</PackageId>
-        <Title>Fable.Electron</Title>
-        <RootNamespace>Fable.Electron</RootNamespace>
-        <AssemblyName>Fable.Electron</AssemblyName>
+        <PackageId>Fable.Electron.Remoting</PackageId>
+        <Title>Fable.Electron.Remoting</Title>
+        <RootNamespace>Fable.Electron.Remoting</RootNamespace>
+        <AssemblyName>Fable.Electron.Remoting</AssemblyName>
         <Company>Fable-Hub</Company>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/fable-hub/fable-electron</RepositoryUrl>
@@ -19,9 +19,10 @@
         <Authors>Shayan Habibi and Contributors</Authors>
         <Copoyright>Copyright (c) 2025 Shayan Habibi and Fable-Hub contributors</Copoyright>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>39.1.2</Version>
-        <PackageVersion>39.1.2</PackageVersion>
+        <Version>1.0.0</Version>
+        <PackageVersion>1.0.0</PackageVersion>
         <PackageIcon>feleico-dark.png</PackageIcon>
+
     </PropertyGroup>
 
     <ItemGroup>
@@ -31,16 +32,17 @@
             <PackagePath>\</PackagePath>
             <Link>Public/icon.png</Link>
         </None>
-        <Compile Include="Types.fs" />
-        <Compile Include="Program.fs" />
+        <Compile Include="Renderer.fs" />
+        <Compile Include="Preload.fs" />
+        <Compile Include="Main.fs" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Fable.Browser.Dom" Version="2.20.0" />
-      <PackageReference Include="Fable.Browser.Url" Version="1.4.0" />
-      <PackageReference Include="Fable.Core" Version="5.0.0-beta.1" />
-      <PackageReference Include="Fable.Fetch" Version="2.7.0" />
-      <PackageReference Include="Fable.Node" Version="1.6.0" />
+      <ProjectReference Include="..\Fable.Electron\Fable.Electron.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Fable.SimpleJson" Version="3.24.0" />
         <PackageReference Include="Fable.Package.SDK" Version="1.3.2">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
