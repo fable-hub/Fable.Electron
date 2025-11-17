@@ -936,7 +936,7 @@ module Types =
         /// Electron APIs being used.  This option uses the same technique used by Chrome Content Scripts.  You can access
         /// this context in the dev tools by selecting the 'Electron Isolated Context' entry in the combo box at the top
         /// of the Console tab.</param>
-        /// <param name="webviewTag">Whether to enable the <c>&lt;webview&gt;</c> tag. Defaults to <c>false</c>. **Note:** The <c>preload</c> script configured for the <c>&lt;webview&gt;</c> will have
+        /// <param name="webviewTag">Whether to enable the <c>&lt;webview&gt;</c> tag. Defaults to <c>false</c>. <b>Note:</b> The <c>preload</c> script configured for the <c>&lt;webview&gt;</c> will have
         /// node integration enabled when it is executed so you should ensure remote/untrusted content is not able to create a <c>&lt;webview&gt;</c>
         /// tag with a possibly malicious <c>preload</c> script. You can use the <c>will-attach-webview</c> event on webContents to strip away the <c>preload</c>
         /// script and to validate or alter the <c>&lt;webview&gt;</c>'s initial settings.</param>
@@ -957,7 +957,7 @@ module Types =
         /// <param name="enablePreferredSizeMode">Whether to enable preferred size mode. The preferred size is the minimum size needed to contain the layout of
         /// the document—without requiring scrolling. Enabling this will cause the <c>preferred-size-changed</c> event to be emitted on the <c>WebContents</c> when the preferred
         /// size changes. Default is <c>false</c>.</param>
-        /// <param name="transparent">Whether to enable background transparency for the guest page. Default is <c>true</c>. **Note:** The guest page's text and background
+        /// <param name="transparent">Whether to enable background transparency for the guest page. Default is <c>true</c>. <b>Note:</b> The guest page's text and background
         /// colors are derived from the color scheme of its root element. When transparency is enabled, the text color will still
         /// change accordingly but the background will remain transparent.</param>
         /// <param name="enableDeprecatedPaste">Whether to enable the <c>paste</c> execCommand. Default is <c>false</c>.</param>
@@ -1217,7 +1217,7 @@ module Types =
         member val contextIsolation: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// Whether to enable the <c>&lt;webview&gt;</c> tag. Defaults to <c>false</c>. **Note:** The <c>preload</c> script configured for the <c>&lt;webview&gt;</c> will have node
+        /// Whether to enable the <c>&lt;webview&gt;</c> tag. Defaults to <c>false</c>. <b>Note:</b> The <c>preload</c> script configured for the <c>&lt;webview&gt;</c> will have node
         /// integration enabled when it is executed so you should ensure remote/untrusted content is not able to create a <c>&lt;webview&gt;</c> tag
         /// with a possibly malicious <c>preload</c> script. You can use the <c>will-attach-webview</c> event on webContents to strip away the <c>preload</c> script
         /// and to validate or alter the <c>&lt;webview&gt;</c>'s initial settings.
@@ -1303,7 +1303,7 @@ module Types =
         member val enablePreferredSizeMode: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// Whether to enable background transparency for the guest page. Default is <c>true</c>. **Note:** The guest page's text and background colors
+        /// Whether to enable background transparency for the guest page. Default is <c>true</c>. <b>Note:</b> The guest page's text and background colors
         /// are derived from the color scheme of its root element. When transparency is enabled, the text color will still change
         /// accordingly but the background will remain transparent.
         /// </summary>
@@ -4628,7 +4628,7 @@ module Types =
         /// the index in the source's name.</param>
         /// <param name="name">A screen source will be named either <c>Entire Screen</c> or <c>Screen &lt;index&gt;</c>, while the name of a window source
         /// will match the window title.</param>
-        /// <param name="thumbnail">A thumbnail image. **Note:** There is no guarantee that the size of the thumbnail is the same as the
+        /// <param name="thumbnail">A thumbnail image. <b>Note:</b> There is no guarantee that the size of the thumbnail is the same as the
         /// <c>thumbnailSize</c> specified in the <c>options</c> passed to <c>desktopCapturer.getSources</c>. The actual size depends on the scale of the screen or window.</param>
         /// <param name="displayId">A unique identifier that will correspond to the <c>id</c> of the matching Display returned by the Screen API. On
         /// some platforms, this is equivalent to the <c>XX</c> portion of the <c>id</c> field above and on others it will differ.
@@ -4656,7 +4656,7 @@ module Types =
         member val name: string = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// A thumbnail image. **Note:** There is no guarantee that the size of the thumbnail is the same as the <c>thumbnailSize</c>
+        /// A thumbnail image. <b>Note:</b> There is no guarantee that the size of the thumbnail is the same as the <c>thumbnailSize</c>
         /// specified in the <c>options</c> passed to <c>desktopCapturer.getSources</c>. The actual size depends on the scale of the screen or window.
         /// </summary>
         [<Erase>]
@@ -5656,7 +5656,7 @@ module Types =
     /// a toolbar appearance.<br/>  * The <c>splash</c> type behaves in a specific way. It is not draggable, even if the
     /// CSS styling of the window's body contains -webkit-app-region: drag. This type is commonly used for splash screens.<br/>  * The
     /// <c>notification</c> type creates a window that behaves like a system notification.<br/>* On macOS, possible types are <c>desktop</c>, <c>textured</c>, <c>panel</c>.<br/>
-    /// * The <c>textured</c> type adds metal gradient appearance. This option is **deprecated**.<br/>  * The <c>desktop</c> type places the window
+    /// * The <c>textured</c> type adds metal gradient appearance. This option is <b>deprecated</b>.<br/>  * The <c>desktop</c> type places the window
     /// at the desktop background window level (<c>kCGDesktopWindowLevel - 1</c>). Note that desktop window will not receive focus, keyboard or mouse
     /// events, but you can use <c>globalShortcut</c> to receive input sparingly.<br/>  * The <c>panel</c> type enables the window to float
     /// on top of full-screened apps by adding the <c>NSWindowStyleMaskNonactivatingPanel</c> style mask, normally reserved for NSPanel, at runtime. Also, the window
@@ -7037,7 +7037,7 @@ module Enums =
                 | [<CompiledName("hiddenInset")>] HiddenInset
                 /// <summary>
                 /// Results in a hidden title bar and a full size content window, the traffic light buttons will display when being
-                /// hovered over in the top left of the window. **Note:** This option is currently experimental.
+                /// hovered over in the top left of the window. <b>Note:</b> This option is currently experimental.
                 /// </summary>
                 | [<CompiledName("customButtonsOnHover")>] CustomButtonsOnHover
 
@@ -7103,7 +7103,7 @@ module Enums =
                 | [<CompiledName("hiddenInset")>] HiddenInset
                 /// <summary>
                 /// Results in a hidden title bar and a full size content window, the traffic light buttons will display when being
-                /// hovered over in the top left of the window. **Note:** This option is currently experimental.
+                /// hovered over in the top left of the window. <b>Note:</b> This option is currently experimental.
                 /// </summary>
                 | [<CompiledName("customButtonsOnHover")>] CustomButtonsOnHover
 
@@ -7322,7 +7322,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation anywhere in the <c>&lt;webview&gt;</c> or any frames embedded within.
         /// It can happen when the <c>window.location</c> object is changed or a user clicks a link in the page.<br/><br/>This event will
         /// not emit when the navigation is started programmatically with APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page
-        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have
+        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have
         /// any effect.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
@@ -9727,7 +9727,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation. It can happen when the <c>window.location</c> object is changed
         /// or a user clicks a link in the page.<br/><br/>This event will not emit when the navigation is started programmatically with
         /// APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page navigation, such as clicking anchor links or updating the
-        /// <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have any effect.
+        /// <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have any effect.
         /// </summary>
         [<Emit("$0.on('will-navigate', $1)")>]
         member inline _.onWillNavigate(handler: string -> unit) : unit = Unchecked.defaultof<_>
@@ -9736,7 +9736,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation. It can happen when the <c>window.location</c> object is changed
         /// or a user clicks a link in the page.<br/><br/>This event will not emit when the navigation is started programmatically with
         /// APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page navigation, such as clicking anchor links or updating the
-        /// <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have any effect.
+        /// <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have any effect.
         /// </summary>
         [<Emit("$0.once('will-navigate', $1)")>]
         member inline _.onceWillNavigate(handler: string -> unit) : unit = Unchecked.defaultof<_>
@@ -9745,7 +9745,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation. It can happen when the <c>window.location</c> object is changed
         /// or a user clicks a link in the page.<br/><br/>This event will not emit when the navigation is started programmatically with
         /// APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page navigation, such as clicking anchor links or updating the
-        /// <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have any effect.
+        /// <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have any effect.
         /// </summary>
         [<Emit("$0.off('will-navigate', $1)")>]
         member inline _.offWillNavigate(handler: string -> unit) : unit = Unchecked.defaultof<_>
@@ -9754,7 +9754,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation anywhere in the <c>&lt;webview&gt;</c> or any frames embedded within.
         /// It can happen when the <c>window.location</c> object is changed or a user clicks a link in the page.<br/><br/>This event will
         /// not emit when the navigation is started programmatically with APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page
-        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have
+        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have
         /// any effect.
         /// </summary>
         [<Emit("$0.on('will-frame-navigate', $1)")>]
@@ -9765,7 +9765,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation anywhere in the <c>&lt;webview&gt;</c> or any frames embedded within.
         /// It can happen when the <c>window.location</c> object is changed or a user clicks a link in the page.<br/><br/>This event will
         /// not emit when the navigation is started programmatically with APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page
-        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have
+        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have
         /// any effect.
         /// </summary>
         [<Emit("$0.on('will-frame-navigate', $1)")>]
@@ -9776,7 +9776,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation anywhere in the <c>&lt;webview&gt;</c> or any frames embedded within.
         /// It can happen when the <c>window.location</c> object is changed or a user clicks a link in the page.<br/><br/>This event will
         /// not emit when the navigation is started programmatically with APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page
-        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have
+        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have
         /// any effect.
         /// </summary>
         [<Emit("$0.once('will-frame-navigate', $1)")>]
@@ -9787,7 +9787,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation anywhere in the <c>&lt;webview&gt;</c> or any frames embedded within.
         /// It can happen when the <c>window.location</c> object is changed or a user clicks a link in the page.<br/><br/>This event will
         /// not emit when the navigation is started programmatically with APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page
-        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have
+        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have
         /// any effect.
         /// </summary>
         [<Emit("$0.once('will-frame-navigate', $1)")>]
@@ -9798,7 +9798,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation anywhere in the <c>&lt;webview&gt;</c> or any frames embedded within.
         /// It can happen when the <c>window.location</c> object is changed or a user clicks a link in the page.<br/><br/>This event will
         /// not emit when the navigation is started programmatically with APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page
-        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have
+        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have
         /// any effect.
         /// </summary>
         [<Emit("$0.off('will-frame-navigate', $1)")>]
@@ -9809,7 +9809,7 @@ module Renderer =
         /// Emitted when a user or the page wants to start navigation anywhere in the <c>&lt;webview&gt;</c> or any frames embedded within.
         /// It can happen when the <c>window.location</c> object is changed or a user clicks a link in the page.<br/><br/>This event will
         /// not emit when the navigation is started programmatically with APIs like <c>&lt;webview&gt;.loadURL</c> and <c>&lt;webview&gt;.back</c>.<br/><br/>It is also not emitted during in-page
-        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does **NOT** have
+        /// navigation, such as clicking anchor links or updating the <c>window.location.hash</c>. Use <c>did-navigate-in-page</c> event for this purpose.<br/><br/>Calling <c>event.preventDefault()</c> does <b>NOT</b> have
         /// any effect.
         /// </summary>
         [<Emit("$0.off('will-frame-navigate', $1)")>]
@@ -11150,7 +11150,7 @@ module Renderer =
         static member inline findFrameByName(name: string) : Option<Renderer.webFrame> = Unchecked.defaultof<_>
 
         /// <summary>
-        /// that has the supplied <c>routingId</c>, <c>null</c> if not found.<br/><br/>**Deprecated:** Use the new <c>webFrame.findFrameByToken</c> API.
+        /// that has the supplied <c>routingId</c>, <c>null</c> if not found.<br/> <b>Deprecated:</b> Use the new <c>webFrame.findFrameByToken</c> API.
         /// </summary>
         /// <param name="routingId">An <c>Integer</c> representing the unique frame id in the current renderer process. Routing IDs can be retrieved from <c>WebFrame</c>
         /// instances (<c>webFrame.routingId</c>) and are also passed by frame specific <c>WebContents</c> navigation events (e.g. <c>did-frame-navigate</c>)</param>
@@ -11217,7 +11217,7 @@ module Renderer =
 
         /// <summary>
         /// An <c>Integer</c> representing the unique frame id in the current renderer process. Distinct WebFrame instances that refer to the same
-        /// underlying frame will have the same <c>routingId</c>.<br/><br/>**Deprecated:** Use the new <c>webFrame.frameToken</c> API.
+        /// underlying frame will have the same <c>routingId</c>.<br/> <b>Deprecated:</b> Use the new <c>webFrame.frameToken</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         static member val routingId: int = Unchecked.defaultof<_> with get
@@ -11948,16 +11948,17 @@ module Renderer =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation for
-        /// a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue): The absolute hue
-        /// value for the image - 0 and 1 map to 0 and 360 on the hue color wheel (red).<br/>* <c>hsl_shift[1]</c>
-        /// (saturation): A saturation shift for the image, with the following key values: 0 = remove all color. 0.5 = leave
-        /// unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the following key values:
-        /// 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness (make all pixels
-        /// white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will make the image
-        /// completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>, whose string representation
-        /// would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before passing it in.
-        /// This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.
+        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation and
+        /// SF Symbols for a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue):
+        /// The absolute hue value for the image - 0 and 1 map to 0 and 360 on the hue color
+        /// wheel (red).<br/>* <c>hsl_shift[1]</c> (saturation): A saturation shift for the image, with the following key values: 0 = remove all color.
+        /// 0.5 = leave unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the
+        /// following key values: 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness
+        /// (make all pixels white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will
+        /// make the image completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>,
+        /// whose string representation would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before
+        /// passing it in. This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.<br/><br/>For
+        /// SF Symbols, usage looks as follows:<br/><br/>where <c>'square.and.pencil'</c> is the symbol name from the SF Symbols app.
         /// </summary>
         /// <param name="imageName"></param>
         /// <param name="hslShift"></param>
@@ -12039,7 +12040,7 @@ module Renderer =
         /// <summary>
         /// Send an asynchronous message to the main process via <c>channel</c>, along with arguments. Arguments will be serialized with the Structured
         /// Clone Algorithm, just like <c>window.postMessage</c>, so prototype chains will not be included. Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will
-        /// throw an exception.<br/><br/>&gt; **NOTE:** Sending non-standard JavaScript types such as DOM objects or special Electron objects will throw an exception.<br/><br/>Since
+        /// throw an exception.<br/><br/>&gt; <b>NOTE:</b> Sending non-standard JavaScript types such as DOM objects or special Electron objects will throw an exception.<br/><br/>Since
         /// the main process does not have support for DOM objects such as <c>ImageBitmap</c>, <c>File</c>, <c>DOMMatrix</c> and so on, such objects
         /// cannot be sent over Electron's IPC to the main process, as the main process would have no way to decode
         /// them. Attempting to send such objects over IPC will result in an error.<br/><br/>The main process handles it by listening for
@@ -12071,7 +12072,7 @@ module Renderer =
         /// <summary>
         /// The value sent back by the <c>ipcMain</c> handler.<br/><br/>Send a message to the main process via <c>channel</c> and expect a result
         /// synchronously. Arguments will be serialized with the Structured Clone Algorithm, just like <c>window.postMessage</c>, so prototype chains will not be included.
-        /// Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.<br/><br/>&gt; **NOTE:** Sending non-standard JavaScript types such as DOM objects
+        /// Sending Functions, Promises, Symbols, WeakMaps, or WeakSets will throw an exception.<br/><br/>&gt; <b>NOTE:</b> Sending non-standard JavaScript types such as DOM objects
         /// or special Electron objects will throw an exception.<br/><br/>Since the main process does not have support for DOM objects such as
         /// <c>ImageBitmap</c>, <c>File</c>, <c>DOMMatrix</c> and so on, such objects cannot be sent over Electron's IPC to the main process, as the
         /// main process would have no way to decode them. Attempting to send such objects over IPC will result in an
@@ -12644,7 +12645,7 @@ module Utility =
     module ClientRequest =
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
@@ -12718,6 +12719,9 @@ module Utility =
             /// <param name="session">The <c>Session</c> instance with which the request is associated.</param>
             /// <param name="partition">The name of the <c>partition</c> with which the request is associated. Defaults to the empty string. The <c>session</c> option
             /// supersedes <c>partition</c>. Thus if a <c>session</c> is explicitly specified, <c>partition</c> is ignored.</param>
+            /// <param name="bypassCustomProtocolHandlers">When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows
+            /// forwarding an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to
+            /// <c>false</c>.</param>
             /// <param name="credentials">Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from
             /// the session associated with the request will be used. If set to <c>omit</c>, credentials will not be sent with the
             /// request (and the <c>'login'</c> event will not be triggered in the event of a 401). If set to <c>same-origin</c>, <c>origin</c>
@@ -12744,6 +12748,7 @@ module Utility =
                 ?headers: Record<string, U2<string, string[]>>,
                 ?session: Main.Session,
                 ?partition: string,
+                ?bypassCustomProtocolHandlers: bool,
                 ?credentials: Utility.Enums.ClientRequest.Options.Credentials,
                 ?useSessionCookies: bool,
                 ?protocol: Utility.Enums.ClientRequest.Options.Protocol,
@@ -12791,6 +12796,13 @@ module Utility =
             /// </summary>
             [<Erase>]
             member val partition: string = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows forwarding
+            /// an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to <c>false</c>.
+            /// </summary>
+            [<Erase>]
+            member val bypassCustomProtocolHandlers: bool = Unchecked.defaultof<_> with get, set
 
             /// <summary>
             /// Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from the
@@ -13897,11 +13909,11 @@ module Utility =
         /// is passed, the promise will be rejected. If an access request was denied and later is changed through the System
         /// Preferences pane, a restart of the app will be required for the new permissions to take effect. If access has
         /// already been requested and denied, it _must_ be changed through the preference pane; an alert will not pop up and
-        /// the promise will resolve with the existing access status.<br/><br/>**Important:** In order to properly leverage this API, you must set the
-        /// <c>NSMicrophoneUsageDescription</c> and <c>NSCameraUsageDescription</c> strings in your app's <c>Info.plist</c> file. The values for these keys will be used to populate the
-        /// permission dialogs so that the user will be properly informed as to the purpose of the permission request. See Electron
-        /// Application Distribution for more information about how to set these in the context of Electron.<br/><br/>This user consent was not required
-        /// until macOS 10.14 Mojave, so this method will always return <c>true</c> if your system is running 10.13 High Sierra.
+        /// the promise will resolve with the existing access status.<br/> <b>Important:</b> In order to properly leverage this API, you must set
+        /// the <c>NSMicrophoneUsageDescription</c> and <c>NSCameraUsageDescription</c> strings in your app's <c>Info.plist</c> file. The values for these keys will be used to populate
+        /// the permission dialogs so that the user will be properly informed as to the purpose of the permission request. See
+        /// Electron Application Distribution for more information about how to set these in the context of Electron.<br/><br/>This user consent was not
+        /// required until macOS 10.14 Mojave, so this method will always return <c>true</c> if your system is running 10.13 High Sierra.
         /// </summary>
         /// <param name="mediaType">the type of media being requested; can be <c>microphone</c>, <c>camera</c>.</param>
         [<Erase>]
@@ -13924,8 +13936,8 @@ module Utility =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
-        /// A <c>boolean</c> property which determines whether the app avoids using semitransparent backgrounds. This maps to NSWorkspace.accessibilityDisplayShouldReduceTransparency<br/><br/>**Deprecated:** Use the new <c>nativeTheme.prefersReducedTransparency</c>
-        /// API.
+        /// A <c>boolean</c> property which determines whether the app avoids using semitransparent backgrounds. This maps to NSWorkspace.accessibilityDisplayShouldReduceTransparency<br/> <b>Deprecated:</b> Use the new
+        /// <c>nativeTheme.prefersReducedTransparency</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         static member val accessibilityDisplayShouldReduceTransparency: bool = Unchecked.defaultof<_> with get, set
@@ -14361,7 +14373,7 @@ module Utility =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.on('redirect', $1)")>]
         member inline _.onRedirect(handler: int -> string -> string -> Record<string, string[]> -> unit) : unit =
@@ -14369,14 +14381,14 @@ module Utility =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.on('redirect', $1)")>]
         member inline _.onRedirect(handler: Utility.ClientRequest.IOnRedirect -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.once('redirect', $1)")>]
         member inline _.onceRedirect(handler: int -> string -> string -> Record<string, string[]> -> unit) : unit =
@@ -14384,14 +14396,14 @@ module Utility =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.once('redirect', $1)")>]
         member inline _.onceRedirect(handler: Utility.ClientRequest.IOnRedirect -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.off('redirect', $1)")>]
         member inline _.offRedirect(handler: int -> string -> string -> Record<string, string[]> -> unit) : unit =
@@ -14399,7 +14411,7 @@ module Utility =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.off('redirect', $1)")>]
         member inline _.offRedirect(handler: Utility.ClientRequest.IOnRedirect -> unit) : unit = Unchecked.defaultof<_>
@@ -22640,7 +22652,7 @@ module Main =
             /// <param name="toolTip">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Hover text for this
             /// menu item.</param>
             /// <param name="accelerator">An Accelerator string.</param>
-            /// <param name="icon"></param>
+            /// <param name="icon">Can be a NativeImage or the file path of an icon.</param>
             /// <param name="enabled">If false, the menu item will be greyed out and unclickable.</param>
             /// <param name="acceleratorWorksWhenHidden">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || default is <c>true</c>, and
             /// when <c>false</c> will prevent the accelerator from triggering the item if the item is not visible.</param>
@@ -22752,6 +22764,9 @@ module Main =
             [<Erase>]
             member val accelerator: string = Unchecked.defaultof<_> with get, set
 
+            /// <summary>
+            /// Can be a NativeImage or the file path of an icon.
+            /// </summary>
             [<Erase>]
             member val icon: U2<Main.NativeImage, string> = Unchecked.defaultof<_> with get, set
 
@@ -22918,7 +22933,7 @@ module Main =
     module ClientRequest =
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
@@ -22992,6 +23007,9 @@ module Main =
             /// <param name="session">The <c>Session</c> instance with which the request is associated.</param>
             /// <param name="partition">The name of the <c>partition</c> with which the request is associated. Defaults to the empty string. The <c>session</c> option
             /// supersedes <c>partition</c>. Thus if a <c>session</c> is explicitly specified, <c>partition</c> is ignored.</param>
+            /// <param name="bypassCustomProtocolHandlers">When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows
+            /// forwarding an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to
+            /// <c>false</c>.</param>
             /// <param name="credentials">Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from
             /// the session associated with the request will be used. If set to <c>omit</c>, credentials will not be sent with the
             /// request (and the <c>'login'</c> event will not be triggered in the event of a 401). If set to <c>same-origin</c>, <c>origin</c>
@@ -23018,6 +23036,7 @@ module Main =
                 ?headers: Record<string, U2<string, string[]>>,
                 ?session: Main.Session,
                 ?partition: string,
+                ?bypassCustomProtocolHandlers: bool,
                 ?credentials: Main.Enums.ClientRequest.Options.Credentials,
                 ?useSessionCookies: bool,
                 ?protocol: Main.Enums.ClientRequest.Options.Protocol,
@@ -23065,6 +23084,13 @@ module Main =
             /// </summary>
             [<Erase>]
             member val partition: string = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows forwarding
+            /// an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to <c>false</c>.
+            /// </summary>
+            [<Erase>]
+            member val bypassCustomProtocolHandlers: bool = Unchecked.defaultof<_> with get, set
 
             /// <summary>
             /// Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from the
@@ -24754,7 +24780,7 @@ module Main =
             /// <c>not-registered</c>, <c>enabled</c>, <c>requires-approval</c>, or <c>not-found</c>.</param>
             /// <param name="executableWillLaunchAtLogin">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || <c>true</c> if app is
             /// set to open at login and its run key is not deactivated. This differs from <c>openAtLogin</c> as it ignores the
-            /// <c>args</c> option, this property will be true if the given executable would be launched at login with **any** arguments.</param>
+            /// <c>args</c> option, this property will be true if the given executable would be launched at login with <b>any</b> arguments.</param>
             /// <param name="launchItems">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</param>
             (
                 openAtLogin: bool
@@ -24850,7 +24876,7 @@ module Main =
             /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
             /// <c>true</c> if app is set to open at login and its run key is not deactivated. This differs from <c>openAtLogin</c>
             /// as it ignores the <c>args</c> option, this property will be true if the given executable would be launched at login
-            /// with **any** arguments.
+            /// with <b>any</b> arguments.
             /// </summary>
             [<Erase>]
             member val executableWillLaunchAtLogin: bool = Unchecked.defaultof<_> with get, set
@@ -25111,7 +25137,7 @@ module Main =
             /// <param name="minItems">The minimum number of items that will be shown in the Jump List (for a more detailed description of
             /// this value see the MSDN docs).</param>
             /// <param name="removedItems">Array of <c>JumpListItem</c> objects that correspond to items that the user has explicitly removed from custom categories in the
-            /// Jump List. These items must not be re-added to the Jump List in the **next** call to <c>app.setJumpList()</c>, Windows will
+            /// Jump List. These items must not be re-added to the Jump List in the <b>next</b> call to <c>app.setJumpList()</c>, Windows will
             /// not display any custom category that contains any of the removed items.</param>
             (minItems: int, removedItems: JumpListItem[]) =
             class
@@ -25126,7 +25152,7 @@ module Main =
 
             /// <summary>
             /// Array of <c>JumpListItem</c> objects that correspond to items that the user has explicitly removed from custom categories in the Jump
-            /// List. These items must not be re-added to the Jump List in the **next** call to <c>app.setJumpList()</c>, Windows will not
+            /// List. These items must not be re-added to the Jump List in the <b>next</b> call to <c>app.setJumpList()</c>, Windows will not
             /// display any custom category that contains any of the removed items.
             /// </summary>
             [<Erase>]
@@ -30368,51 +30394,51 @@ module Main =
         member inline _.reloadIgnoringCache() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Whether the browser can go back to previous web page.<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.canGoBack</c> API.
+        /// Whether the browser can go back to previous web page.<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.canGoBack</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         member inline _.canGoBack() : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Whether the browser can go forward to next web page.<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.canGoForward</c> API.
+        /// Whether the browser can go forward to next web page.<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.canGoForward</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         member inline _.canGoForward() : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Whether the web page can go to <c>offset</c>.<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.canGoToOffset</c> API.
+        /// Whether the web page can go to <c>offset</c>.<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.canGoToOffset</c> API.
         /// </summary>
         /// <param name="offset"></param>
         [<Erase; System.Obsolete>]
         member inline _.canGoToOffset(offset: int) : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Clears the navigation history.<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.clear</c> API.
+        /// Clears the navigation history.<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.clear</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         member inline _.clearHistory() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Makes the browser go back a web page.<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.goBack</c> API.
+        /// Makes the browser go back a web page.<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.goBack</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         member inline _.goBack() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Makes the browser go forward a web page.<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.goForward</c> API.
+        /// Makes the browser go forward a web page.<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.goForward</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         member inline _.goForward() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Navigates browser to the specified absolute web page index.<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.goToIndex</c> API.
+        /// Navigates browser to the specified absolute web page index.<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.goToIndex</c> API.
         /// </summary>
         /// <param name="index"></param>
         [<Erase; System.Obsolete>]
         member inline _.goToIndex(index: int) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Navigates to the specified offset from the "current entry".<br/><br/>**Deprecated:** Should use the new <c>contents.navigationHistory.goToOffset</c> API.
+        /// Navigates to the specified offset from the "current entry".<br/> <b>Deprecated:</b> Should use the new <c>contents.navigationHistory.goToOffset</c> API.
         /// </summary>
         /// <param name="offset"></param>
         [<Erase; System.Obsolete>]
@@ -30906,7 +30932,7 @@ module Main =
         /// <summary>
         /// Send an asynchronous message to a specific frame in a renderer process via <c>channel</c>, along with arguments. Arguments will be
         /// serialized with the Structured Clone Algorithm, just like <c>postMessage</c>, so prototype chains will not be included. Sending Functions, Promises, Symbols,
-        /// WeakMaps, or WeakSets will throw an exception.<br/><br/>&gt; **NOTE:** Sending non-standard JavaScript types such as DOM objects or special Electron objects
+        /// WeakMaps, or WeakSets will throw an exception.<br/><br/>&gt; <b>NOTE:</b> Sending non-standard JavaScript types such as DOM objects or special Electron objects
         /// will throw an exception.<br/><br/>The renderer process can handle the message by listening to <c>channel</c> with the <c>ipcRenderer</c> module.<br/><br/>If you want
         /// to get the <c>frameId</c> of a given renderer context you should use the <c>webFrame.routingId</c> value.  E.g.<br/><br/>You can also read
         /// <c>frameId</c> from all incoming IPC messages in the main process.
@@ -31744,20 +31770,21 @@ module Main =
     ///   { label: 'Item1', type: 'radio' },<br/>    { label: 'Item2', type: 'radio' },<br/>
     /// { label: 'Item3', type: 'radio', checked: true },<br/>    { label: 'Item4', type: 'radio' }<br/>  ])<br/>
     /// tray.setToolTip('This is my application.')<br/>  tray.setContextMenu(contextMenu)<br/>})<br/></code><br/><br/>&gt; [!TIP] See also: A detailed guide about how to implement Tray menus.<br/><br/>&gt; [!WARNING] Electron's
-    /// built-in classes cannot be subclassed in user code. For more information, see the FAQ.<br/><br/>**Platform Considerations**<br/><br/>**Linux**<br/><br/>* Tray icon uses StatusNotifierItem by
-    /// default, when it is not available in user's desktop environment the <c>GtkStatusIcon</c> will be used instead.<br/>* The <c>click</c> event is
-    /// emitted when the tray icon receives activation from user, however the StatusNotifierItem spec does not specify which action would cause
-    /// an activation, for some environments it is left mouse click, but for some it might be double left mouse click.<br/>*
-    /// In order for changes made to individual <c>MenuItem</c>s to take effect, you have to call <c>setContextMenu</c> again. For example:<br/><br/><code><br/>const {
-    /// app, Menu, Tray } = require('electron')<br/><br/>let appIcon = null<br/>app.whenReady().then(() =&gt; {<br/>  appIcon = new Tray('/path/to/my/icon')<br/>  const contextMenu =
-    /// Menu.buildFromTemplate([<br/>    { label: 'Item1', type: 'radio' },<br/>    { label: 'Item2', type: 'radio' }<br/>
-    /// ])<br/><br/>  // Make a change to the context menu<br/>  contextMenu.items[1].checked = false<br/><br/>  // Call this again for
-    /// Linux because we modified the context menu<br/>  appIcon.setContextMenu(contextMenu)<br/>})<br/></code><br/><br/>**MacOS**<br/><br/>* Icons passed to the Tray constructor should be Template Images.<br/>* To
-    /// make sure your icon isn't grainy on retina monitors, be sure your <c>@2x</c> image is 144dpi.<br/>* If you are bundling
-    /// your application (e.g., with webpack for development), be sure that the file names are not being mangled or hashed. The
-    /// filename needs to end in Template, and the <c>@2x</c> image needs to have the same filename as the standard image,
-    /// or MacOS will not magically invert your image's colors or use the high density image.<br/>* 16x16 (72dpi) and 32x32@2x (144dpi)
-    /// work well for most icons.<br/><br/>**Windows**<br/><br/>* It is recommended to use <c>ICO</c> icons to get best visual effects.
+    /// built-in classes cannot be subclassed in user code. For more information, see the FAQ.<br/> <b>Platform Considerations</b><br/> <b>Linux</b><br/><br/>* Tray icon uses
+    /// StatusNotifierItem by default, when it is not available in user's desktop environment the <c>GtkStatusIcon</c> will be used instead.<br/>* The <c>click</c>
+    /// event is emitted when the tray icon receives activation from user, however the StatusNotifierItem spec does not specify which action
+    /// would cause an activation, for some environments it is left mouse click, but for some it might be double left
+    /// mouse click.<br/>* In order for changes made to individual <c>MenuItem</c>s to take effect, you have to call <c>setContextMenu</c> again. For
+    /// example:<br/><br/><code><br/>const { app, Menu, Tray } = require('electron')<br/><br/>let appIcon = null<br/>app.whenReady().then(() =&gt; {<br/>  appIcon = new Tray('/path/to/my/icon')<br/>  const
+    /// contextMenu = Menu.buildFromTemplate([<br/>    { label: 'Item1', type: 'radio' },<br/>    { label: 'Item2', type: 'radio'
+    /// }<br/>  ])<br/><br/>  // Make a change to the context menu<br/>  contextMenu.items[1].checked = false<br/><br/>  // Call this
+    /// again for Linux because we modified the context menu<br/>  appIcon.setContextMenu(contextMenu)<br/>})<br/></code><br/> <b>MacOS</b><br/><br/>* Icons passed to the Tray constructor should be
+    /// Template Images.<br/>* To make sure your icon isn't grainy on retina monitors, be sure your <c>@2x</c> image is 144dpi.<br/>* If
+    /// you are bundling your application (e.g., with webpack for development), be sure that the file names are not being mangled
+    /// or hashed. The filename needs to end in Template, and the <c>@2x</c> image needs to have the same filename as
+    /// the standard image, or MacOS will not magically invert your image's colors or use the high density image.<br/>* 16x16 (72dpi)
+    /// and 32x32@2x (144dpi) work well for most icons.<br/> <b>Windows</b><br/><br/>* It is recommended to use <c>ICO</c> icons to get best visual
+    /// effects.
     /// </summary>
     [<Import("Tray", "electron")>]
     type Tray
@@ -33017,7 +33044,7 @@ module Main =
 
         /// <summary>
         /// A <c>SegmentedControlSegment[]</c> array representing the segments in this control. Updating this value immediately updates the control in the touch bar.
-        /// Updating deep properties inside this array **does not update the touch bar**.
+        /// Updating deep properties inside this array <b>does not update the touch bar</b>.
         /// </summary>
         [<Erase>]
         member val segments: SegmentedControlSegment[] = Unchecked.defaultof<_> with get, set
@@ -33066,7 +33093,7 @@ module Main =
 
         /// <summary>
         /// A <c>ScrubberItem[]</c> array representing the items in this scrubber. Updating this value immediately updates the control in the touch bar.
-        /// Updating deep properties inside this array **does not update the touch bar**.
+        /// Updating deep properties inside this array <b>does not update the touch bar</b>.
         /// </summary>
         [<Erase>]
         member val items: ScrubberItem[] = Unchecked.defaultof<_> with get, set
@@ -33715,11 +33742,11 @@ module Main =
         /// is passed, the promise will be rejected. If an access request was denied and later is changed through the System
         /// Preferences pane, a restart of the app will be required for the new permissions to take effect. If access has
         /// already been requested and denied, it _must_ be changed through the preference pane; an alert will not pop up and
-        /// the promise will resolve with the existing access status.<br/><br/>**Important:** In order to properly leverage this API, you must set the
-        /// <c>NSMicrophoneUsageDescription</c> and <c>NSCameraUsageDescription</c> strings in your app's <c>Info.plist</c> file. The values for these keys will be used to populate the
-        /// permission dialogs so that the user will be properly informed as to the purpose of the permission request. See Electron
-        /// Application Distribution for more information about how to set these in the context of Electron.<br/><br/>This user consent was not required
-        /// until macOS 10.14 Mojave, so this method will always return <c>true</c> if your system is running 10.13 High Sierra.
+        /// the promise will resolve with the existing access status.<br/> <b>Important:</b> In order to properly leverage this API, you must set
+        /// the <c>NSMicrophoneUsageDescription</c> and <c>NSCameraUsageDescription</c> strings in your app's <c>Info.plist</c> file. The values for these keys will be used to populate
+        /// the permission dialogs so that the user will be properly informed as to the purpose of the permission request. See
+        /// Electron Application Distribution for more information about how to set these in the context of Electron.<br/><br/>This user consent was not
+        /// required until macOS 10.14 Mojave, so this method will always return <c>true</c> if your system is running 10.13 High Sierra.
         /// </summary>
         /// <param name="mediaType">the type of media being requested; can be <c>microphone</c>, <c>camera</c>.</param>
         [<Erase>]
@@ -33742,8 +33769,8 @@ module Main =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
-        /// A <c>boolean</c> property which determines whether the app avoids using semitransparent backgrounds. This maps to NSWorkspace.accessibilityDisplayShouldReduceTransparency<br/><br/>**Deprecated:** Use the new <c>nativeTheme.prefersReducedTransparency</c>
-        /// API.
+        /// A <c>boolean</c> property which determines whether the app avoids using semitransparent backgrounds. This maps to NSWorkspace.accessibilityDisplayShouldReduceTransparency<br/> <b>Deprecated:</b> Use the new
+        /// <c>nativeTheme.prefersReducedTransparency</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         static member val accessibilityDisplayShouldReduceTransparency: bool = Unchecked.defaultof<_> with get, set
@@ -35132,7 +35159,7 @@ module Main =
         /// <summary>
         /// Sets the certificate verify proc for <c>session</c>, the <c>proc</c> will be called with <c>proc(request, callback)</c> whenever a server certificate verification
         /// is requested. Calling <c>callback(0)</c> accepts the certificate, calling <c>callback(-2)</c> rejects it.<br/><br/>Calling <c>setCertificateVerifyProc(null)</c> will revert back to default certificate verify proc.<br/><br/>&gt;
-        /// **NOTE:** The result of this procedure is cached by the network service.
+        /// <b>NOTE:</b> The result of this procedure is cached by the network service.
         /// </summary>
         /// <param name="proc"></param>
         [<Erase>]
@@ -35370,15 +35397,15 @@ module Main =
 
         /// <summary>
         /// Adds scripts that will be executed on ALL web contents that are associated with this session just before normal <c>preload</c>
-        /// scripts run.<br/><br/>**Deprecated:** Use the new <c>ses.registerPreloadScript</c> API.
+        /// scripts run.<br/> <b>Deprecated:</b> Use the new <c>ses.registerPreloadScript</c> API.
         /// </summary>
         /// <param name="preloads">An array of absolute path to preload scripts</param>
         [<Erase; System.Obsolete>]
         member inline _.setPreloads(preloads: string[]) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// an array of paths to preload scripts that have been registered.<br/><br/>**Deprecated:** Use the new <c>ses.getPreloadScripts</c> API. This will only return
-        /// preload script paths for <c>frame</c> context types.
+        /// an array of paths to preload scripts that have been registered.<br/> <b>Deprecated:</b> Use the new <c>ses.getPreloadScripts</c> API. This will only
+        /// return preload script paths for <c>frame</c> context types.
         /// </summary>
         [<Erase; System.Obsolete>]
         member inline _.getPreloads() : string[] = Unchecked.defaultof<_>
@@ -35503,7 +35530,7 @@ module Main =
         /// By default Electron will download hunspell dictionaries from the Chromium CDN.  If you want to override this behavior you
         /// can use this API to point the dictionary downloader at your own hosted version of the hunspell dictionaries.  We
         /// publish a <c>hunspell_dictionaries.zip</c> file with each release which contains the files you need to host here.<br/><br/>The file server must be
-        /// **case insensitive**. If you cannot do this, you must upload each file twice: once with the case it has in
+        /// <b>case insensitive</b>. If you cannot do this, you must upload each file twice: once with the case it has in
         /// the ZIP file and once with the filename as all lowercase.<br/><br/>If the files present in <c>hunspell_dictionaries.zip</c> are available at <c>https://example.com/dictionaries/language-code.bdic</c>
         /// then you should call this api with <c>ses.setSpellCheckerDictionaryDownloadURL('https://example.com/dictionaries/')</c>.  Please note the trailing slash.  The URL to the dictionaries
         /// is formed as <c>${url}${filename}</c>.<br/><br/>&gt; [!NOTE] On macOS, the OS spellchecker is used and therefore we do not download any dictionary
@@ -35543,7 +35570,7 @@ module Main =
         /// be remembered for future runs of the application. This is no longer the case: <c>loadExtension</c> must be called on every
         /// boot of your app if you want the extension to be loaded.<br/><br/>This API does not support loading packed (.crx) extensions.<br/><br/>&gt;
         /// [!NOTE] This API cannot be called before the <c>ready</c> event of the <c>app</c> module is emitted.<br/><br/>&gt; [!NOTE] Loading extensions into
-        /// in-memory (non-persistent) sessions is not supported and will throw an error.<br/><br/>**Deprecated:** Use the new <c>ses.extensions.loadExtension</c> API.
+        /// in-memory (non-persistent) sessions is not supported and will throw an error.<br/> <b>Deprecated:</b> Use the new <c>ses.extensions.loadExtension</c> API.
         /// </summary>
         /// <param name="path">Path to a directory containing an unpacked Chrome extension</param>
         /// <param name="options"></param>
@@ -35552,8 +35579,8 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Unloads an extension.<br/><br/>&gt; [!NOTE] This API cannot be called before the <c>ready</c> event of the <c>app</c> module is emitted.<br/><br/>**Deprecated:** Use
-        /// the new <c>ses.extensions.removeExtension</c> API.
+        /// Unloads an extension.<br/><br/>&gt; [!NOTE] This API cannot be called before the <c>ready</c> event of the <c>app</c> module is emitted.<br/> <b>Deprecated:</b>
+        /// Use the new <c>ses.extensions.removeExtension</c> API.
         /// </summary>
         /// <param name="extensionId">ID of extension to remove</param>
         [<Erase; System.Obsolete>]
@@ -35561,7 +35588,7 @@ module Main =
 
         /// <summary>
         /// The loaded extension with the given ID.<br/><br/>&gt; [!NOTE] This API cannot be called before the <c>ready</c> event of the <c>app</c>
-        /// module is emitted.<br/><br/>**Deprecated:** Use the new <c>ses.extensions.getExtension</c> API.
+        /// module is emitted.<br/> <b>Deprecated:</b> Use the new <c>ses.extensions.getExtension</c> API.
         /// </summary>
         /// <param name="extensionId">ID of extension to query</param>
         [<Erase; System.Obsolete>]
@@ -35569,7 +35596,7 @@ module Main =
 
         /// <summary>
         /// A list of all loaded extensions.<br/><br/>&gt; [!NOTE] This API cannot be called before the <c>ready</c> event of the <c>app</c> module
-        /// is emitted.<br/><br/>**Deprecated:** Use the new <c>ses.extensions.getAllExtensions</c> API.
+        /// is emitted.<br/> <b>Deprecated:</b> Use the new <c>ses.extensions.getAllExtensions</c> API.
         /// </summary>
         [<Erase; System.Obsolete>]
         member inline _.getAllExtensions() : Extension[] = Unchecked.defaultof<_>
@@ -35858,7 +35885,7 @@ module Main =
 
         /// <summary>
         /// Information about this service worker<br/><br/>If the service worker does not exist or is not running this method will throw an
-        /// exception.<br/><br/>**Deprecated:** Use the new <c>serviceWorkers.getInfoFromVersionID</c> API.
+        /// exception.<br/> <b>Deprecated:</b> Use the new <c>serviceWorkers.getInfoFromVersionID</c> API.
         /// </summary>
         /// <param name="versionId">ID of the service worker version</param>
         [<Erase; System.Obsolete>]
@@ -35948,7 +35975,7 @@ module Main =
     /// || display.bounds.y !== 0<br/>  })<br/><br/>  if (externalDisplay) {<br/>    win = new BrowserWindow({<br/>
     ///   x: externalDisplay.bounds.x + 50,<br/>      y: externalDisplay.bounds.y + 50<br/>    })<br/>
     ///   win.loadURL('https://github.com')<br/>  }<br/>})<br/></code><br/><br/>&gt; [!NOTE] Screen coordinates used by this module are <c>Point</c> structures. There are two kinds of
-    /// coordinates available to the process:<br/><br/>* **Physical screen points** are raw hardware pixels on a display.<br/>* **Device-independent pixel (DIP) points** are
+    /// coordinates available to the process:<br/><br/>* <b>Physical screen points</b> are raw hardware pixels on a display.<br/>* <b>Device-independent pixel (DIP) points</b> are
     /// virtualized screen points scaled based on the DPI (dots per inch) of the display.
     /// </summary>
     [<Import("screen", "electron")>]
@@ -38279,16 +38306,17 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation for
-        /// a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue): The absolute hue
-        /// value for the image - 0 and 1 map to 0 and 360 on the hue color wheel (red).<br/>* <c>hsl_shift[1]</c>
-        /// (saturation): A saturation shift for the image, with the following key values: 0 = remove all color. 0.5 = leave
-        /// unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the following key values:
-        /// 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness (make all pixels
-        /// white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will make the image
-        /// completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>, whose string representation
-        /// would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before passing it in.
-        /// This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.
+        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation and
+        /// SF Symbols for a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue):
+        /// The absolute hue value for the image - 0 and 1 map to 0 and 360 on the hue color
+        /// wheel (red).<br/>* <c>hsl_shift[1]</c> (saturation): A saturation shift for the image, with the following key values: 0 = remove all color.
+        /// 0.5 = leave unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the
+        /// following key values: 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness
+        /// (make all pixels white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will
+        /// make the image completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>,
+        /// whose string representation would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before
+        /// passing it in. This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.<br/><br/>For
+        /// SF Symbols, usage looks as follows:<br/><br/>where <c>'square.and.pencil'</c> is the symbol name from the SF Symbols app.
         /// </summary>
         /// <param name="imageName"></param>
         /// <param name="hslShift"></param>
@@ -38564,7 +38592,7 @@ module Main =
         /// <param name="toolTip">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Hover text for this
         /// menu item.</param>
         /// <param name="accelerator">An Accelerator string.</param>
-        /// <param name="icon"></param>
+        /// <param name="icon">Can be a NativeImage or the file path of an icon.</param>
         /// <param name="enabled">If false, the menu item will be greyed out and unclickable.</param>
         /// <param name="acceleratorWorksWhenHidden">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || default is <c>true</c>, and
         /// when <c>false</c> will prevent the accelerator from triggering the item if the item is not visible.</param>
@@ -40561,7 +40589,7 @@ module Main =
         /// <summary>
         /// resolves with an array of category groups once all child processes have acknowledged the <c>getCategories</c> request<br/><br/>Get a set of category
         /// groups. The category groups can change as new code paths are reached. See also the list of built-in tracing categories.<br/><br/>&gt;
-        /// **NOTE:** Electron adds a non-default tracing category called <c>"electron"</c>. This category can be used to capture Electron-specific tracing events.
+        /// <b>NOTE:</b> Electron adds a non-default tracing category called <c>"electron"</c>. This category can be used to capture Electron-specific tracing events.
         /// </summary>
         [<Erase>]
         static member inline getCategories() : Promise<string[]> = Unchecked.defaultof<_>
@@ -40997,7 +41025,7 @@ module Main =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.on('redirect', $1)")>]
         member inline _.onRedirect(handler: int -> string -> string -> Record<string, string[]> -> unit) : unit =
@@ -41005,14 +41033,14 @@ module Main =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.on('redirect', $1)")>]
         member inline _.onRedirect(handler: Main.ClientRequest.IOnRedirect -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.once('redirect', $1)")>]
         member inline _.onceRedirect(handler: int -> string -> string -> Record<string, string[]> -> unit) : unit =
@@ -41020,14 +41048,14 @@ module Main =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.once('redirect', $1)")>]
         member inline _.onceRedirect(handler: Main.ClientRequest.IOnRedirect -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.off('redirect', $1)")>]
         member inline _.offRedirect(handler: int -> string -> string -> Record<string, string[]> -> unit) : unit =
@@ -41035,7 +41063,7 @@ module Main =
 
         /// <summary>
         /// Emitted when the server returns a redirect response (e.g. 301 Moved Permanently). Calling <c>request.followRedirect</c> will continue with the redirection.
-        /// If this event is handled, <c>request.followRedirect</c> must be called **synchronously**, otherwise the request will be cancelled.
+        /// If this event is handled, <c>request.followRedirect</c> must be called <b>synchronously</b>, otherwise the request will be cancelled.
         /// </summary>
         [<Emit("$0.off('redirect', $1)")>]
         member inline _.offRedirect(handler: Main.ClientRequest.IOnRedirect -> unit) : unit = Unchecked.defaultof<_>
@@ -43346,14 +43374,17 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
-        /// Sets the system accent color and highlighting of active window border.<br/><br/>The <c>accentColor</c> parameter accepts the following values:<br/><br/>* **Color string** -
-        /// Sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values
-        /// in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Uses the system's default accent
-        /// color from user preferences in System Settings.<br/>* **<c>false</c>** - Explicitly disables accent color highlighting for the window.<br/><br/>Examples:
+        /// Sets the system accent color and highlighting of active window border.<br/><br/>The <c>accentColor</c> parameter accepts the following values:<br/><br/>* <b>Color string</b> -
+        /// Like <c>true</c>, but sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named
+        /// colors). Alpha values in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Enable accent
+        /// color highlighting for the window with the system accent color regardless of whether accent colors are enabled for windows in
+        /// System <c>Settings.</c><br/>* **<c>false</c>** - Disable accent color highlighting for the window regardless of whether accent colors are currently enabled for
+        /// windows in System Settings.<br/>* **<c>null</c>** - Reset window accent color behavior to follow behavior set in System Settings.<br/><br/>Examples:
         /// </summary>
-        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings.</param>
+        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings. To reset to system default,
+        /// pass <c>null</c>.</param>
         [<Erase>]
-        member inline _.setAccentColor(accentColor: U2<bool, string>) : unit = Unchecked.defaultof<_>
+        member inline _.setAccentColor(accentColor: U3<bool, string, unit>) : unit = Unchecked.defaultof<_>
         #endif
 
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
@@ -46107,14 +46138,17 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
-        /// Sets the system accent color and highlighting of active window border.<br/><br/>The <c>accentColor</c> parameter accepts the following values:<br/><br/>* **Color string** -
-        /// Sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values
-        /// in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Uses the system's default accent
-        /// color from user preferences in System Settings.<br/>* **<c>false</c>** - Explicitly disables accent color highlighting for the window.<br/><br/>Examples:
+        /// Sets the system accent color and highlighting of active window border.<br/><br/>The <c>accentColor</c> parameter accepts the following values:<br/><br/>* <b>Color string</b> -
+        /// Like <c>true</c>, but sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named
+        /// colors). Alpha values in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Enable accent
+        /// color highlighting for the window with the system accent color regardless of whether accent colors are enabled for windows in
+        /// System <c>Settings.</c><br/>* **<c>false</c>** - Disable accent color highlighting for the window regardless of whether accent colors are currently enabled for
+        /// windows in System Settings.<br/>* **<c>null</c>** - Reset window accent color behavior to follow behavior set in System Settings.<br/><br/>Examples:
         /// </summary>
-        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings.</param>
+        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings. To reset to system default,
+        /// pass <c>null</c>.</param>
         [<Erase>]
-        member inline _.setAccentColor(accentColor: U2<bool, string>) : unit = Unchecked.defaultof<_>
+        member inline _.setAccentColor(accentColor: U3<bool, string, unit>) : unit = Unchecked.defaultof<_>
         #endif
 
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
@@ -46713,23 +46747,23 @@ module Main =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ✔</para>
-    /// &gt; Enable apps to automatically update themselves.<br/><br/>Process: Main<br/><br/>**See also: A detailed guide about how to implement updates in your application.**<br/><br/><c>autoUpdater</c>
-    /// is an EventEmitter.<br/><br/>### Platform Notices<br/><br/>Currently, only macOS and Windows are supported. There is no built-in support for auto-updater on Linux,
-    /// so it is recommended to use the distribution's package manager to update your app.<br/><br/>In addition, there are some subtle differences
-    /// on each platform:<br/><br/>### macOS<br/><br/>On macOS, the <c>autoUpdater</c> module is built upon Squirrel.Mac, meaning you don't need any special setup to
-    /// make it work. For server-side requirements, you can read Server Support. Note that App Transport Security (ATS) applies to all
-    /// requests made as part of the update process. Apps that need to disable ATS can add the <c>NSAllowsArbitraryLoads</c> key to
-    /// their app's plist.<br/><br/>&gt; [!IMPORTANT] Your application must be signed for automatic updates on macOS. This is a requirement of <c>Squirrel.Mac</c>.<br/><br/>###
-    /// Windows<br/><br/>On Windows, you have to install your app into a user's machine before you can use the <c>autoUpdater</c>, so it
-    /// is recommended that you use electron-winstaller or Electron Forge's Squirrel.Windows maker to generate a Windows installer.<br/><br/>Apps built with Squirrel.Windows will
-    /// trigger custom launch events that must be handled by your Electron application to ensure proper setup and teardown.<br/><br/>Squirrel.Windows apps will
-    /// launch with the <c>--squirrel-firstrun</c> argument immediately after installation. During this time, Squirrel.Windows will obtain a file lock on your app,
-    /// and <c>autoUpdater</c> requests will fail until the lock is released. In practice, this means that you won't be able to
-    /// check for updates on first launch for the first few seconds. You can work around this by not checking for
-    /// updates when <c>process.argv</c> contains the <c>--squirrel-firstrun</c> flag or by setting a 10-second timeout on your update checks (see electron/electron#7155 for
-    /// more information).<br/><br/>The installer generated with Squirrel.Windows will create a shortcut icon with an Application User Model ID in the format
-    /// of <c>com.squirrel.PACKAGE_ID.YOUR_EXE_WITHOUT_DOT_EXE</c>, examples are <c>com.squirrel.slack.Slack</c> and <c>com.squirrel.code.Code</c>. You have to use the same ID for your app with <c>app.setAppUserModelId</c> API,
-    /// otherwise Windows will not be able to pin your app properly in task bar.
+    /// &gt; Enable apps to automatically update themselves.<br/><br/>Process: Main<br/> <b>See also: A detailed guide about how to implement updates in your
+    /// application.</b><br/><br/><c>autoUpdater</c> is an EventEmitter.<br/><br/>### Platform Notices<br/><br/>Currently, only macOS and Windows are supported. There is no built-in support for auto-updater on
+    /// Linux, so it is recommended to use the distribution's package manager to update your app.<br/><br/>In addition, there are some subtle
+    /// differences on each platform:<br/><br/>### macOS<br/><br/>On macOS, the <c>autoUpdater</c> module is built upon Squirrel.Mac, meaning you don't need any special setup
+    /// to make it work. For server-side requirements, you can read Server Support. Note that App Transport Security (ATS) applies to
+    /// all requests made as part of the update process. Apps that need to disable ATS can add the <c>NSAllowsArbitraryLoads</c> key
+    /// to their app's plist.<br/><br/>&gt; [!IMPORTANT] Your application must be signed for automatic updates on macOS. This is a requirement of
+    /// <c>Squirrel.Mac</c>.<br/><br/>### Windows<br/><br/>On Windows, you have to install your app into a user's machine before you can use the <c>autoUpdater</c>, so
+    /// it is recommended that you use electron-winstaller or Electron Forge's Squirrel.Windows maker to generate a Windows installer.<br/><br/>Apps built with Squirrel.Windows
+    /// will trigger custom launch events that must be handled by your Electron application to ensure proper setup and teardown.<br/><br/>Squirrel.Windows apps
+    /// will launch with the <c>--squirrel-firstrun</c> argument immediately after installation. During this time, Squirrel.Windows will obtain a file lock on your
+    /// app, and <c>autoUpdater</c> requests will fail until the lock is released. In practice, this means that you won't be able
+    /// to check for updates on first launch for the first few seconds. You can work around this by not checking
+    /// for updates when <c>process.argv</c> contains the <c>--squirrel-firstrun</c> flag or by setting a 10-second timeout on your update checks (see electron/electron#7155
+    /// for more information).<br/><br/>The installer generated with Squirrel.Windows will create a shortcut icon with an Application User Model ID in the
+    /// format of <c>com.squirrel.PACKAGE_ID.YOUR_EXE_WITHOUT_DOT_EXE</c>, examples are <c>com.squirrel.slack.Slack</c> and <c>com.squirrel.code.Code</c>. You have to use the same ID for your app with <c>app.setAppUserModelId</c>
+    /// API, otherwise Windows will not be able to pin your app properly in task bar.
     /// </summary>
     [<Import("autoUpdater", "electron")>]
     type autoUpdater =
@@ -48919,7 +48953,7 @@ module Main =
         /// * <c>minItems</c> Integer - The minimum number of items that will be shown in the Jump List (for a more
         /// detailed description of this value see the MSDN docs).<br/>* <c>removedItems</c> JumpListItem[] - Array of <c>JumpListItem</c> objects that correspond to items
         /// that the user has explicitly removed from custom categories in the Jump List. These items must not be re-added to
-        /// the Jump List in the **next** call to <c>app.setJumpList()</c>, Windows will not display any custom category that contains any of
+        /// the Jump List in the <b>next</b> call to <c>app.setJumpList()</c>, Windows will not display any custom category that contains any of
         /// the removed items.
         /// </summary>
         [<Erase>]
@@ -48941,7 +48975,7 @@ module Main =
         /// neither the <c>type</c> nor the <c>name</c> property set then its <c>type</c> is assumed to be <c>tasks</c>. If the <c>name</c> property
         /// is set but the <c>type</c> property is omitted then the <c>type</c> is assumed to be <c>custom</c>.<br/><br/>&gt; [!NOTE] Users can remove
         /// items from custom categories, and Windows will not allow a removed item to be added back into a custom category
-        /// until **after** the next successful call to <c>app.setJumpList(categories)</c>. Any attempt to re-add a removed item to a custom category earlier
+        /// until <b>after</b> the next successful call to <c>app.setJumpList(categories)</c>. Any attempt to re-add a removed item to a custom category earlier
         /// than that will result in the entire custom category being omitted from the Jump List. The list of removed items
         /// can be obtained using <c>app.getJumpListSettings()</c>.<br/><br/>&gt; [!NOTE] The maximum length of a Jump List item's <c>description</c> property is 260 characters. Beyond
         /// this limit, the item will not be added to the Jump List, nor will it be displayed.<br/><br/>Here's a very simple
@@ -49132,6 +49166,12 @@ module Main =
         static member inline disableHardwareAcceleration() : unit = Unchecked.defaultof<_>
 
         /// <summary>
+        /// whether hardware acceleration is currently enabled.<br/><br/>&gt; [!NOTE] This information is only usable after the <c>gpu-info-update</c> event is emitted.
+        /// </summary>
+        [<Erase>]
+        static member inline isHardwareAccelerationEnabled() : bool = Unchecked.defaultof<_>
+
+        /// <summary>
         /// By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain basis if the GPU processes crashes
         /// too frequently. This function disables that behavior.<br/><br/>This method can only be called before app is ready.
         /// </summary>
@@ -49214,7 +49254,7 @@ module Main =
         /// closed. This setting is not available on MAS builds or on macOS 13 and up.<br/>* <c>status</c> string _macOS_ - can
         /// be one of <c>not-registered</c>, <c>enabled</c>, <c>requires-approval</c>, or <c>not-found</c>.<br/>* <c>executableWillLaunchAtLogin</c> boolean _Windows_ - <c>true</c> if app is set to open at
         /// login and its run key is not deactivated. This differs from <c>openAtLogin</c> as it ignores the <c>args</c> option, this property
-        /// will be true if the given executable would be launched at login with **any** arguments.<br/>* <c>launchItems</c> Object[] _Windows_<br/>  *
+        /// will be true if the given executable would be launched at login with <b>any</b> arguments.<br/>* <c>launchItems</c> Object[] _Windows_<br/>  *
         /// <c>name</c> string _Windows_ - name value of a registry entry.<br/>  * <c>path</c> string _Windows_ - The executable to an
         /// app that corresponds to a registry entry.<br/>  * <c>args</c> string[] _Windows_ - the command-line arguments to pass to the
         /// executable.<br/>  * <c>scope</c> string _Windows_ - one of <c>user</c> or <c>machine</c>. Indicates whether the registry entry is under <c>HKEY_CURRENT
@@ -49397,7 +49437,7 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ❌ | MAS ✔
         /// </para>
-        /// This function **must** be called once you have finished accessing the security scoped file. If you do not remember to
+        /// This function <b>must</b> be called once you have finished accessing the security scoped file. If you do not remember to
         /// stop accessing the bookmark, kernel resources will be leaked and your app will lose its ability to reach outside the
         /// sandbox completely, until your app is restarted.<br/><br/>Start accessing a security scoped resource. With this method Electron applications that are packaged
         /// for the Mac App Store may reach outside their sandbox to access files chosen by the user. See Apple's documentation
@@ -49434,17 +49474,17 @@ module Main =
         /// </para>
         /// Whether the move was successful. Please note that if the move is successful, your application will quit and relaunch.<br/><br/>No confirmation
         /// dialog will be presented by default. If you wish to allow the user to confirm the operation, you may do
-        /// so using the <c>dialog</c> API.<br/><br/>**NOTE:** This method throws errors if anything other than the user causes the move to fail.
-        /// For instance if the user cancels the authorization dialog, this method returns false. If we fail to perform the copy,
-        /// then this method will throw an error. The message in the error should be informative and tell you exactly what
-        /// went wrong.<br/><br/>By default, if an app of the same name as the one being moved exists in the Applications directory
-        /// and is _not_ running, the existing app will be trashed and the active app moved into its place. If it
-        /// _is_ running, the preexisting running app will assume focus and the previously active app will quit itself. This behavior can
-        /// be changed by providing the optional conflict handler, where the boolean returned by the handler determines whether or not the
-        /// move conflict is resolved with default behavior.  i.e. returning <c>false</c> will ensure no further action is taken, returning <c>true</c>
-        /// will result in the default behavior and the method continuing.<br/><br/>For example:<br/><br/>Would mean that if an app already exists in the
-        /// user directory, if the user chooses to 'Continue Move' then the function would continue with its default behavior and the
-        /// existing app will be trashed and the active app moved into its place.
+        /// so using the <c>dialog</c> API.<br/> <b>NOTE:</b> This method throws errors if anything other than the user causes the move to
+        /// fail. For instance if the user cancels the authorization dialog, this method returns false. If we fail to perform the
+        /// copy, then this method will throw an error. The message in the error should be informative and tell you exactly
+        /// what went wrong.<br/><br/>By default, if an app of the same name as the one being moved exists in the Applications
+        /// directory and is _not_ running, the existing app will be trashed and the active app moved into its place. If
+        /// it _is_ running, the preexisting running app will assume focus and the previously active app will quit itself. This behavior
+        /// can be changed by providing the optional conflict handler, where the boolean returned by the handler determines whether or not
+        /// the move conflict is resolved with default behavior.  i.e. returning <c>false</c> will ensure no further action is taken, returning
+        /// <c>true</c> will result in the default behavior and the method continuing.<br/><br/>For example:<br/><br/>Would mean that if an app already exists in
+        /// the user directory, if the user chooses to 'Continue Move' then the function would continue with its default behavior and
+        /// the existing app will be trashed and the active app moved into its place.
         /// </summary>
         /// <param name="conflictHandler">A handler for potential conflict in move failure.</param>
         [<Erase; ParamObject(0)>]

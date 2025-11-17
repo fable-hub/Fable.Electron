@@ -122,10 +122,10 @@ module Ops =
 
     [<Literal>]
     let changeLogGen = "changelog-gen"
-    
+
     [<Literal>]
     let docs = "docs"
-    
+
     [<Literal>]
     let apiDocs = "build-api-docs"
 
@@ -144,6 +144,7 @@ type Args =
 
     static member getFlag value =
         args |> Option.bind (DocoptResult.tryGetArgument value)
+
     static member gitBot = Args.hasFlag "--git-bot"
     static member help = Args.hasFlag "--help"
     static member detailed = Args.hasFlag "--detailed"

@@ -8,6 +8,14 @@ open Thoth.Json.Net
 
 #nowarn 40
 
+let private transformEmphasis (input: string) =
+    let transformBold =
+        Regex.Replace(input, @"\s\*\*\b(.*?)\*\*([\s\.\,\)\'])", " <b>$1</b>$2", RegexOptions.Singleline)
+        |> fun input -> Regex.Replace(input, @"\s__\b(.*?)__([\s\.\,\)\'])", " <b>$1</b>$2", RegexOptions.Singleline)
+
+    Regex.Replace(transformBold, "\s\*\b(.*?)\*([\s\.\,\)\'])", " <i>$1</i>$2", RegexOptions.Singleline)
+    |> fun input -> Regex.Replace(input, "\s_\b(.*?)_([\s\.\,\)\'])", " <i>$1</i>$2", RegexOptions.Singleline)
+
 let private transformCodeBlocks (input: string) =
     let fencedReplaced =
         Regex.Replace(input, @"```(.*?)```", "<code>$1</code>", RegexOptions.Singleline)
@@ -21,6 +29,7 @@ let normalizeDocs =
         | '&' -> "&amp;"
         | c -> string c)
     >> transformCodeBlocks
+    >> transformEmphasis
 
 /// <summary>
 /// The documentation tag is used to provide supplementary remarks to the API, such

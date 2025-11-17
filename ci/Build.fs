@@ -27,34 +27,38 @@ let mutable _fableElectronNewVersion = None
 // ========================================================
 // Laundry
 
-Target.create Ops.apiDocs <| fun _ ->
+Target.create Ops.apiDocs
+<| fun _ ->
     DirectoryInfo(VirtualRoot.fsdocs.``.``)
     |> DirectoryInfo.exists
     |> function
         | false -> Directory.create VirtualRoot.fsdocs.``.``
         | _ -> ()
-    Fsdocs.build (fun p -> {
-        p with
+
+    Fsdocs.build (fun p ->
+        { p with
             SourceRepository = Some "https://github.com/fable-hub/fable-electron"
             SaveImages = Some true
             Input = Some VirtualRoot.fsdocs.``.``
             MdComments = Some true
-            Projects = Some [
-                Projects.Electron
-                Projects.Forge
-                Projects.Remoting
-            ]
-            Properties = Some "Configuration=Release"
-    })
+            Projects = Some [ Projects.Electron; Projects.Forge; Projects.Remoting ]
+            Properties = Some "Configuration=Release" })
 
-Target.create Ops.docs <| fun _ ->
-    if Args.npmCi
-    then Npm.cleanInstall (fun p -> { p with WorkingDirectory = Root.docs.``.`` })
-    else Npm.install (fun p -> { p with WorkingDirectory = Root.docs.``.`` })
-    Npm.run "start" (fun p -> {
-        p with WorkingDirectory = Root.docs.``.``
-    })
-    
+Target.create Ops.docs
+<| fun _ ->
+    if Args.npmCi then
+        Npm.cleanInstall (fun p ->
+            { p with
+                WorkingDirectory = Root.docs.``.`` })
+    else
+        Npm.install (fun p ->
+            { p with
+                WorkingDirectory = Root.docs.``.`` })
+
+    Npm.run "start" (fun p ->
+        { p with
+            WorkingDirectory = Root.docs.``.`` })
+
 // Generate changelog for FABLE.ELECTRON. Make major and minor match the release we are
 // generating for. Internal patches can only bump patch number.
 // Make sure this runs before we commit any files so the current hash is not updated
@@ -187,19 +191,20 @@ Target.create Ops.downloadLatestApi
     // Reroute if we're choosing the release
     if Args.releaseVersion.IsSome then
         Target.runSimple Ops.downloadApi []
-        |> _.Error |> function
+        |> _.Error
+        |> function
             | Some ex -> raise ex
             | None -> ()
     else
-    Electron.getReleases ()
-    |> List.tryFind _.isLatest
-    |> function
-        | Some release ->
-            _release <- Some release
-            release
-        | None -> failwith "Unable to find a release on the Electron GH that is the 'latest'."
-    |> Electron.downloadElectronApi VirtualRoot.temp.``electron-api.json``
-    |> Async.RunSynchronously
+        Electron.getReleases ()
+        |> List.tryFind _.isLatest
+        |> function
+            | Some release ->
+                _release <- Some release
+                release
+            | None -> failwith "Unable to find a release on the Electron GH that is the 'latest'."
+        |> Electron.downloadElectronApi VirtualRoot.temp.``electron-api.json``
+        |> Async.RunSynchronously
 
 // Download the api given in the cli args
 Target.create Ops.downloadApi
@@ -331,9 +336,12 @@ Target.create Ops.gitCommit
 Target.create Ops.test
 <| fun _ ->
     let workDir = Root.tests.``Fable.Electron.Remoting.Tests``.``.``
-    if Args.npmCi
-    then Npm.cleanInstall (fun p -> { p with WorkingDirectory = workDir })
-    else Npm.install (fun p -> { p with WorkingDirectory = workDir })
+
+    if Args.npmCi then
+        Npm.cleanInstall (fun p -> { p with WorkingDirectory = workDir })
+    else
+        Npm.install (fun p -> { p with WorkingDirectory = workDir })
+
     Npm.runTest "test" (fun p -> { p with WorkingDirectory = workDir })
 
 // =========================================================
@@ -353,10 +361,11 @@ open Fake.Core.TargetOperators
 [<EntryPoint>]
 let main argsv =
     argsv |> Args.setArgs
+
     let dependencyMapping =
         [ Ops.clean ==> Ops.downloadLatestApi
           Ops.clean ==> Ops.downloadApi
-          
+
           Ops.configGitBot =?> (Ops.gitCommit, Args.gitBot)
           Ops.configGitBot =?> (Ops.gitPull, Args.gitBot)
           Ops.configGitBot =?> (Ops.changeLogGen, Args.gitBot)
@@ -366,14 +375,14 @@ let main argsv =
           Ops.downloadApi =?> (Ops.generateBinding, Args.releaseVersion.IsSome)
 
           Ops.restoreTools ==> Ops.generateBinding ?=> Ops.test
-          
+
           Ops.test ?=> Ops.build
           Ops.test ?=> Ops.fableClean
           Ops.test =?> (Ops.pack, not Args.skipTest)
           Ops.test =?> (Ops.push, not Args.skipTest)
 
           Ops.fableClean ==> Ops.build ==> Ops.pack ==> Ops.push
-          
+
           Ops.restoreTools ==> Ops.build ==> Ops.apiDocs
 
           Ops.clean ==> Ops.fableClean ==> Ops.gitPull ]
@@ -385,16 +394,18 @@ let main argsv =
 
         let rec getInput () =
             let input = UserInput.getUserInput "Choose a release or quit (q):"
+
             match input with
             | "q" -> ()
             | version ->
                 let inputVersion = version.TrimStart('v')
+
                 if inputVersion |> SemVer.isValid then
                     inputVersion |> Args.setReleaseVersion
                     argsv[0] |> Target.runOrDefaultWithArguments
                 else
                     printfn $"Input version %s{inputVersion} is not a valid SemVer; try again."
-                    getInput()
+                    getInput ()
 
         getInput ()
     elif Args.clean && argsv[0].StartsWith("-") then

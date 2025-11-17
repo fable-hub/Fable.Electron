@@ -74,7 +74,7 @@ module internal Proxy =
 
 [<Erase>]
 type Remoting =
-//%TWO_WAY%START%
+    //%TWO_WAY%START%
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     static member buildReceiverProxy(config: RemotingConfig, impl, resolvedType: Type) =
         let schemaType = createTypeInfo resolvedType
@@ -141,21 +141,21 @@ type Remoting =
             failwithf
                 $"Cannot build proxy. Expected type %s{resolvedType.FullName} to be \
                 a valid protocol definition which is a record of functions"
-//%TWO_WAY%END%
-//%IMPL%START%
+    //%TWO_WAY%END%
+    //%IMPL%START%
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-//%CLIENT_START%START%
+    //%CLIENT_START%START%
     static member buildSenderProxy(config: RemotingConfig, resolvedType: Type) =
         let schemaType = createTypeInfo resolvedType
-//%CLIENT_START%END%
-//%CLIENT_TWO%START%
+        //%CLIENT_START%END%
+        //%CLIENT_TWO%START%
         match schemaType with
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
             let makeChannelName = config.ChannelNameMap
             let windows = config.Windows
-//%CLIENT_TWO%END%
-//%CLIENT_THREE%START%
+            //%CLIENT_TWO%END%
+            //%CLIENT_THREE%START%
             let recordFields =
                 [| for field in fields do
                        let returnType = Proxy.getReturnType field.PropertyInfo.PropertyType
@@ -183,16 +183,16 @@ type Remoting =
                            |> box
 
                        func |]
-//%CLIENT_THREE%END%
-            
+            //%CLIENT_THREE%END%
+
             let proxy = FSharpValue.MakeRecord(recordType, recordFields)
             unbox proxy
         | _ ->
             failwithf
                 $"Cannot build proxy. Expected type %s{resolvedType.FullName} to be \
                 a valid protocol definition which is a record of functions"
-//%IMPL%END%
-//%INLINE_ENTRY%START%
+    //%IMPL%END%
+    //%INLINE_ENTRY%START%
     /// <summary>
     /// Builds the receiver for the two way <c>Main &lt;-> Renderer</c> IPC proxy router.
     /// </summary>

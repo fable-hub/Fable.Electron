@@ -334,11 +334,6 @@ module Type =
                 |> FantomasFactory.mapToFantomas
             | OneOf types -> FantomasFactory.makeUnion types
             | Constant literalType ->
-                // match literalType with
-                // | LiteralType.Float f -> failwith "todo"
-                // | LiteralType.Int i -> failwith "todo"
-                // | LiteralType.String s -> failwith "todo"
-                // | LiteralType.Char c -> failwith "todo"
                 // TODO - where this is encountered, we actually have
                 // to emit the expression so we can add the constant arg.
                 FcsType.string
@@ -396,8 +391,6 @@ module EventInterfaces =
         // We don't need to create an interface for events with one or less parameters
         | { Parameters = [] | [ _ ] } -> Error CacheRejectionReason.HasLessThanTwoParameters
         | event ->
-            let modulePath = getInterfaceModuleRoot event
-
             event.PathKey
             |> match cache.Add event with
                | true -> Ok
@@ -1256,13 +1249,7 @@ module GeneratorContainer =
              |> List.collect id
              |> cutOffFirstTextNodeWithDirectiveMaybe Unspecific
              |> wrapParametersIntoParenNode
-             |> List.singleton
-            // |> function
-            // | [] ->
-            // Pattern.Unit (UnitNode(PatParenNode.makeOpening, PatParenNode.makeClosing, Range.Zero))
-            // |> List.singleton
-            // | pats -> pats
-            )
+             |> List.singleton)
             (makeReturnInfoNode method.ReturnType)
 
     let makeEventAttributes (isStatic: bool) (functionPrefix: string) (event: Event) =
@@ -1286,6 +1273,14 @@ module GeneratorContainer =
         |> List.collect (fun functionPrefix ->
             let attributes =
                 makeEventAttributes isStatic functionPrefix event |> makeAttributesNode
+            (* Alternative to the above; this would hide the off/once prefix events since they
+                    serve little purpose in intellisense. *)
+            // |> match functionPrefix with
+            //     | "on" -> makeAttributesNode
+            //     | _ ->
+            //         fun attrs ->
+            //             "System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)" :: attrs
+            //             |> makeAttributesNode
 
             let parameter =
                 makeUnitFunsParameterNode true "handler" event.Parameters
