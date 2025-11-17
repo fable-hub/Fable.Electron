@@ -1,6 +1,6 @@
 process.env.TEST = 'true';
 exports.config = {
-    // autoXvfb: true,
+    autoXvfb: false,
     // xvfbAutoInstall: true,
     // xvfbAutoInstallMode: 'sudo',
     runner: 'local',
