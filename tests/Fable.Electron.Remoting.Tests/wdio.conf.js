@@ -17,7 +17,7 @@ exports.config = {
         // see https://webdriver.io/docs/desktop-testing/electron/configuration/#service-options
         'wdio:electronServiceOptions': {
             // appArgs: [ '--headless' ]
-            appArgs: [ '--verbose', '--no-sandbox' ]
+            appArgs: [ '--headless', '--no-sandbox' ]
         }
     }],
 
