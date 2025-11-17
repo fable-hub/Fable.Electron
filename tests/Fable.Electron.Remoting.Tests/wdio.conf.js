@@ -16,12 +16,12 @@ exports.config = {
         // Electron service options
         // see https://webdriver.io/docs/desktop-testing/electron/configuration/#service-options
         'wdio:electronServiceOptions': {
-            appArgs: [ '--headless' ]
-            // appArgs: [ ]
+            // appArgs: [ '--headless' ]
+            appArgs: [ ]
         }
     }],
 
-    logLevel: 'warn',
+    logLevel: 'info',
     //
     // Set specific log levels per logger
     // loggers:
