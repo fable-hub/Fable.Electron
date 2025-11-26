@@ -9,8 +9,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 const prodUrl = 'https://fable-hub.github.io'
 const organizationName = 'fable-hub'
-const projectName = 'fable-electron'
-const projectUrl = 'https://github.com/fable-hub/fable-electron'
+const projectName = 'Fable.Electron'
+const projectUrl = 'https://github.com/fable-hub/Fable.Electron'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -27,7 +27,7 @@ const config = {
   url: prodUrl,
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/fable-electron',
+  baseUrl: '/Fable.Electron',
     trailingSlash: false,
 
   // GitHub pages deployment config.
@@ -55,7 +55,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/fable-hub/fable-electron',
+            'https://github.com/fable-hub/fable.electron',
         },
         blog: {
           showReadingTime: true,
@@ -66,7 +66,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/fable-hub/fable-electron',
+            'https://github.com/fable-hub/fable.electron',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
