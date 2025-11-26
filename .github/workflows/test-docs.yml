@@ -1,4 +1,4 @@
-﻿name: Test deployment
+﻿name: Test Docs
 
 on:
   pull_request:
@@ -19,12 +19,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
-        working-directory: ./docs
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-
       - name: Install dependencies
         run: npm ci
       - name: Test build website

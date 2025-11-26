@@ -16,13 +16,7 @@ module Types =
         type Offscreen
             /// <param name="useSharedTexture">Whether to use GPU shared texture for accelerated paint event. Defaults to <c>false</c>. See the offscreen rendering tutorial for
             /// more details.</param>
-            /// <param name="sharedTexturePixelFormat">The requested output format of the shared texture. Defaults to <c>argb</c>. The name is originated from Chromium <c>media::VideoPixelFormat</c> enum
-            /// suffix and only subset of them are supported. The actual output pixel format and color space of the texture should
-            /// refer to <c>OffscreenSharedTexture</c> object in the <c>paint</c> event.</param>
-            (
-                ?useSharedTexture: bool,
-                ?sharedTexturePixelFormat: Enums.Types.WebPreferences.Offscreen.SharedTexturePixelFormat
-            ) =
+            (?useSharedTexture: bool) =
             class
             end
 
@@ -32,15 +26,6 @@ module Types =
             /// </summary>
             [<Erase; Experimental("Experimental according to Electron")>]
             member val useSharedTexture: bool = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// The requested output format of the shared texture. Defaults to <c>argb</c>. The name is originated from Chromium <c>media::VideoPixelFormat</c> enum suffix
-            /// and only subset of them are supported. The actual output pixel format and color space of the texture should refer
-            /// to <c>OffscreenSharedTexture</c> object in the <c>paint</c> event.
-            /// </summary>
-            [<Erase; Experimental("Experimental according to Electron")>]
-            member val sharedTexturePixelFormat: Enums.Types.WebPreferences.Offscreen.SharedTexturePixelFormat =
-                Unchecked.defaultof<_> with get, set
 
         [<JS.Pojo>]
         type DefaultFontFamily
@@ -105,163 +90,6 @@ module Types =
             [<Erase>]
             member val math: string = Unchecked.defaultof<_> with get, set
 
-    module USBDevice =
-        [<JS.Pojo>]
-        type Configurations() = class end
-
-        [<JS.Pojo>]
-        type Configuration
-            /// <param name="configurationValue">the configuration value of this configuration.</param>
-            /// <param name="configurationName">the name provided by the device to describe this configuration.</param>
-            /// <param name="interfaces">An array of USBInterface objects containing information about an interface provided by the USB device.</param>
-            (configurationValue: int, configurationName: string, interfaces: Types.USBDevice.Configuration.Interfaces[])
-            =
-            class
-            end
-
-            /// <summary>
-            /// the configuration value of this configuration.
-            /// </summary>
-            [<Erase>]
-            member val configurationValue: int = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// the name provided by the device to describe this configuration.
-            /// </summary>
-            [<Erase>]
-            member val configurationName: string = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// An array of USBInterface objects containing information about an interface provided by the USB device.
-            /// </summary>
-            [<Erase>]
-            member val interfaces: Types.USBDevice.Configuration.Interfaces[] = Unchecked.defaultof<_> with get, set
-
-        module Configuration =
-            [<JS.Pojo>]
-            type Interfaces
-                /// <param name="interfaceNumber">the interface number of this interface.</param>
-                /// <param name="alternate">the currently selected alternative configuration of this interface.</param>
-                /// <param name="alternates">an array containing instances of the USBAlternateInterface interface describing each of the alternative configurations possible for this interface.</param>
-                (interfaceNumber: int, alternate: Types.USBDevice.Configuration.Interfaces.Alternate, alternates: obj[])
-                =
-                class
-                end
-
-                /// <summary>
-                /// the interface number of this interface.
-                /// </summary>
-                [<Erase>]
-                member val interfaceNumber: int = Unchecked.defaultof<_> with get, set
-
-                /// <summary>
-                /// the currently selected alternative configuration of this interface.
-                /// </summary>
-                [<Erase>]
-                member val alternate: Types.USBDevice.Configuration.Interfaces.Alternate =
-                    Unchecked.defaultof<_> with get, set
-
-                /// <summary>
-                /// an array containing instances of the USBAlternateInterface interface describing each of the alternative configurations possible for this interface.
-                /// </summary>
-                [<Erase>]
-                member val alternates: obj[] = Unchecked.defaultof<_> with get, set
-
-            module Interfaces =
-                [<JS.Pojo>]
-                type Alternates() = class end
-
-                [<JS.Pojo>]
-                type Alternate
-                    /// <param name="alternateSetting">the alternate setting number of this interface.</param>
-                    /// <param name="interfaceClass">the class of this interface. See USB.org for class code descriptions.</param>
-                    /// <param name="interfaceSubclass">the subclass of this interface.</param>
-                    /// <param name="interfaceProtocol">the protocol supported by this interface.</param>
-                    /// <param name="interfaceName">the name of the interface, if one is provided by the device.</param>
-                    /// <param name="endpoints">an array containing instances of the USBEndpoint interface describing each of the endpoints that are part of this interface.</param>
-                    (
-                        alternateSetting: int,
-                        interfaceClass: int,
-                        interfaceSubclass: int,
-                        interfaceProtocol: int,
-                        endpoints: Types.USBDevice.Configuration.Interfaces.Alternate.Endpoints[],
-                        ?interfaceName: string
-                    ) =
-                    class
-                    end
-
-                    /// <summary>
-                    /// the alternate setting number of this interface.
-                    /// </summary>
-                    [<Erase>]
-                    member val alternateSetting: int = Unchecked.defaultof<_> with get, set
-
-                    /// <summary>
-                    /// the class of this interface. See USB.org for class code descriptions.
-                    /// </summary>
-                    [<Erase>]
-                    member val interfaceClass: int = Unchecked.defaultof<_> with get, set
-
-                    /// <summary>
-                    /// the subclass of this interface.
-                    /// </summary>
-                    [<Erase>]
-                    member val interfaceSubclass: int = Unchecked.defaultof<_> with get, set
-
-                    /// <summary>
-                    /// the protocol supported by this interface.
-                    /// </summary>
-                    [<Erase>]
-                    member val interfaceProtocol: int = Unchecked.defaultof<_> with get, set
-
-                    /// <summary>
-                    /// the name of the interface, if one is provided by the device.
-                    /// </summary>
-                    [<Erase>]
-                    member val interfaceName: string = Unchecked.defaultof<_> with get, set
-
-                    /// <summary>
-                    /// an array containing instances of the USBEndpoint interface describing each of the endpoints that are part of this interface.
-                    /// </summary>
-                    [<Erase>]
-                    member val endpoints: Types.USBDevice.Configuration.Interfaces.Alternate.Endpoints[] =
-                        Unchecked.defaultof<_> with get, set
-
-                module Alternate =
-                    [<JS.Pojo>]
-                    type Endpoints
-                        /// <param name="endpointNumber">this endpoint's "endpoint number" which is a value from 1 to 15.</param>
-                        /// <param name="direction">the direction in which this endpoint transfers data - can be either 'in' or 'out'.</param>
-                        /// <param name="type">the type of this endpoint - can be either 'bulk', 'interrupt', or 'isochronous'.</param>
-                        /// <param name="packetSize">the size of the packets that data sent through this endpoint will be divided into.</param>
-                        (endpointNumber: int, direction: string, ``type``: string, packetSize: int) =
-                        class
-                        end
-
-                        /// <summary>
-                        /// this endpoint's "endpoint number" which is a value from 1 to 15.
-                        /// </summary>
-                        [<Erase>]
-                        member val endpointNumber: int = Unchecked.defaultof<_> with get, set
-
-                        /// <summary>
-                        /// the direction in which this endpoint transfers data - can be either 'in' or 'out'.
-                        /// </summary>
-                        [<Erase>]
-                        member val direction: string = Unchecked.defaultof<_> with get, set
-
-                        /// <summary>
-                        /// the type of this endpoint - can be either 'bulk', 'interrupt', or 'isochronous'.
-                        /// </summary>
-                        [<Erase>]
-                        member val ``type``: string = Unchecked.defaultof<_> with get, set
-
-                        /// <summary>
-                        /// the size of the packets that data sent through this endpoint will be divided into.
-                        /// </summary>
-                        [<Erase>]
-                        member val packetSize: int = Unchecked.defaultof<_> with get, set
-
     module Transaction =
         [<JS.Pojo>]
         type Payment
@@ -297,38 +125,113 @@ module Types =
             [<Erase>]
             member val paymentDiscount: PaymentDiscount = Unchecked.defaultof<_> with get, set
 
-    module SharedTextureHandle =
+    module PrinterInfo =
         [<JS.Pojo>]
-        type NativePixmap
+        type Options() = class end
+
+    module OffscreenSharedTexture =
+        [<JS.Pojo>]
+        type TextureInfo
+            /// <param name="widgetType">The widget type of the texture. Can be <c>popup</c> or <c>frame</c>.</param>
+            /// <param name="pixelFormat">The pixel format of the texture. Can be <c>rgba</c> or <c>bgra</c>.</param>
+            /// <param name="codedSize">The full dimensions of the video frame.</param>
+            /// <param name="visibleRect">A subsection of [0, 0, codedSize.width(), codedSize.height()]. In OSR case, it is expected to have the full section area.</param>
+            /// <param name="contentRect">The region of the video frame that capturer would like to populate. In OSR case, it is the same
+            /// with <c>dirtyRect</c> that needs to be painted.</param>
+            /// <param name="timestamp">The time in microseconds since the capture start.</param>
+            /// <param name="metadata">Extra metadata. See comments in src\media\base\video_frame_metadata.h for accurate details.</param>
+            /// <param name="sharedTextureHandle">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || The handle to the
+            /// shared texture.</param>
             /// <param name="planes">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || Each plane's info of
             /// the shared texture.</param>
             /// <param name="modifier">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || The modifier is retrieved
             /// from GBM library and passed to EGL driver.</param>
-            /// <param name="supportsZeroCopyWebGpuImport">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || Indicates whether supports zero
-            /// copy import to WebGPU.</param>
             (
+                widgetType: Enums.Types.OffscreenSharedTexture.TextureInfo.WidgetType,
+                pixelFormat: Enums.Types.OffscreenSharedTexture.TextureInfo.PixelFormat,
+                codedSize: Size,
+                visibleRect: Rectangle,
+                contentRect: Rectangle,
+                timestamp: float,
+                metadata: Types.OffscreenSharedTexture.TextureInfo.Metadata
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+                ,
+                sharedTextureHandle: Buffer
+                #endif
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
-                planes: Types.SharedTextureHandle.NativePixmap.Planes[]
+                ,
+                planes: Types.OffscreenSharedTexture.TextureInfo.Planes[]
                 #endif
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
                 ,
                 modifier: string
                 #endif
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
-                ,
-                supportsZeroCopyWebGpuImport: bool
-                #endif
 
             ) =
             class
             end
+
+            /// <summary>
+            /// The widget type of the texture. Can be <c>popup</c> or <c>frame</c>.
+            /// </summary>
+            [<Erase>]
+            member val widgetType: Enums.Types.OffscreenSharedTexture.TextureInfo.WidgetType =
+                Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// The pixel format of the texture. Can be <c>rgba</c> or <c>bgra</c>.
+            /// </summary>
+            [<Erase>]
+            member val pixelFormat: Enums.Types.OffscreenSharedTexture.TextureInfo.PixelFormat =
+                Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// The full dimensions of the video frame.
+            /// </summary>
+            [<Erase>]
+            member val codedSize: Size = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// A subsection of [0, 0, codedSize.width(), codedSize.height()]. In OSR case, it is expected to have the full section area.
+            /// </summary>
+            [<Erase>]
+            member val visibleRect: Rectangle = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// The region of the video frame that capturer would like to populate. In OSR case, it is the same with
+            /// <c>dirtyRect</c> that needs to be painted.
+            /// </summary>
+            [<Erase>]
+            member val contentRect: Rectangle = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// The time in microseconds since the capture start.
+            /// </summary>
+            [<Erase>]
+            member val timestamp: float = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// Extra metadata. See comments in src\media\base\video_frame_metadata.h for accurate details.
+            /// </summary>
+            [<Erase>]
+            member val metadata: Types.OffscreenSharedTexture.TextureInfo.Metadata =
+                Unchecked.defaultof<_> with get, set
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+            /// <summary>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
+            /// The handle to the shared texture.
+            /// </summary>
+            [<Erase>]
+            member val sharedTextureHandle: Buffer = Unchecked.defaultof<_> with get, set
+            #endif
+
             #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
             /// <summary>
             /// <para>⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌</para>
             /// Each plane's info of the shared texture.
             /// </summary>
             [<Erase>]
-            member val planes: Types.SharedTextureHandle.NativePixmap.Planes[] = Unchecked.defaultof<_> with get, set
+            member val planes: Types.OffscreenSharedTexture.TextureInfo.Planes[] = Unchecked.defaultof<_> with get, set
             #endif
 
             #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
@@ -340,17 +243,8 @@ module Types =
             member val modifier: string = Unchecked.defaultof<_> with get, set
             #endif
 
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
-            /// <summary>
-            /// <para>⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌</para>
-            /// Indicates whether supports zero copy import to WebGPU.
-            /// </summary>
-            [<Erase>]
-            member val supportsZeroCopyWebGpuImport: bool = Unchecked.defaultof<_> with get, set
-            #endif
 
-
-        module NativePixmap =
+        module TextureInfo =
             [<JS.Pojo>]
             type Planes
                 /// <param name="stride">The strides and offsets in bytes to be used when accessing the buffers via a memory mapping. One per
@@ -389,96 +283,6 @@ module Types =
                 [<Erase>]
                 member val fd: float = Unchecked.defaultof<_> with get, set
 
-    module PrinterInfo =
-        [<JS.Pojo>]
-        type Options() = class end
-
-    module OffscreenSharedTexture =
-        [<JS.Pojo>]
-        type TextureInfo
-            /// <param name="widgetType">The widget type of the texture. Can be <c>popup</c> or <c>frame</c>.</param>
-            /// <param name="pixelFormat">The pixel format of the texture.</param>
-            /// <param name="codedSize">The full dimensions of the video frame.</param>
-            /// <param name="colorSpace">The color space of the video frame.</param>
-            /// <param name="visibleRect">A subsection of [0, 0, codedSize.width, codedSize.height]. In OSR case, it is expected to have the full section area.</param>
-            /// <param name="contentRect">The region of the video frame that capturer would like to populate. In OSR case, it is the same
-            /// with <c>dirtyRect</c> that needs to be painted.</param>
-            /// <param name="timestamp">The time in microseconds since the capture start.</param>
-            /// <param name="metadata">Extra metadata. See comments in src\media\base\video_frame_metadata.h for accurate details.</param>
-            /// <param name="handle">The shared texture handle data.</param>
-            (
-                widgetType: Enums.Types.OffscreenSharedTexture.TextureInfo.WidgetType,
-                pixelFormat: Enums.Types.OffscreenSharedTexture.TextureInfo.PixelFormat,
-                codedSize: Size,
-                colorSpace: ColorSpace,
-                visibleRect: Rectangle,
-                contentRect: Rectangle,
-                timestamp: float,
-                metadata: Types.OffscreenSharedTexture.TextureInfo.Metadata,
-                handle: SharedTextureHandle
-            ) =
-            class
-            end
-
-            /// <summary>
-            /// The widget type of the texture. Can be <c>popup</c> or <c>frame</c>.
-            /// </summary>
-            [<Erase>]
-            member val widgetType: Enums.Types.OffscreenSharedTexture.TextureInfo.WidgetType =
-                Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// The pixel format of the texture.
-            /// </summary>
-            [<Erase>]
-            member val pixelFormat: Enums.Types.OffscreenSharedTexture.TextureInfo.PixelFormat =
-                Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// The full dimensions of the video frame.
-            /// </summary>
-            [<Erase>]
-            member val codedSize: Size = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// The color space of the video frame.
-            /// </summary>
-            [<Erase>]
-            member val colorSpace: ColorSpace = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// A subsection of [0, 0, codedSize.width, codedSize.height]. In OSR case, it is expected to have the full section area.
-            /// </summary>
-            [<Erase>]
-            member val visibleRect: Rectangle = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// The region of the video frame that capturer would like to populate. In OSR case, it is the same with
-            /// <c>dirtyRect</c> that needs to be painted.
-            /// </summary>
-            [<Erase>]
-            member val contentRect: Rectangle = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// The time in microseconds since the capture start.
-            /// </summary>
-            [<Erase>]
-            member val timestamp: float = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// Extra metadata. See comments in src\media\base\video_frame_metadata.h for accurate details.
-            /// </summary>
-            [<Erase>]
-            member val metadata: Types.OffscreenSharedTexture.TextureInfo.Metadata =
-                Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// The shared texture handle data.
-            /// </summary>
-            [<Erase>]
-            member val handle: SharedTextureHandle = Unchecked.defaultof<_> with get, set
-
-        module TextureInfo =
             [<JS.Pojo>]
             type Metadata
                 /// <param name="captureUpdateRect">Updated area of frame, can be considered as the <c>dirty</c> area.</param>
@@ -892,8 +696,7 @@ module Types =
         /// to the global scope. See example here.</param>
         /// <param name="sandbox">If set, this will sandbox the renderer associated with the window, making it compatible with the Chromium OS-level sandbox
         /// and disabling the Node.js engine. This is not the same as the <c>nodeIntegration</c> option and the APIs available to the
-        /// preload script are more limited. Default is <c>true</c> since Electron 20. The sandbox will automatically be disabled when <c>nodeIntegration</c> is
-        /// set to <c>true</c>. Read more about the option here.</param>
+        /// preload script are more limited. Read more about the option here.</param>
         /// <param name="session">Sets the session used by the page. Instead of passing the Session object directly, you can also choose to
         /// use the <c>partition</c> option instead, which accepts a partition string. When both <c>session</c> and <c>partition</c> are provided, <c>session</c> will be
         /// preferred. Default is the default session.</param>
@@ -1051,8 +854,7 @@ module Types =
         /// <summary>
         /// If set, this will sandbox the renderer associated with the window, making it compatible with the Chromium OS-level sandbox and
         /// disabling the Node.js engine. This is not the same as the <c>nodeIntegration</c> option and the APIs available to the preload
-        /// script are more limited. Default is <c>true</c> since Electron 20. The sandbox will automatically be disabled when <c>nodeIntegration</c> is set
-        /// to <c>true</c>. Read more about the option here.
+        /// script are more limited. Read more about the option here.
         /// </summary>
         [<Erase>]
         member val sandbox: bool = Unchecked.defaultof<_> with get, set
@@ -1368,62 +1170,40 @@ module Types =
 
     [<JS.Pojo>]
     type USBDevice
-        /// <param name="configuration">A USBConfiguration object containing information about the currently selected configuration of a USB device.</param>
-        /// <param name="configurations">An array of USBConfiguration interfaces for controlling a paired USB device.</param>
-        /// <param name="deviceClass">The device class for the communication interface supported by the device.</param>
         /// <param name="deviceId">Unique identifier for the device.</param>
-        /// <param name="deviceProtocol">The device protocol for the communication interface supported by the device.</param>
-        /// <param name="deviceSubclass">The device subclass for the communication interface supported by the device.</param>
-        /// <param name="deviceVersionMajor">The major version number of the device as defined by the device manufacturer.</param>
-        /// <param name="deviceVersionMinor">The minor version number of the device as defined by the device manufacturer.</param>
-        /// <param name="deviceVersionSubminor">The subminor version number of the device as defined by the device manufacturer.</param>
-        /// <param name="manufacturerName">The manufacturer name of the device.</param>
+        /// <param name="vendorId">The USB vendor ID.</param>
         /// <param name="productId">The USB product ID.</param>
         /// <param name="productName">Name of the device.</param>
         /// <param name="serialNumber">The USB device serial number.</param>
-        /// <param name="usbVersionMajor">The USB protocol major version supported by the device.</param>
-        /// <param name="usbVersionMinor">The USB protocol minor version supported by the device.</param>
-        /// <param name="usbVersionSubminor">The USB protocol subminor version supported by the device.</param>
-        /// <param name="vendorId">The USB vendor ID.</param>
+        /// <param name="manufacturerName">The manufacturer name of the device.</param>
+        /// <param name="usbVersionMajor">The USB protocol major version supported by the device</param>
+        /// <param name="usbVersionMinor">The USB protocol minor version supported by the device</param>
+        /// <param name="usbVersionSubminor">The USB protocol subminor version supported by the device</param>
+        /// <param name="deviceClass">The device class for the communication interface supported by the device</param>
+        /// <param name="deviceSubclass">The device subclass for the communication interface supported by the device</param>
+        /// <param name="deviceProtocol">The device protocol for the communication interface supported by the device</param>
+        /// <param name="deviceVersionMajor">The major version number of the device as defined by the device manufacturer.</param>
+        /// <param name="deviceVersionMinor">The minor version number of the device as defined by the device manufacturer.</param>
+        /// <param name="deviceVersionSubminor">The subminor version number of the device as defined by the device manufacturer.</param>
         (
-            configurations: obj[],
-            deviceClass: int,
             deviceId: string,
-            deviceProtocol: int,
-            deviceSubclass: int,
-            deviceVersionMajor: int,
-            deviceVersionMinor: int,
-            deviceVersionSubminor: int,
+            vendorId: int,
             productId: int,
             usbVersionMajor: int,
             usbVersionMinor: int,
             usbVersionSubminor: int,
-            vendorId: int,
-            ?configuration: Types.USBDevice.Configuration,
-            ?manufacturerName: string,
+            deviceClass: int,
+            deviceSubclass: int,
+            deviceProtocol: int,
+            deviceVersionMajor: int,
+            deviceVersionMinor: int,
+            deviceVersionSubminor: int,
             ?productName: string,
-            ?serialNumber: string
+            ?serialNumber: string,
+            ?manufacturerName: string
         ) =
         class
         end
-
-        /// <summary>
-        /// A USBConfiguration object containing information about the currently selected configuration of a USB device.
-        /// </summary>
-        [<Erase>]
-        member val configuration: Types.USBDevice.Configuration = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// An array of USBConfiguration interfaces for controlling a paired USB device.
-        /// </summary>
-        [<Erase>]
-        member val configurations: obj[] = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The device class for the communication interface supported by the device.
-        /// </summary>
-        [<Erase>]
-        member val deviceClass: int = Unchecked.defaultof<_> with get, set
 
         /// <summary>
         /// Unique identifier for the device.
@@ -1432,40 +1212,10 @@ module Types =
         member val deviceId: string = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// The device protocol for the communication interface supported by the device.
+        /// The USB vendor ID.
         /// </summary>
         [<Erase>]
-        member val deviceProtocol: int = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The device subclass for the communication interface supported by the device.
-        /// </summary>
-        [<Erase>]
-        member val deviceSubclass: int = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The major version number of the device as defined by the device manufacturer.
-        /// </summary>
-        [<Erase>]
-        member val deviceVersionMajor: int = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The minor version number of the device as defined by the device manufacturer.
-        /// </summary>
-        [<Erase>]
-        member val deviceVersionMinor: int = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The subminor version number of the device as defined by the device manufacturer.
-        /// </summary>
-        [<Erase>]
-        member val deviceVersionSubminor: int = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The manufacturer name of the device.
-        /// </summary>
-        [<Erase>]
-        member val manufacturerName: string = Unchecked.defaultof<_> with get, set
+        member val vendorId: int = Unchecked.defaultof<_> with get, set
 
         /// <summary>
         /// The USB product ID.
@@ -1486,28 +1236,64 @@ module Types =
         member val serialNumber: string = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// The USB protocol major version supported by the device.
+        /// The manufacturer name of the device.
+        /// </summary>
+        [<Erase>]
+        member val manufacturerName: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The USB protocol major version supported by the device
         /// </summary>
         [<Erase>]
         member val usbVersionMajor: int = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// The USB protocol minor version supported by the device.
+        /// The USB protocol minor version supported by the device
         /// </summary>
         [<Erase>]
         member val usbVersionMinor: int = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// The USB protocol subminor version supported by the device.
+        /// The USB protocol subminor version supported by the device
         /// </summary>
         [<Erase>]
         member val usbVersionSubminor: int = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// The USB vendor ID.
+        /// The device class for the communication interface supported by the device
         /// </summary>
         [<Erase>]
-        member val vendorId: int = Unchecked.defaultof<_> with get, set
+        member val deviceClass: int = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The device subclass for the communication interface supported by the device
+        /// </summary>
+        [<Erase>]
+        member val deviceSubclass: int = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The device protocol for the communication interface supported by the device
+        /// </summary>
+        [<Erase>]
+        member val deviceProtocol: int = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The major version number of the device as defined by the device manufacturer.
+        /// </summary>
+        [<Erase>]
+        member val deviceVersionMajor: int = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The minor version number of the device as defined by the device manufacturer.
+        /// </summary>
+        [<Erase>]
+        member val deviceVersionMinor: int = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The subminor version number of the device as defined by the device manufacturer.
+        /// </summary>
+        [<Erase>]
+        member val deviceVersionSubminor: int = Unchecked.defaultof<_> with get, set
 
     [<JS.Pojo>]
     type UploadRawData
@@ -2036,58 +1822,6 @@ module Types =
         /// </summary>
         [<Erase>]
         member val url: string = Unchecked.defaultof<_> with get, set
-
-    [<JS.Pojo>]
-    type SharedTextureHandle
-        /// <param name="ntHandle">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || NT HANDLE holds the
-        /// shared texture. Note that this NT HANDLE is local to current process.</param>
-        /// <param name="ioSurface">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || IOSurfaceRef holds the shared
-        /// texture. Note that this IOSurface is local to current process (not global).</param>
-        /// <param name="nativePixmap">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || Structure contains planes of
-        /// shared texture.</param>
-        (
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
-            ?ntHandle: Buffer
-            #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
-            ,
-            ?ioSurface: Buffer
-            #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
-            ,
-            ?nativePixmap: Types.SharedTextureHandle.NativePixmap
-            #endif
-
-        ) =
-        class
-        end
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
-        /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
-        /// NT HANDLE holds the shared texture. Note that this NT HANDLE is local to current process.
-        /// </summary>
-        [<Erase>]
-        member val ntHandle: Buffer = Unchecked.defaultof<_> with get, set
-        #endif
-
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
-        /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
-        /// IOSurfaceRef holds the shared texture. Note that this IOSurface is local to current process (not global).
-        /// </summary>
-        [<Erase>]
-        member val ioSurface: Buffer = Unchecked.defaultof<_> with get, set
-        #endif
-
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
-        /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌</para>
-        /// Structure contains planes of shared texture.
-        /// </summary>
-        [<Erase>]
-        member val nativePixmap: Types.SharedTextureHandle.NativePixmap = Unchecked.defaultof<_> with get, set
-        #endif
-
 
     [<JS.Pojo>]
     type SharedDictionaryUsageInfo
@@ -4829,45 +4563,6 @@ module Types =
         member val sameSite: Enums.Types.Cookie.SameSite = Unchecked.defaultof<_> with get, set
 
     [<JS.Pojo>]
-    type ColorSpace
-        /// <param name="primaries">The color primaries of the color space. Can be one of the following values:</param>
-        /// <param name="transfer">The transfer function of the color space. Can be one of the following values:</param>
-        /// <param name="matrix">The color matrix of the color space. Can be one of the following values:</param>
-        /// <param name="range">The color range of the color space. Can be one of the following values:</param>
-        (
-            primaries: Enums.Types.ColorSpace.Primaries,
-            transfer: Enums.Types.ColorSpace.Transfer,
-            matrix: Enums.Types.ColorSpace.Matrix,
-            range: Enums.Types.ColorSpace.Range
-        ) =
-        class
-        end
-
-        /// <summary>
-        /// The color primaries of the color space. Can be one of the following values:
-        /// </summary>
-        [<Erase>]
-        member val primaries: Enums.Types.ColorSpace.Primaries = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The transfer function of the color space. Can be one of the following values:
-        /// </summary>
-        [<Erase>]
-        member val transfer: Enums.Types.ColorSpace.Transfer = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The color matrix of the color space. Can be one of the following values:
-        /// </summary>
-        [<Erase>]
-        member val matrix: Enums.Types.ColorSpace.Matrix = Unchecked.defaultof<_> with get, set
-
-        /// <summary>
-        /// The color range of the color space. Can be one of the following values:
-        /// </summary>
-        [<Erase>]
-        member val range: Enums.Types.ColorSpace.Range = Unchecked.defaultof<_> with get, set
-
-    [<JS.Pojo>]
     type Certificate
         /// <param name="data">PEM encoded data</param>
         /// <param name="issuer">Issuer principal</param>
@@ -5089,9 +4784,8 @@ module Types =
         /// have rounded corners. Default is <c>true</c>. Setting this property to <c>false</c> will prevent the window from being fullscreenable on macOS.
         /// On Windows versions older than Windows 11 Build 22000 this property has no effect, and frameless windows will not have
         /// rounded corners.</param>
-        /// <param name="thickFrame">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || Use <c>WS_THICKFRAME</c> style for
-        /// frameless windows on Windows, which adds the standard window frame. Setting it to <c>false</c> will remove window shadow and window
-        /// animations, and disable window resizing via dragging the window edges. Default is <c>true</c>.</param>
+        /// <param name="thickFrame">Use <c>WS_THICKFRAME</c> style for frameless windows on Windows, which adds standard window frame. Setting it to <c>false</c> will remove
+        /// window shadow and window animations. Default is <c>true</c>.</param>
         /// <param name="vibrancy">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Add a type of
         /// vibrancy effect to the window, only on macOS. Can be <c>appearance-based</c>, <c>titlebar</c>, <c>selection</c>, <c>menu</c>, <c>popover</c>, <c>sidebar</c>, <c>header</c>, <c>sheet</c>, <c>window</c>, <c>hud</c>,
         /// <c>fullscreen-ui</c>, <c>tooltip</c>, <c>content</c>, <c>under-window</c>, or <c>under-page</c>.</param>
@@ -5204,10 +4898,8 @@ module Types =
             ,
             ?roundedCorners: bool
             #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
             ,
             ?thickFrame: bool
-            #endif
             #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
             ,
             ?vibrancy: Enums.Types.BrowserWindowConstructorOptions.Vibrancy
@@ -5577,16 +5269,13 @@ module Types =
         member val roundedCorners: bool = Unchecked.defaultof<_> with get, set
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
-        /// Use <c>WS_THICKFRAME</c> style for frameless windows on Windows, which adds the standard window frame. Setting it to <c>false</c> will remove
-        /// window shadow and window animations, and disable window resizing via dragging the window edges. Default is <c>true</c>.
+        /// Use <c>WS_THICKFRAME</c> style for frameless windows on Windows, which adds standard window frame. Setting it to <c>false</c> will remove window
+        /// shadow and window animations. Default is <c>true</c>.
         /// </summary>
         [<Erase>]
         member val thickFrame: bool = Unchecked.defaultof<_> with get, set
-        #endif
-
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
@@ -5738,9 +5427,8 @@ module Types =
         /// have rounded corners. Default is <c>true</c>. Setting this property to <c>false</c> will prevent the window from being fullscreenable on macOS.
         /// On Windows versions older than Windows 11 Build 22000 this property has no effect, and frameless windows will not have
         /// rounded corners.</param>
-        /// <param name="thickFrame">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || Use <c>WS_THICKFRAME</c> style for
-        /// frameless windows on Windows, which adds the standard window frame. Setting it to <c>false</c> will remove window shadow and window
-        /// animations, and disable window resizing via dragging the window edges. Default is <c>true</c>.</param>
+        /// <param name="thickFrame">Use <c>WS_THICKFRAME</c> style for frameless windows on Windows, which adds standard window frame. Setting it to <c>false</c> will remove
+        /// window shadow and window animations. Default is <c>true</c>.</param>
         /// <param name="vibrancy">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Add a type of
         /// vibrancy effect to the window, only on macOS. Can be <c>appearance-based</c>, <c>titlebar</c>, <c>selection</c>, <c>menu</c>, <c>popover</c>, <c>sidebar</c>, <c>header</c>, <c>sheet</c>, <c>window</c>, <c>hud</c>,
         /// <c>fullscreen-ui</c>, <c>tooltip</c>, <c>content</c>, <c>under-window</c>, or <c>under-page</c>.</param>
@@ -5851,10 +5539,8 @@ module Types =
             ,
             ?roundedCorners: bool
             #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
             ,
             ?thickFrame: bool
-            #endif
             #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
             ,
             ?vibrancy: Enums.Types.BaseWindowConstructorOptions.Vibrancy
@@ -6210,16 +5896,13 @@ module Types =
         member val roundedCorners: bool = Unchecked.defaultof<_> with get, set
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
-        /// Use <c>WS_THICKFRAME</c> style for frameless windows on Windows, which adds the standard window frame. Setting it to <c>false</c> will remove
-        /// window shadow and window animations, and disable window resizing via dragging the window edges. Default is <c>true</c>.
+        /// Use <c>WS_THICKFRAME</c> style for frameless windows on Windows, which adds standard window frame. Setting it to <c>false</c> will remove window
+        /// shadow and window animations. Default is <c>true</c>.
         /// </summary>
         [<Erase>]
         member val thickFrame: bool = Unchecked.defaultof<_> with get, set
-        #endif
-
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
@@ -6324,18 +6007,6 @@ module Enums =
                 | [<CompiledName("user-gesture-required")>] UserGestureRequired
                 | [<CompiledName("document-user-activation-required")>] DocumentUserActivationRequired
 
-            module Offscreen =
-                [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-                type SharedTexturePixelFormat =
-                    /// <summary>
-                    /// The requested output texture format is 8-bit unorm RGBA, with SRGB SDR color space.
-                    /// </summary>
-                    | [<CompiledName("argb")>] Argb
-                    /// <summary>
-                    /// The requested output texture format is 16-bit float RGBA, with scRGB HDR color space.
-                    /// </summary>
-                    | [<CompiledName("rgbaf16")>] Rgbaf16
-
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
             type ImageAnimationPolicy =
                 | [<CompiledName("animate")>] Animate
@@ -6406,10 +6077,6 @@ module Enums =
                 /// Windows code integrity checks failed
                 /// </summary>
                 | [<CompiledName("integrity-failure")>] IntegrityFailure
-                /// <summary>
-                /// Process proactively terminated to prevent a future out-of-memory (OOM) situation
-                /// </summary>
-                | [<CompiledName("memory-eviction")>] MemoryEviction
 
         module Referrer =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -6502,18 +6169,8 @@ module Enums =
             module TextureInfo =
                 [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                 type PixelFormat =
-                    /// <summary>
-                    /// The texture format is 8-bit unorm RGBA.
-                    /// </summary>
                     | [<CompiledName("rgba")>] Rgba
-                    /// <summary>
-                    /// The texture format is 8-bit unorm BGRA.
-                    /// </summary>
                     | [<CompiledName("bgra")>] Bgra
-                    /// <summary>
-                    /// The texture format is 16-bit float RGBA.
-                    /// </summary>
-                    | [<CompiledName("rgbaf16")>] Rgbaf16
 
                 [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                 type WidgetType =
@@ -6749,247 +6406,6 @@ module Enums =
                 | [<CompiledName("no_restriction")>] NoRestriction
                 | [<CompiledName("lax")>] Lax
                 | [<CompiledName("strict")>] Strict
-
-        module ColorSpace =
-            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type Range =
-                /// <summary>
-                /// Limited color range (RGB values ranging from 16 to 235)
-                /// </summary>
-                | [<CompiledName("limited")>] Limited
-                /// <summary>
-                /// Full color range (RGB values from 0 to 255)
-                /// </summary>
-                | [<CompiledName("full")>] Full
-                /// <summary>
-                /// Range defined by the transfer function and matrix
-                /// </summary>
-                | [<CompiledName("derived")>] Derived
-                /// <summary>
-                /// Invalid range
-                /// </summary>
-                | [<CompiledName("invalid")>] Invalid
-
-            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type Matrix =
-                /// <summary>
-                /// RGB matrix
-                /// </summary>
-                | [<CompiledName("rgb")>] Rgb
-                /// <summary>
-                /// BT709 matrix
-                /// </summary>
-                | [<CompiledName("bt709")>] Bt709
-                /// <summary>
-                /// FCC matrix
-                /// </summary>
-                | [<CompiledName("fcc")>] Fcc
-                /// <summary>
-                /// BT470BG matrix
-                /// </summary>
-                | [<CompiledName("bt470bg")>] Bt470bg
-                /// <summary>
-                /// SMPTE170M matrix
-                /// </summary>
-                | [<CompiledName("smpte170m")>] Smpte170m
-                /// <summary>
-                /// SMPTE240M matrix
-                /// </summary>
-                | [<CompiledName("smpte240m")>] Smpte240m
-                /// <summary>
-                /// YCoCg matrix
-                /// </summary>
-                | [<CompiledName("ycocg")>] Ycocg
-                /// <summary>
-                /// BT2020 NCL matrix
-                /// </summary>
-                | [<CompiledName("bt2020-ncl")>] Bt2020Ncl
-                /// <summary>
-                /// YDzDx matrix
-                /// </summary>
-                | [<CompiledName("ydzdx")>] Ydzdx
-                /// <summary>
-                /// GBR matrix
-                /// </summary>
-                | [<CompiledName("gbr")>] Gbr
-                /// <summary>
-                /// Invalid matrix
-                /// </summary>
-                | [<CompiledName("invalid")>] Invalid
-
-            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type Transfer =
-                /// <summary>
-                /// BT709 transfer function
-                /// </summary>
-                | [<CompiledName("bt709")>] Bt709
-                /// <summary>
-                /// BT709 Apple transfer function
-                /// </summary>
-                | [<CompiledName("bt709-apple")>] Bt709Apple
-                /// <summary>
-                /// Gamma 1.8 transfer function
-                /// </summary>
-                | [<CompiledName("gamma18")>] Gamma18
-                /// <summary>
-                /// Gamma 2.2 transfer function
-                /// </summary>
-                | [<CompiledName("gamma22")>] Gamma22
-                /// <summary>
-                /// Gamma 2.4 transfer function
-                /// </summary>
-                | [<CompiledName("gamma24")>] Gamma24
-                /// <summary>
-                /// Gamma 2.8 transfer function
-                /// </summary>
-                | [<CompiledName("gamma28")>] Gamma28
-                /// <summary>
-                /// SMPTE170M transfer function
-                /// </summary>
-                | [<CompiledName("smpte170m")>] Smpte170m
-                /// <summary>
-                /// SMPTE240M transfer function
-                /// </summary>
-                | [<CompiledName("smpte240m")>] Smpte240m
-                /// <summary>
-                /// Linear transfer function
-                /// </summary>
-                | [<CompiledName("linear")>] Linear
-                /// <summary>
-                /// Log transfer function
-                /// </summary>
-                | [<CompiledName("log")>] Log
-                /// <summary>
-                /// Log Square Root transfer function
-                /// </summary>
-                | [<CompiledName("log-sqrt")>] LogSqrt
-                /// <summary>
-                /// IEC61966-2-4 transfer function
-                /// </summary>
-                | [<CompiledName("iec61966-2-4")>] Iec6196624
-                /// <summary>
-                /// BT1361 ECG transfer function
-                /// </summary>
-                | [<CompiledName("bt1361-ecg")>] Bt1361Ecg
-                /// <summary>
-                /// sRGB transfer function
-                /// </summary>
-                | [<CompiledName("srgb")>] Srgb
-                /// <summary>
-                /// BT2020-10 transfer function
-                /// </summary>
-                | [<CompiledName("bt2020-10")>] Bt202010
-                /// <summary>
-                /// BT2020-12 transfer function
-                /// </summary>
-                | [<CompiledName("bt2020-12")>] Bt202012
-                /// <summary>
-                /// PQ (Perceptual Quantizer) transfer function
-                /// </summary>
-                | [<CompiledName("pq")>] Pq
-                /// <summary>
-                /// SMPTEST428-1 transfer function
-                /// </summary>
-                | [<CompiledName("smptest428-1")>] Smptest4281
-                /// <summary>
-                /// HLG (Hybrid Log-Gamma) transfer function
-                /// </summary>
-                | [<CompiledName("hlg")>] Hlg
-                /// <summary>
-                /// sRGB HDR transfer function
-                /// </summary>
-                | [<CompiledName("srgb-hdr")>] SrgbHdr
-                /// <summary>
-                /// Linear HDR transfer function
-                /// </summary>
-                | [<CompiledName("linear-hdr")>] LinearHdr
-                /// <summary>
-                /// Custom transfer function
-                /// </summary>
-                | [<CompiledName("custom")>] Custom
-                /// <summary>
-                /// Custom HDR transfer function
-                /// </summary>
-                | [<CompiledName("custom-hdr")>] CustomHdr
-                /// <summary>
-                /// scRGB Linear 80 nits transfer function
-                /// </summary>
-                | [<CompiledName("scrgb-linear-80-nits")>] ScrgbLinear80Nits
-                /// <summary>
-                /// Invalid transfer function
-                /// </summary>
-                | [<CompiledName("invalid")>] Invalid
-
-            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type Primaries =
-                /// <summary>
-                /// BT709 primaries (also used for sRGB)
-                /// </summary>
-                | [<CompiledName("bt709")>] Bt709
-                /// <summary>
-                /// BT470M primaries
-                /// </summary>
-                | [<CompiledName("bt470m")>] Bt470m
-                /// <summary>
-                /// BT470BG primaries
-                /// </summary>
-                | [<CompiledName("bt470bg")>] Bt470bg
-                /// <summary>
-                /// SMPTE170M primaries
-                /// </summary>
-                | [<CompiledName("smpte170m")>] Smpte170m
-                /// <summary>
-                /// SMPTE240M primaries
-                /// </summary>
-                | [<CompiledName("smpte240m")>] Smpte240m
-                /// <summary>
-                /// Film primaries
-                /// </summary>
-                | [<CompiledName("film")>] Film
-                /// <summary>
-                /// BT2020 primaries
-                /// </summary>
-                | [<CompiledName("bt2020")>] Bt2020
-                /// <summary>
-                /// SMPTEST428-1 primaries
-                /// </summary>
-                | [<CompiledName("smptest428-1")>] Smptest4281
-                /// <summary>
-                /// SMPTEST431-2 primaries
-                /// </summary>
-                | [<CompiledName("smptest431-2")>] Smptest4312
-                /// <summary>
-                /// P3 primaries
-                /// </summary>
-                | [<CompiledName("p3")>] P3
-                /// <summary>
-                /// XYZ D50 primaries
-                /// </summary>
-                | [<CompiledName("xyz-d50")>] XyzD50
-                /// <summary>
-                /// Adobe RGB primaries
-                /// </summary>
-                | [<CompiledName("adobe-rgb")>] AdobeRgb
-                /// <summary>
-                /// Apple Generic RGB primaries
-                /// </summary>
-                | [<CompiledName("apple-generic-rgb")>] AppleGenericRgb
-                /// <summary>
-                /// Wide Gamut Color Spin primaries
-                /// </summary>
-                | [<CompiledName("wide-gamut-color-spin")>] WideGamutColorSpin
-                /// <summary>
-                /// EBU 3213-E primaries
-                /// </summary>
-                | [<CompiledName("ebu-3213-e")>] Ebu3213E
-                /// <summary>
-                /// Custom primaries
-                /// </summary>
-                | [<CompiledName("custom")>] Custom
-                /// <summary>
-                /// Invalid primaries
-                /// </summary>
-                | [<CompiledName("invalid")>] Invalid
 
         module BrowserWindowConstructorOptions =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -11948,17 +11364,16 @@ module Renderer =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation and
-        /// SF Symbols for a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue):
-        /// The absolute hue value for the image - 0 and 1 map to 0 and 360 on the hue color
-        /// wheel (red).<br/>* <c>hsl_shift[1]</c> (saturation): A saturation shift for the image, with the following key values: 0 = remove all color.
-        /// 0.5 = leave unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the
-        /// following key values: 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness
-        /// (make all pixels white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will
-        /// make the image completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>,
-        /// whose string representation would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before
-        /// passing it in. This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.<br/><br/>For
-        /// SF Symbols, usage looks as follows:<br/><br/>where <c>'square.and.pencil'</c> is the symbol name from the SF Symbols app.
+        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation for
+        /// a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue): The absolute hue
+        /// value for the image - 0 and 1 map to 0 and 360 on the hue color wheel (red).<br/>* <c>hsl_shift[1]</c>
+        /// (saturation): A saturation shift for the image, with the following key values: 0 = remove all color. 0.5 = leave
+        /// unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the following key values:
+        /// 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness (make all pixels
+        /// white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will make the image
+        /// completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>, whose string representation
+        /// would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before passing it in.
+        /// This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.
         /// </summary>
         /// <param name="imageName"></param>
         /// <param name="hslShift"></param>
@@ -12576,9 +11991,9 @@ module Utility =
                     Unchecked.defaultof<_> with get, set
 
     module SystemPreferences =
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌</para>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
@@ -12719,9 +12134,6 @@ module Utility =
             /// <param name="session">The <c>Session</c> instance with which the request is associated.</param>
             /// <param name="partition">The name of the <c>partition</c> with which the request is associated. Defaults to the empty string. The <c>session</c> option
             /// supersedes <c>partition</c>. Thus if a <c>session</c> is explicitly specified, <c>partition</c> is ignored.</param>
-            /// <param name="bypassCustomProtocolHandlers">When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows
-            /// forwarding an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to
-            /// <c>false</c>.</param>
             /// <param name="credentials">Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from
             /// the session associated with the request will be used. If set to <c>omit</c>, credentials will not be sent with the
             /// request (and the <c>'login'</c> event will not be triggered in the event of a 401). If set to <c>same-origin</c>, <c>origin</c>
@@ -12748,7 +12160,6 @@ module Utility =
                 ?headers: Record<string, U2<string, string[]>>,
                 ?session: Main.Session,
                 ?partition: string,
-                ?bypassCustomProtocolHandlers: bool,
                 ?credentials: Utility.Enums.ClientRequest.Options.Credentials,
                 ?useSessionCookies: bool,
                 ?protocol: Utility.Enums.ClientRequest.Options.Protocol,
@@ -12796,13 +12207,6 @@ module Utility =
             /// </summary>
             [<Erase>]
             member val partition: string = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows forwarding
-            /// an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to <c>false</c>.
-            /// </summary>
-            [<Erase>]
-            member val bypassCustomProtocolHandlers: bool = Unchecked.defaultof<_> with get, set
 
             /// <summary>
             /// Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from the
@@ -13491,20 +12895,20 @@ module Utility =
         end
 
         interface EventEmitter
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
         static member inline onAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
@@ -13514,20 +12918,20 @@ module Utility =
             Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
         static member inline onceAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
@@ -13537,20 +12941,20 @@ module Utility =
             Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
         static member inline offAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
@@ -13797,13 +13201,18 @@ module Utility =
         static member inline removeUserDefault(key: string) : unit = Unchecked.defaultof<_>
         #endif
 
-
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
         /// The users current system wide accent color preference in RGBA hexadecimal form.<br/><br/>This API is only available on macOS 10.14 Mojave
         /// or newer.
         /// </summary>
         [<Erase>]
         static member inline getAccentColor() : string = Unchecked.defaultof<_>
+        #endif
+
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
@@ -21127,9 +20536,9 @@ module Main =
             type Change = delegate of selectedIndex: int * isSelected: bool -> unit
 
     module SystemPreferences =
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌</para>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
@@ -22652,7 +22061,7 @@ module Main =
             /// <param name="toolTip">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Hover text for this
             /// menu item.</param>
             /// <param name="accelerator">An Accelerator string.</param>
-            /// <param name="icon">Can be a NativeImage or the file path of an icon.</param>
+            /// <param name="icon"></param>
             /// <param name="enabled">If false, the menu item will be greyed out and unclickable.</param>
             /// <param name="acceleratorWorksWhenHidden">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || default is <c>true</c>, and
             /// when <c>false</c> will prevent the accelerator from triggering the item if the item is not visible.</param>
@@ -22764,9 +22173,6 @@ module Main =
             [<Erase>]
             member val accelerator: string = Unchecked.defaultof<_> with get, set
 
-            /// <summary>
-            /// Can be a NativeImage or the file path of an icon.
-            /// </summary>
             [<Erase>]
             member val icon: U2<Main.NativeImage, string> = Unchecked.defaultof<_> with get, set
 
@@ -23007,9 +22413,6 @@ module Main =
             /// <param name="session">The <c>Session</c> instance with which the request is associated.</param>
             /// <param name="partition">The name of the <c>partition</c> with which the request is associated. Defaults to the empty string. The <c>session</c> option
             /// supersedes <c>partition</c>. Thus if a <c>session</c> is explicitly specified, <c>partition</c> is ignored.</param>
-            /// <param name="bypassCustomProtocolHandlers">When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows
-            /// forwarding an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to
-            /// <c>false</c>.</param>
             /// <param name="credentials">Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from
             /// the session associated with the request will be used. If set to <c>omit</c>, credentials will not be sent with the
             /// request (and the <c>'login'</c> event will not be triggered in the event of a 401). If set to <c>same-origin</c>, <c>origin</c>
@@ -23036,7 +22439,6 @@ module Main =
                 ?headers: Record<string, U2<string, string[]>>,
                 ?session: Main.Session,
                 ?partition: string,
-                ?bypassCustomProtocolHandlers: bool,
                 ?credentials: Main.Enums.ClientRequest.Options.Credentials,
                 ?useSessionCookies: bool,
                 ?protocol: Main.Enums.ClientRequest.Options.Protocol,
@@ -23084,13 +22486,6 @@ module Main =
             /// </summary>
             [<Erase>]
             member val partition: string = Unchecked.defaultof<_> with get, set
-
-            /// <summary>
-            /// When set to <c>true</c>, custom protocol handlers registered for the request's URL scheme will not be called. This allows forwarding
-            /// an intercepted request to the built-in handler. webRequest handlers will still be triggered when bypassing custom protocols. Defaults to <c>false</c>.
-            /// </summary>
-            [<Erase>]
-            member val bypassCustomProtocolHandlers: bool = Unchecked.defaultof<_> with get, set
 
             /// <summary>
             /// Can be <c>include</c>, <c>omit</c> or <c>same-origin</c>. Whether to send credentials with this request. If set to <c>include</c>, credentials from the
@@ -27485,10 +26880,6 @@ module Main =
                         /// Windows code integrity checks failed
                         /// </summary>
                         | [<CompiledName("integrity-failure")>] IntegrityFailure
-                        /// <summary>
-                        /// Process proactively terminated to prevent a future out-of-memory (OOM) situation
-                        /// </summary>
-                        | [<CompiledName("memory-eviction")>] MemoryEviction
 
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Type =
@@ -33324,20 +32715,20 @@ module Main =
         end
 
         interface EventEmitter
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
         static member inline onAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
@@ -33347,20 +32738,20 @@ module Main =
             Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
         static member inline onceAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
@@ -33370,20 +32761,20 @@ module Main =
             Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
         static member inline offAccentColorChanged(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('accent-color-changed', $1)"); Import("systemPreferences", "electron")>]
@@ -33630,13 +33021,18 @@ module Main =
         static member inline removeUserDefault(key: string) : unit = Unchecked.defaultof<_>
         #endif
 
-
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
         /// The users current system wide accent color preference in RGBA hexadecimal form.<br/><br/>This API is only available on macOS 10.14 Mojave
         /// or newer.
         /// </summary>
         [<Erase>]
         static member inline getAccentColor() : string = Unchecked.defaultof<_>
+        #endif
+
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
@@ -38306,17 +37702,16 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation and
-        /// SF Symbols for a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue):
-        /// The absolute hue value for the image - 0 and 1 map to 0 and 360 on the hue color
-        /// wheel (red).<br/>* <c>hsl_shift[1]</c> (saturation): A saturation shift for the image, with the following key values: 0 = remove all color.
-        /// 0.5 = leave unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the
-        /// following key values: 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness
-        /// (make all pixels white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will
-        /// make the image completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>,
-        /// whose string representation would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before
-        /// passing it in. This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.<br/><br/>For
-        /// SF Symbols, usage looks as follows:<br/><br/>where <c>'square.and.pencil'</c> is the symbol name from the SF Symbols app.
+        /// Creates a new <c>NativeImage</c> instance from the <c>NSImage</c> that maps to the given image name. See Apple's <c>NSImageName</c> documentation for
+        /// a list of possible values.<br/><br/>The <c>hslShift</c> is applied to the image with the following rules:<br/><br/>* <c>hsl_shift[0]</c> (hue): The absolute hue
+        /// value for the image - 0 and 1 map to 0 and 360 on the hue color wheel (red).<br/>* <c>hsl_shift[1]</c>
+        /// (saturation): A saturation shift for the image, with the following key values: 0 = remove all color. 0.5 = leave
+        /// unchanged. 1 = fully saturate the image.<br/>* <c>hsl_shift[2]</c> (lightness): A lightness shift for the image, with the following key values:
+        /// 0 = remove all lightness (make all pixels black). 0.5 = leave unchanged. 1 = full lightness (make all pixels
+        /// white).<br/><br/>This means that <c>[-1, 0, 1]</c> will make the image completely white and <c>[-1, 1, 0]</c> will make the image
+        /// completely black.<br/><br/>In some cases, the <c>NSImageName</c> doesn't match its string representation; one example of this is <c>NSFolderImageName</c>, whose string representation
+        /// would actually be <c>NSFolder</c>. Therefore, you'll need to determine the correct string representation for your image before passing it in.
+        /// This can be done with the following:<br/><br/>where <c>SYSTEM_IMAGE_NAME</c> should be replaced with any value from this list.
         /// </summary>
         /// <param name="imageName"></param>
         /// <param name="hslShift"></param>
@@ -38592,7 +37987,7 @@ module Main =
         /// <param name="toolTip">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Hover text for this
         /// menu item.</param>
         /// <param name="accelerator">An Accelerator string.</param>
-        /// <param name="icon">Can be a NativeImage or the file path of an icon.</param>
+        /// <param name="icon"></param>
         /// <param name="enabled">If false, the menu item will be greyed out and unclickable.</param>
         /// <param name="acceleratorWorksWhenHidden">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || default is <c>true</c>, and
         /// when <c>false</c> will prevent the accelerator from triggering the item if the item is not visible.</param>
@@ -41185,9 +40580,7 @@ module Main =
     /// order to minimize power consumption.<br/><br/>### Platform notices<br/><br/>* On macOS modal windows will be displayed as sheets attached to the parent
     /// window.<br/>* On macOS the child windows will keep the relative position to parent window when parent window moves, while on
     /// Windows and Linux child windows will not move.<br/>* On Linux the type of modal windows will be changed to <c>dialog</c>.<br/>*
-    /// On Linux many desktop environments do not support hiding a modal window.<br/>* On Wayland (Linux) it is generally not possible
-    /// to programmatically resize windows after creation, or to position, move, focus, or blur windows without user input. If your app
-    /// needs these capabilities, run it in Xwayland by appending the flag <c>--ozone-platform=x11</c>.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
+    /// On Linux many desktop environments do not support hiding a modal window.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
     /// windows.<br/><br/>Process: Main<br/><br/><c>BrowserWindow</c> is an EventEmitter.<br/><br/>It creates a new <c>BrowserWindow</c> with native properties as set by the <c>options</c>.<br/><br/>&gt; [!WARNING] Electron's built-in
     /// classes cannot be subclassed in user code. For more information, see the FAQ.
     /// </summary>
@@ -42417,14 +41810,13 @@ module Main =
         member inline _.close() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Focuses on the window.<br/><br/>On Wayland (Linux), the desktop environment may show a notification or flash the app icon if the
-        /// window or app is not already focused.
+        /// Focuses on the window.
         /// </summary>
         [<Erase>]
         member inline _.focus() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Removes focus from the window.<br/><br/>Not supported on Wayland (Linux).
+        /// Removes focus from the window.
         /// </summary>
         [<Erase>]
         member inline _.blur() : unit = Unchecked.defaultof<_>
@@ -42448,7 +41840,7 @@ module Main =
         member inline _.show() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Shows the window but doesn't focus on it.<br/><br/>Not supported on Wayland (Linux).
+        /// Shows the window but doesn't focus on it.
         /// </summary>
         [<Erase>]
         member inline _.showInactive() : unit = Unchecked.defaultof<_>
@@ -42609,9 +42001,9 @@ module Main =
 
         /// <summary>
         /// Resizes and moves the window to the supplied bounds. Any properties that are not supplied will default to their current
-        /// values.<br/><br/>On Wayland (Linux), has the same limitations as <c>setSize</c> and <c>setPosition</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller
-        /// than the Tray height. The tray height has changed over time and depends on the operating system, but is between
-        /// 20-40px. Passing a value lower than the tray height will result in a window that is flush to the tray.
+        /// values.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray height. The tray height has changed over
+        /// time and depends on the operating system, but is between 20-40px. Passing a value lower than the tray height will
+        /// result in a window that is flush to the tray.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -42634,8 +42026,7 @@ module Main =
         member inline _.getBackgroundColor() : string = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.<br/><br/>On Wayland (Linux), has the same
-        /// limitations as <c>setContentSize</c> and <c>setPosition</c>.
+        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -42671,7 +42062,7 @@ module Main =
 
         /// <summary>
         /// Resizes the window to <c>width</c> and <c>height</c>. If <c>width</c> or <c>height</c> are below any set minimum size constraints the window
-        /// will snap to its minimum size.<br/><br/>On Wayland (Linux), may not work as some window managers restrict programmatic window resizing.
+        /// will snap to its minimum size.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -42686,8 +42077,7 @@ module Main =
         member inline _.getSize() : int[] = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.<br/><br/>On Wayland (Linux), may not work as some
-        /// window managers restrict programmatic window resizing.
+        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -42903,19 +42293,19 @@ module Main =
         member inline _.moveAbove(mediaSourceId: string) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to top(z-order) regardless of focus.<br/><br/>Not supported on Wayland (Linux).
+        /// Moves window to top(z-order) regardless of focus
         /// </summary>
         [<Erase>]
         member inline _.moveTop() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to the center of the screen.<br/><br/>Not supported on Wayland (Linux).
+        /// Moves window to the center of the screen.
         /// </summary>
         [<Erase>]
         member inline _.center() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to <c>x</c> and <c>y</c>.<br/><br/>Not supported on Wayland (Linux).
+        /// Moves window to <c>x</c> and <c>y</c>.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -43375,16 +42765,13 @@ module Main =
         /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// Sets the system accent color and highlighting of active window border.<br/><br/>The <c>accentColor</c> parameter accepts the following values:<br/><br/>* <b>Color string</b> -
-        /// Like <c>true</c>, but sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named
-        /// colors). Alpha values in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Enable accent
-        /// color highlighting for the window with the system accent color regardless of whether accent colors are enabled for windows in
-        /// System <c>Settings.</c><br/>* **<c>false</c>** - Disable accent color highlighting for the window regardless of whether accent colors are currently enabled for
-        /// windows in System Settings.<br/>* **<c>null</c>** - Reset window accent color behavior to follow behavior set in System Settings.<br/><br/>Examples:
+        /// Sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values
+        /// in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Uses the system's default accent
+        /// color from user preferences in System Settings.<br/>* **<c>false</c>** - Explicitly disables accent color highlighting for the window.<br/><br/>Examples:
         /// </summary>
-        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings. To reset to system default,
-        /// pass <c>null</c>.</param>
+        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings.</param>
         [<Erase>]
-        member inline _.setAccentColor(accentColor: U3<bool, string, unit>) : unit = Unchecked.defaultof<_>
+        member inline _.setAccentColor(accentColor: U2<bool, string>) : unit = Unchecked.defaultof<_>
         #endif
 
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
@@ -46139,16 +45526,13 @@ module Main =
         /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
         /// </para>
         /// Sets the system accent color and highlighting of active window border.<br/><br/>The <c>accentColor</c> parameter accepts the following values:<br/><br/>* <b>Color string</b> -
-        /// Like <c>true</c>, but sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named
-        /// colors). Alpha values in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Enable accent
-        /// color highlighting for the window with the system accent color regardless of whether accent colors are enabled for windows in
-        /// System <c>Settings.</c><br/>* **<c>false</c>** - Disable accent color highlighting for the window regardless of whether accent colors are currently enabled for
-        /// windows in System Settings.<br/>* **<c>null</c>** - Reset window accent color behavior to follow behavior set in System Settings.<br/><br/>Examples:
+        /// Sets a custom accent color using standard CSS color formats (Hex, RGB, RGBA, HSL, HSLA, or named colors). Alpha values
+        /// in RGBA/HSLA formats are ignored and the color is treated as fully opaque.<br/>* **<c>true</c>** - Uses the system's default accent
+        /// color from user preferences in System Settings.<br/>* **<c>false</c>** - Explicitly disables accent color highlighting for the window.<br/><br/>Examples:
         /// </summary>
-        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings. To reset to system default,
-        /// pass <c>null</c>.</param>
+        /// <param name="accentColor">The accent color for the window. By default, follows user preference in System Settings.</param>
         [<Erase>]
-        member inline _.setAccentColor(accentColor: U3<bool, string, unit>) : unit = Unchecked.defaultof<_>
+        member inline _.setAccentColor(accentColor: U2<bool, string>) : unit = Unchecked.defaultof<_>
         #endif
 
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
@@ -48659,9 +48043,8 @@ module Main =
         static member inline whenReady() : Promise<unit> = Unchecked.defaultof<_>
 
         /// <summary>
-        /// On macOS, makes the application the active app. On Windows, focuses on the application's first window. On Linux, either focuses
-        /// on the first visible window (X11) or requests focus but may instead show a notification or flash the app icon
-        /// (Wayland).<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
+        /// On Linux, focuses on the first visible window. On macOS, makes the application the active app. On Windows, focuses on
+        /// the application's first window.<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
         /// </summary>
         /// <param name="steal">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Make the receiver the
         /// active app even if another app is currently active.</param>
@@ -49166,12 +48549,6 @@ module Main =
         static member inline disableHardwareAcceleration() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// whether hardware acceleration is currently enabled.<br/><br/>&gt; [!NOTE] This information is only usable after the <c>gpu-info-update</c> event is emitted.
-        /// </summary>
-        [<Erase>]
-        static member inline isHardwareAccelerationEnabled() : bool = Unchecked.defaultof<_>
-
-        /// <summary>
         /// By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain basis if the GPU processes crashes
         /// too frequently. This function disables that behavior.<br/><br/>This method can only be called before app is ready.
         /// </summary>
@@ -49338,42 +48715,11 @@ module Main =
         /// </para>
         /// Manually enables Chrome's accessibility support, allowing to expose accessibility switch to users in application settings. See Chromium's accessibility docs for
         /// more details. Disabled by default.<br/><br/>This API must be called after the <c>ready</c> event is emitted.<br/><br/>&gt; [!NOTE] Rendering accessibility tree can
-        /// significantly affect the performance of your app. It should not be enabled by default. Calling this method will enable the
-        /// following accessibility support features: <c>nativeAPIs</c>, <c>webContents</c>, <c>inlineTextBoxes</c>, and <c>extendedProperties</c>.
+        /// significantly affect the performance of your app. It should not be enabled by default.
         /// </summary>
         /// <param name="enabled">Enable or disable accessibility tree rendering</param>
         [<Erase>]
         static member inline setAccessibilitySupportEnabled(enabled: bool) : unit = Unchecked.defaultof<_>
-        #endif
-
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
-        /// <summary>
-        /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
-        /// </para>
-        /// Array of strings naming currently enabled accessibility support components. Possible values:<br/><br/>* <c>nativeAPIs</c> - Native OS accessibility APIs integration enabled.<br/>* <c>webContents</c>
-        /// - Web contents accessibility tree exposure enabled.<br/>* <c>inlineTextBoxes</c> - Inline text boxes (character bounding boxes) enabled.<br/>* <c>extendedProperties</c> - Extended accessibility
-        /// properties enabled.<br/>* <c>screenReader</c> - Screen reader specific mode enabled.<br/>* <c>html</c> - HTML accessibility tree construction enabled.<br/>* <c>labelImages</c> - Accessibility support
-        /// for automatic image annotations.<br/>* <c>pdfPrinting</c> - Accessibility support for PDF printing enabled.<br/><br/>Notes:<br/><br/>* The array may be empty if no accessibility
-        /// modes are active.<br/>* Use <c>app.isAccessibilitySupportEnabled()</c> for the legacy boolean check; prefer this method for granular diagnostics or telemetry.<br/><br/>Example:
-        /// </summary>
-        [<Erase>]
-        static member inline getAccessibilitySupportFeatures() : string[] = Unchecked.defaultof<_>
-        #endif
-
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
-        /// <summary>
-        /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
-        /// </para>
-        /// Possible values are:<br/><br/>* <c>nativeAPIs</c> - Native OS accessibility APIs integration enabled.<br/>* <c>webContents</c> - Web contents accessibility tree exposure enabled.<br/>* <c>inlineTextBoxes</c>
-        /// - Inline text boxes (character bounding boxes) enabled.<br/>* <c>extendedProperties</c> - Extended accessibility properties enabled.<br/>* <c>screenReader</c> - Screen reader specific mode
-        /// enabled.<br/>* <c>html</c> - HTML accessibility tree construction enabled.<br/>* <c>labelImages</c> - Accessibility support for automatic image annotations.<br/>* <c>pdfPrinting</c> - Accessibility support
-        /// for PDF printing enabled.<br/><br/>To disable all supported features, pass an empty array <c>[]</c>.<br/><br/>Example:
-        /// </summary>
-        /// <param name="features">An array of the accessibility features to enable.</param>
-        [<Erase>]
-        static member inline setAccessibilitySupportFeatures(features: string[]) : unit = Unchecked.defaultof<_>
         #endif
 
 
