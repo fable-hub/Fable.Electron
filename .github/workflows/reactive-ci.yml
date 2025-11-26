@@ -1,8 +1,6 @@
 name: Binding Generator
 # Ensure any workflow in FAKE runs `post` cleans AFTER the test has run.
 on:
-  workflow_call:
-  workflow_dispatch:
   push:
     branches:
       - main
