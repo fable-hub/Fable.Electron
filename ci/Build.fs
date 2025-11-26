@@ -108,8 +108,9 @@ Target.create Ops.setupDocs <| fun _ -> Docs.setup Args.npmCi
 Target.create Ops.docs (ignore >> Docs.dev)
 Target.create Ops.build (fun _ -> Project.build Project.Targets.All)
 Target.create Ops.pack (fun _ -> Project.pack true Project.Targets.All)
-// Target.create Ops.push (ignore >> Project.push)
-Target.create Ops.push ignore
+Target.create Ops.push (fun _ ->
+    // Project.push()
+    Target.deactivateFinal Ops.gitnet)
 Target.create Ops.generateApiDocs (ignore >> ApiDocs.validateDir >> ApiDocs.build)
 Target.create Ops.setupTest (fun _ -> Electron.installTests Args.npmCi)
 Target.create Ops.test (ignore >> Electron.test)
