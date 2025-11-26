@@ -62,6 +62,7 @@
       <Content Include="static\img\cleaninstall-example.PNG" />
       <Content Include="static\img\remoting_name_map.png" />
       <Content Include="static\img\social.png" />
+      <Content Include="static\img\flair-1.png" />
       <Content Include="static\.nojekyll" />
       <Content Include="README.md" />
       <Content Include="sidebars.js" />
