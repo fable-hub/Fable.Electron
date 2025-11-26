@@ -24,6 +24,33 @@ as follows:
 $"{baseName}_{typeName}"
 ```
 
+<details>
+<summary>Example</summary>
+
+Using the debugger, you can navigate to `Sources` and `pause` so that you can view the window properties in `Scope - Global`.
+
+```fsharp
+type TextHandler = { ... }
+type CounterHandler = { ... }
+```
+
+```fsharp title="Preload Process"
+let apiNameMap = fun baseName typName ->
+    $"{baseName}_{typName}"
+Remoting.init
+|> Remoting.withApiNameBase "FABLE_REMOTING"
+|> Remoting.withApiNameMap apiNameMap
+|> Remoting.buildTwoWayBridge<CounterHandler>
+Remoting.init
+|> Remoting.withApiNameBase "FABLE_REMOTING"
+|> Remoting.withApiNameMap apiNameMap
+|> Remoting.buildBridge<TextHandler>
+```
+
+![Image of debugger](../../../static/img/remoting_name_map.png)
+</details>
+
+
 Similarly, the `Main` and `Preload` step share a named communication - `channel-name`.
 
 The `channel-name` is unique for each record field, and is a combination of
@@ -32,6 +59,35 @@ the type name and the field name, which is mapped by default as follows:
 ```fsharp
 $"{typeName}:{fieldName}"
 ```
+
+<details>
+<summary>Example</summary>
+
+```fsharp
+type TextHandler = {
+    SetValue: ...
+    SetDisabled: ...
+ }
+type CounterHandler = {
+    Increment: ...
+    Decrement: ...
+ }
+```
+
+```fsharp title="Preload Process"
+let channelNameMap = fun typName fieldName ->
+    $"{typName}_{fieldName}"
+Remoting.init
+|> Remoting.withChannelMap channelNameMap
+|> Remoting.buildTwoWayBridge<CounterHandler>
+Remoting.init
+|> Remoting.withChannelMap channelNameMap
+|> Remoting.buildBridge<TextHandler>
+```
+
+Would use the channels `CounterHandler_Increment`, `CounterHandler_Decrement`, `TextHandler_SetValue` and `TextHandler_SetDisabled`.
+
+</details>
 
 ## Common
 

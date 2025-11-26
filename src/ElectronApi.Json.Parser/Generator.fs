@@ -321,6 +321,7 @@ module Transpiler =
                         failwith $"Unhandled type in generator: {item}"
                         state)
                 group
+        //%Injection%START%
         // Add other material, such as prebaked interfaces and constants
         // NOTE: currently the EventInterface system still uses the old method and is included here.
         |> fun group ->
@@ -335,6 +336,7 @@ module Transpiler =
                  Spec.touchBarItemsDef)
                 |> GeneratorGroupChild.EventInterface
             )
+        //%Injection%END%
         // Add other material, such as prebaked interfaces and constants
         |> fun group ->
             Type.Cache.GetEventStrings(true)
