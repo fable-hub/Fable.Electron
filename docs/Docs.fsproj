@@ -19,9 +19,11 @@
       <Content Include="docs\dev\introduction.md" />
       <Content Include="docs\dev\ci\README.md" />
       <Content Include="docs\dev\ci\testing.md" />
+      <Content Include="docs\dev\ci\build.mdx" />
       <Content Include="docs\dev\fable-electron-remoting\README.mdx" />
       <Content Include="docs\dev\fable-electron-remoting\_category_.yml" />
       <Content Include="docs\dev\generator\README.md" />
+      <Content Include="docs\dev\generator\custom-gen.mdx" />
       <Content Include="docs\dev\generator\_category_.yml" />
       <Content Include="docs\dev\common\README.md" />
       <Content Include="docs\dev\common\_category_.yml" />
@@ -33,16 +35,14 @@
       <Content Include="docs\dev\parser\README.md" />
       <Content Include="docs\dev\parser\1-type-scheme.md" />
       <Content Include="docs\dev\parser\2-extensions.md" />
-      <Content Include="blog\2021-08-26-welcome\index.md" />
-      <Content Include="blog\2021-08-26-welcome\docusaurus-plushie-banner.jpeg" />
       <Content Include="blog\tags.yml" />
       <Content Include="blog\authors.yml" />
       <Content Include="blog\2025-11-14-generating-a-binding\index.md" />
       <Content Include="blog\2025-11-14-generating-a-binding\help.PNG" />
       <Content Include="blog\2025-11-14-generating-a-binding\choose.PNG" />
-      <Content Include="blog\2021-08-01-mdx-blog-post.mdx" />
-      <Content Include="blog\2019-05-29-long-blog-post.md" />
-      <Content Include="blog\2019-05-28-first-blog-post.md" />
+      <Content Include="blog\2025-11-14-generating-a-binding\success.PNG" />
+      <Content Include="blog\2025-11-14-generating-a-binding\pass-tests.PNG" />
+      <Content Include="blog\2025-11-14-generating-a-binding\pack-success.PNG" />
       <Content Include="src\components\LineRegions.js" />
       <Content Include="src\pages\markdown-page.md" />
       <Content Include="src\pages\index.module.css" />
@@ -58,14 +58,20 @@
       <Content Include="static\img\favicon.ico" />
       <Content Include="static\img\electronlogo.svg" />
       <Content Include="static\img\docusaurus.png" />
-      <Content Include="static\img\docusaurus-social-card.jpg" />
       <Content Include="static\img\feleico-dark.png" />
       <Content Include="static\img\cleaninstall-example.PNG" />
+      <Content Include="static\img\remoting_name_map.png" />
+      <Content Include="static\img\social.png" />
       <Content Include="static\.nojekyll" />
       <Content Include="README.md" />
       <Content Include="sidebars.js" />
       <Content Include="package.json" />
       <Content Include="docusaurus.config.js" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <EmbeddedResource Remove="blog\2021-08-26-welcome\**" />
     </ItemGroup>
 
 </Project>

@@ -226,7 +226,7 @@ module Type =
 
         static member makeTuple(apiTypes: ApiType list) : FcsType =
             apiTypes |> List.map FantomasFactory.mapToFantomas |> FantomasFactory.makeTuple
-
+        //%mapToFantomas%START%
         static member mapToFantomas(apiType: ApiType) : FcsType =
             match apiType with
             | ApiType.Any
@@ -241,6 +241,7 @@ module Type =
             | Prelude.Type.Integer -> FcsType.integer
             | Prelude.Type.String -> FcsType.string
             | Prelude.Type.StructureRef value ->
+                //highlight-start
                 match value with
                 | "UserDefaultTypes[Type]" -> FcsType.string
                 | "ClientRequestConstructorOptions" -> makeSimple "ClientRequest.Options"
@@ -259,6 +260,7 @@ module Type =
                     value.Substring "Electron.".Length
                     |> Prelude.Type.StructureRef
                     |> FantomasFactory.mapToFantomas
+                //highlight-end //%mapToFantomas%END%
                 | _ ->
                     Path.Cache.retrievePath value
                     |> function
@@ -304,6 +306,7 @@ module Type =
                 FantomasFactory.mapToFantomas ``type``
             | Collection ``type`` -> FantomasFactory.mapToFantomas ``type`` |> FantomasFactory.makeCollection
             | Array ``type`` -> FantomasFactory.mapToFantomas ``type`` |> FantomasFactory.makeCollection
+            //%TouchBarItemsMap%START%
             | OneOf [ Prelude.Type.StructureRef "TouchBarButton"
                       Prelude.Type.StructureRef "TouchBarColorPicker"
                       Prelude.Type.StructureRef "TouchBarGroup"
@@ -332,6 +335,7 @@ module Type =
                     [ yield Prelude.Type.StructureRef Spec.touchBarItemsName
                       yield! types |> List.skip 9 ]
                 |> FantomasFactory.mapToFantomas
+            //%TouchBarItemsMap%END%
             | OneOf types -> FantomasFactory.makeUnion types
             | Constant literalType ->
                 // TODO - where this is encountered, we actually have

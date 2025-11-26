@@ -162,7 +162,7 @@ module Spec =
                     makeTextNode ">]",
                     Range.Zero
                 )
-
+    //%TouchBarItemsImpl%START%
     let touchBarItemsDef =
         let touchBarItems =
             [ "Button"
@@ -221,3 +221,4 @@ module Spec =
             Range.Zero
         )
         |> TypeDefn.Union
+//%TouchBarItemsImpl%END%

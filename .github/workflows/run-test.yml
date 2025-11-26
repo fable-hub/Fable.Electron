@@ -1,0 +1,45 @@
+﻿name: Test Packages
+# This will run tests only for branches which are making a pull request to main and develop.
+# Ensure any workflow in FAKE runs `post` cleans AFTER the test has run.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - develop
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_VERSION: 9.0.301
+  NODE_VERSION: 24.x
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        
+      - name: Install Chromium
+        uses: nanasess/setup-chromedriver@v2
+        
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ./tests/Fable.Electron.Remoting.Tests/package-lock.json
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        
+      - name: Run FAKE CI
+        run: dotnet run -- test
