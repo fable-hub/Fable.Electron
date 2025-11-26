@@ -493,7 +493,10 @@ It is recommended to merge to `develop` for major electron versions first.
         Trace.log "[ACTION] Pushing to nuget"
 //%gitnet5%END%
 
-Target.create Ops.activateGitnet <| fun _ -> Target.activateFinal Ops.gitnet
+Target.create Ops.activateGitnet <| fun _ ->
+    Target.runSimple Ops.loadCache []
+    |> ignore
+    Target.activateFinal Ops.gitnet
 
 open Fake.Core.TargetOperators
 // ==========================================================
@@ -577,8 +580,7 @@ let main argsv =
               ==> Ops.postTest
               ==> Ops.postDownload
               ?==> [
-                  Ops.loadCache
-                  ==> Ops.gitnet
+                  Ops.gitnet
                   Ops.cron
               ]
               ==> Ops.cron ]
