@@ -3,6 +3,7 @@
 open System.Collections.Generic
 open System.IO
 open System.Xml.Linq
+open Partas.Tools.SepochSemver
 open Workers
 open System.Text.Json
 open EasyBuild.Tools
@@ -24,21 +25,7 @@ open Partas.GitNet.BuildHelpers
 open GitNet
 
 initializeContext ()
-//%StatusModule%START%
-module Status =
-    //highlight-next-line
-    let mutable private _cache = None
-    let setCache (releaseInfo: ReleaseInfo) = _cache <- Some releaseInfo
-    let hasCache () = _cache.IsSome
-    let tryGetCache () = _cache
-    let getCache = tryGetCache >> Option.get
-    //highlight-next-line
-    let mutable private _release = None
-    let setRelease (release: ReleaseInfo) = _release <- Some release
-    let hasRelease () = _release.IsSome
-    let tryGetRelease () = _release
-    let getRelease = tryGetRelease >> Option.get
-    let getSemver = getRelease >> _.tagName.TrimStart('v') >> SemVer.parse //%StatusModule%END%
+
 
 // Laundry
 Target.create Ops.clean (ignore >> Laundry.clean)
@@ -84,7 +71,59 @@ Target.create Ops.downloadInput
     getUserInput () |> run
 
 Target.create Ops.downloadLatest
-<| fun _ ->
+<| function
+| _ when Args.downloadMinorOnly || Args.downloadPatchOnly ->
+    Target.runSimple Ops.loadCache []
+    |> ignore
+    let currentElectronVersion =
+        let tagName = Status.getCache().tagName.TrimStart('v')
+        tagName
+        |> tryParseSepochSemver
+        |> Option.map _.SemVer
+        |> function
+            | Some ver -> ver
+            | None ->
+                failwith $"The `--only-minor` and `--only-patch` flags require the cache \
+                            to have a compatible semver. Found {tagName} instead."
+    let parseTagName =
+        _.tagName.TrimStart('v')
+        >> tryParseSepochSemver
+        >> Option.map _.SemVer
+    Electron.getReleases()
+    |> List.filter (_.isPrerelease >> not)
+    |> List.filter (parseTagName >> function
+        | Some value when Args.downloadMinorOnly && Args.downloadPatchOnly ->
+            currentElectronVersion.Major = value.Major
+            && (
+                currentElectronVersion.Minor < value.Minor
+                || (
+                    currentElectronVersion.Minor = value.Minor
+                    && currentElectronVersion.Patch < value.Patch
+                )
+            )
+        | Some value when Args.downloadMinorOnly ->
+            currentElectronVersion.Major = value.Major
+            && currentElectronVersion.Minor < value.Minor
+        | Some value when Args.downloadPatchOnly ->
+            currentElectronVersion.Major = value.Major
+            && currentElectronVersion.Minor = value.Minor
+            && currentElectronVersion.Patch < value.Patch
+        | _ -> false
+        )
+    |> function
+        | [] ->
+            Electron.tryGetReleaseFromString (Status.getCache().tagName)
+        | releases ->
+            releases
+            |> List.maxBy _.createdAt
+            |> _.tagName
+            |> Electron.tryGetReleaseFromString
+    |> function
+        | Some release ->
+            Status.setRelease release
+            Electron.downloadRelease release
+        | None -> failwith "Was not able to identify the latest release using the 'gh' cli."
+| _ ->
     Electron.tryGetRelease _.isLatest
     |> function
         | Some release ->
@@ -118,7 +157,8 @@ Target.create Ops.postTest (ignore >> Laundry.fableClean)
 Target.create Ops.restore (ignore >> Laundry.restoreTools)
 Target.create Ops.format (ignore >> Laundry.format)
 
-// sign post
+// This target doesn't necessarily need to run anything itself. It acts to a sign post
+// to target with a specific dependency list
 Target.create Ops.cron ignore
 
 Target.create Ops.loadCache
@@ -136,138 +176,53 @@ Target.create Ops.gitnet
         match para.Context.FinalTarget with
         | Ops.gitnet -> Target.deactivateFinal Ops.gitnet
         | _ -> ()
-    let projects = runtime.CrackRepo
-
-    let getProjectOrFail leaf =
-        try
-            Seq.find _.ProjectFileName.EndsWith(leaf + ".fsproj") projects
-        with e ->
-            Trace.traceError $"A required project was not found. Could not find a project file ending with '{leaf}'"
-            raise e
-
+    let projects, electronDeltaInfo = Versions.ElectronDelta.CreateFromContext()
     let project =
-        {| electron = getProjectOrFail "Electron"
-           forge = getProjectOrFail "Forge"
-           remoting = getProjectOrFail "Remoting" |} //%gitnet1%END% //%gitnet2%START%
-    // ========== Current version/status
-    let currentElectronVersion =
-        let mutable maybeVersion: string option = None
-
-        project.electron
-        //highlight-next-line
-        |> CrackedProject.withFsProj (
-            CrackedProject.Document.withProperty
-                "ElectronVersion"
-                (_.Value
-                 >> Option.ofObj
-                 >> function
-                     | Some value -> maybeVersion <- Some value
-                     | None -> ())
-            >> Error
-        )
-        |> fun _ -> maybeVersion |> Option.bind tryParseSepochSemver |> Option.map _.SemVer
-        |> Option.orElseWith (fun () ->
-            Status.tryGetCache ()
-            |> Option.bind (_.tagName.TrimStart('v') >> tryParseSepochSemver >> Option.map _.SemVer))
-        |> Option.defaultValue (Semver.SemVersion(0, 1, 0))
-
-    let downloadedVersion =
-        Status.tryGetRelease ()
-        |> Option.bind (_.tagName.TrimStart('v') >> tryParseSepochSemver)
-        |> Option.map _.SemVer
-        //highlight-next-line
-        |> Option.get
-
-    let currentPackageVersion =
-        //highlight-next-line
-        getInitVersionElectron
-        |> ValueOption.bind (function
-            | GitNetTag.SepochTag(sepochSemver = { SemVer = semver })
-            | GitNetTag.SemVerTag(semver = semver) -> ValueSome semver
-            | _ -> ValueNone)
-        |> ValueOption.defaultValue (Semver.SemVersion(0, 1, 0)) //%gitnet2%END%
-    //%gitnet3%START%
-    // ============ Deltas
-    let deltaVersion =
-        {| major = int (downloadedVersion.Major - currentElectronVersion.Major)
-           minor = int (downloadedVersion.Minor - currentElectronVersion.Minor)
-           patch = int (downloadedVersion.Patch - currentElectronVersion.Patch) |}
-
-    let isMajorChange = deltaVersion.major > 0
-    let isMinorChange = deltaVersion.minor > 0 || isMajorChange
-    let isPatchChange = deltaVersion.patch > 0 || isMajorChange
-    let isElectronVersionDifferent = isMajorChange || isMinorChange || isPatchChange
-    //highlight-next-line
-    let isLocalBindingDirty = Electron.isDirty ()
-
-    let cachedVersion =
-        Status.tryGetCache ()
-        |> Option.bind (_.tagName.TrimStart('v') >> tryParseSepochSemver >> Option.map _.SemVer)
-        |> Option.defaultValue (Semver.SemVersion(0, 1, 0))
-
-    let isProbablyPulled =
-        isMajorChange && (currentElectronVersion.ComparePrecedenceTo cachedVersion < 0)
-    //%gitnet3%END% //%gitnet4%START%
-    // ============= Next
-    let electronScope = "Electron"
-
-    let makeElectronSepochSemver =
-        fun semver ->
-            { SemVer = semver
-              Sepoch = Sepoch.Scope electronScope }
-
-    let nextVersion =
-        match isElectronVersionDifferent, isLocalBindingDirty, isMajorChange || isMinorChange with
-        | false, false, _ -> currentPackageVersion |> makeElectronSepochSemver
-        | true, _, false
-        | false, true, _ -> currentPackageVersion |> makeElectronSepochSemver |> SepochSemver.bumpPatch
-        | true, _, _ -> downloadedVersion |> makeElectronSepochSemver
-
-    let electronPackageUpdated = isElectronVersionDifferent || isLocalBindingDirty
+        {| electron = Project.Cracked.getProjectOrFail "Electron" projects
+           forge = Project.Cracked.getProjectOrFail "Forge" projects
+           remoting = Project.Cracked.getProjectOrFail "Remoting" projects |} //%gitnet1%END% //%gitnet2%START%
 
     let anyPackageUpdated =
-        electronPackageUpdated || getInitBumpRemoting.IsSome || getInitBumpForge.IsSome
+        electronDeltaInfo.IsElectronBump || getInitBumpRemoting.IsSome || getInitBumpForge.IsSome
 
     let packageRequiresPull =
-        (isMajorChange && not isProbablyPulled) || para.Context.HasError
-    //%gitnet4%END%
+        (electronDeltaInfo.DeltaKind.IsMajor && not electronDeltaInfo.IsProbablyPulled)
+        || para.Context.HasError
     // ====== Debug msg
     printfn
         $"
 Summary of current status for GitNet:
 
-Electron Cached Version: {cachedVersion.ToString()}
+Electron Cached Version: {electronDeltaInfo.Versions.CachedElectron.ToString()}
     This is the electron release
     information that is stored in
     ci/cache.json
 
-Is Probably Pulled: {isProbablyPulled}
+Is Probably Pulled: {electronDeltaInfo.IsProbablyPulled}
     We can assume the repository
     is being merged from a pull when
     the electron cached version is higher
     than the project files electron version
 
-Current Electron Version: {currentElectronVersion.ToString()}
+Current Electron Version: {electronDeltaInfo.Versions.FableElectronElectron.ToString()}
     This is the project file electron version.
     This is not updated except when being merged to main.
 
-Current Package Version: {currentPackageVersion.ToString()}
+Current Package Version: {electronDeltaInfo.Versions.FableElectronPackage.ToString()}
     This is the package version for Fable.Electron
 
-Downloaded Version: {downloadedVersion.ToString()}
+Downloaded Version: {electronDeltaInfo.Versions.DownloadedElectron.ToString()}
     This is the version of Electron that was
     downloaded in this run.
 
 If the major is updated, then we will submit a pull:
-    Is Major Updated: {isMajorChange}
-    Is Minor Updated: {isMinorChange}
-    Is Patch Updated: {isPatchChange}
+    {electronDeltaInfo.DeltaKind}
 
-Next version: {nextVersion.ToString()}
+Next version: {electronDeltaInfo.NextElectronVersion.ToString()}
     This is the next calculated version
     of Fable.Electron
 
-Is Electron Package Updated: {electronPackageUpdated}
+Is Electron Package Updated: {electronDeltaInfo.IsElectronBump}
     Whether or not the Electron package
     is changed, regardless of whether the
     'electron' version has changed.
@@ -286,45 +241,37 @@ Package Requires Pull: {packageRequiresPull}
 "
     //%gitnet5%START%
     // ============= Action
-    match anyPackageUpdated, electronPackageUpdated, packageRequiresPull with
+    match anyPackageUpdated, electronDeltaInfo.DeltaKind, packageRequiresPull with
     | false, _, _ ->
         // nothing to do
         Trace.log "No changes during CI."
-    | true, false, true ->
+    | true, Versions.Equal, true ->
         // Electron package didnt update, but our other dependent packages failed
         // which means we will not push this update at all.
-        para.Context.ErrorTargets |> Trace.traceErrorfn "%A"
-    | _, true, requiresPull ->
+        failwith $"%A{para.Context.ErrorTargets}"
+    | _, (Versions.Major | Versions.Minor | Versions.Patch as deltaKind), requiresPull ->
         // The message for the commit should still abide by ConventionalCommits.
         let commitMessage =
-            [
-              // Major changes require ! to indicate breaking change
-              if isMajorChange then
-                  "feat!: Electron binding update to match " + Status.getRelease().tagName
-              // Minor change
-              elif isMinorChange then
-                  "feat: Electron binding update to match " + Status.getRelease().tagName
-              // Patch
-              else
-                  "fix: Electron binding update to match " + Status.getRelease().tagName
-              ""
-              "This commit is automatically generated by Build project."
-              ""
-              // Footer will allow us to filter these commits
-              "generated: true" ]
-            |> String.concat "\n"
-        // Electron package has changed. So we'll do a run through everything.
-        match requiresPull, Args.dryRun with
-        | true, false ->
-            // If requires a pull, then we'll do everything in a different branch
-            // If the pull already exists though then we'll stop
-            Git.Branches.getRemoteBranches Root.``.``
+            Versions.makeCommitMessage
+                ("Electron binding update to match " + Status.getRelease().tagName)
+                deltaKind
+        let runOrDryLog message (fn: Lazy<_>) =
+            if Args.dryRun
+            then fn.Value
+            else Trace.log $"[ACTION] "
+        let runOrDryLogItems messages (fn: Lazy<_>) =
+            if Args.dryRun
+            then fn.Value
+            else Trace.logItems "[ACTION] " messages
+        lazy
+            Branches.getRemoteBranches Root.``.``
             |> List.exists ((=) $"ci/electron/{Status.getRelease().tagName}")
             |> function
-                | true -> failwith "A pull already exists for this release."
+                | true when not Args.dryRun -> failwith "A pull already exists for this release."
                 | false -> Laundry.createBranch $"ci/electron/{Status.getRelease().tagName}"
-        | true, true -> Trace.log $"[ACTION] Create branch: ci/electron/{Status.getRelease().tagName}"
-        | _, false ->
+                | _ -> ()
+        |> runOrDryLog $"[ACTION] Create branch: ci/electron/{Status.getRelease().tagName}"
+        lazy (
             // If we don't have to make a pull, then we'll change the versions in the project files
             // Otherwise, this change should be delegated to when we actually merge.
             // Exception for this is the cache release info. We'll use that as our guide post
@@ -332,17 +279,18 @@ Package Requires Pull: {packageRequiresPull}
 
             // If the electron version is different, we also update the property in the project file
             // to match this.
-            if isElectronVersionDifferent then
+            if electronDeltaInfo.Versions.DownloadedElectron.Value
+               <> electronDeltaInfo.Versions.FableElectronElectron.Value then
                 project.electron
                 |> CrackedProject.withFsProj (
-                    CrackedProject.Document.withProperty "ElectronVersion" _.SetValue(downloadedVersion.ToString())
+                    CrackedProject.Document.withProperty "ElectronVersion" _.SetValue(electronDeltaInfo.Versions.DownloadedElectron.Value.ToString())
                     // Return Ok to overwrite the project file
                     // Return Error to prevent overwriting project file
                     >> ignore
                     >> Ok
                 )
                 |> ignore
-
+            let nextVersion = electronDeltaInfo.NextElectronVersion
             [ project.electron, nextVersion.SemVer
               match getInitBumpForge with
               | ValueSome { SemVer = version } -> project.forge, version
@@ -352,7 +300,6 @@ Package Requires Pull: {packageRequiresPull}
               | _ -> () ]
             |> List.iter (fun (proj, version) ->
                 let versionString = version.ToString()
-
                 proj
                 |> CrackedProject.withFsProj (
                     CrackedProject.Document.withPackageVersion _.SetValue(versionString)
@@ -361,26 +308,24 @@ Package Requires Pull: {packageRequiresPull}
                     >> Ok
                 )
                 |> ignore)
-        | _, true ->
-            Trace.logItems
-                "[ACTION]"
-                [ downloadedVersion.ToString() |> sprintf "Set Fable.Electron ElectronVersion: %s"
-                  nextVersion.SemVer.ToString() |> sprintf "Set Fable.Electron Version: %s"
+        )
+        |> runOrDryLogItems
+            [ electronDeltaInfo.Versions.DownloadedElectron.ToString() |> sprintf "Set Fable.Electron ElectronVersion: %s"
+              electronDeltaInfo.NextElectronVersion.SemVer.ToString() |> sprintf "Set Fable.Electron Version: %s"
 
-                  match getInitBumpForge with
-                  | ValueSome { SemVer = version } ->
-                      version.ToString() |> sprintf "Set Fable.Electron.Forge Version: %s"
-                  | _ -> ()
-                  match getInitBumpRemoting with
-                  | ValueSome { SemVer = version } ->
-                      version.ToString() |> sprintf "Set Fable.Electron.Remoting Version: %s"
-                  | _ -> () ]
+              match getInitBumpForge with
+              | ValueSome { SemVer = version } ->
+                  version.ToString() |> sprintf "Set Fable.Electron.Forge Version: %s"
+              | _ -> ()
+              match getInitBumpRemoting with
+              | ValueSome { SemVer = version } ->
+                  version.ToString() |> sprintf "Set Fable.Electron.Remoting Version: %s"
+              | _ -> () ]
 
         // Write the version/release info to the cache that this generation was based off
-        if not Args.dryRun then
+        lazy
             Status.getRelease () |> Electron.writeToCache
-        else
-            Trace.log $"[ACTION] Write to cache: {Status.getRelease ()}"
+        |> runOrDryLog $"Write to cache: {Status.getRelease ()}"
 
         [ project.electron; project.forge; project.remoting ] // We collect all the compiled files for each project, the project files
         |> List.collect (fun proj ->
@@ -402,20 +347,16 @@ Package Requires Pull: {packageRequiresPull}
         // Otherwise, we'll leave that for when the pull is merged.
         if not requiresPull then
             let tags =
-                [ nextVersion
+                [ electronDeltaInfo.NextElectronVersion
                   if getInitBumpForge.IsSome then
                       getInitBumpForge.Value
                   if getInitBumpRemoting.IsSome then
                       getInitBumpRemoting.Value ]
-
-            if Args.dryRun then
-                Trace.logItems "[ACTION]" (tags |> List.map (_.ToString() >> sprintf "Git Tag with: %s"))
-            else
+            lazy
                 runtime.CommitTags tags
+            |> runOrDryLogItems (tags |> List.map (_.ToString() >> sprintf "Git Tag with: %s"))
 
-        if Args.dryRun then
-            Trace.logItems "[ACTION]" [ "GENERATE RELEASE_NOTES"; "Stage release notes"; "Commit changes" ]
-        else
+        lazy
             // Once we have committed above, the markdown output will include the
             // tags/commits, and we can generate the release notes
             runtime.DryRun()
@@ -426,25 +367,23 @@ Package Requires Pull: {packageRequiresPull}
             |> runtime.WriteToOutputAndStage
 
             runtime.CommitChanges(appendCommit = false)
+        |> runOrDryLogItems [ "GENERATE RELEASE_NOTES"; "Stage release notes"; "Commit changes" ]
 
         if not requiresPull then
             // Before we do any pushing, we'll make sure the packages have no issues getting
             // pushed to nuget if we're not doing a pull
             Target.WithContext.run 1 (if Args.dryRun then Ops.pack else Ops.push) []
             |> Target.raiseIfError
-
-        if Args.dryRun then
-            Trace.log "[ACTION] Push to branch"
-        else
+        lazy
             // This will push to main or push to the created branch
             Laundry.pushCurrentBranch ()
-        // If we have to make a pull, we'll generate the pull using Octokit
+        |> runOrDryLog "Push to branch"
+        // If we have to make a pull, we'll generate the pull using GH CLI
         if requiresPull then
             let title =
                 if para.Context.HasError then "[GEN ERROR] For " else ""
                 + "Electron "
                 + Status.getRelease().tagName
-
             let body =
                 if para.Context.HasError then
                     let rec addDetails (errors: (exn * Target) list) : string list =
@@ -462,7 +401,6 @@ Package Requires Pull: {packageRequiresPull}
                               "</details>"
                               "" ]
                             @ addDetails rest
-
                     addDetails para.Context.ErrorTargets
                     |> String.concat "\n"
                     |> sprintf
@@ -482,17 +420,16 @@ This pull must be merged to `main` for publishing to occur.
 It is recommended to merge to `develop` for major electron versions first.
 """
 
-            if Args.dryRun then
-                Trace.log $"[ACTION] Send pull to devel:\n{title}\n\n{body}"
-            else // Pulls are made to Devel rather than Main
+            lazy // Pulls are made to Devel rather than Main
                 Laundry.sendPullForDevel title body
-    | true, false, false when not Args.dryRun ->
+            |> runOrDryLog "Send pull to devel:\n{title}\n\n{body}"
+    | true, Versions.Equal, false when not Args.dryRun ->
         // If electron package is the same, then we can just do a normal run
         // and let everything fall into place
         use runtime = createRuntime ()
         runtime.Run() |> ignore
         Target.WithContext.run 1 Ops.push [] |> Target.raiseIfError
-    | true, false, false ->
+    | true, Versions.Equal, false ->
         Trace.log $"[ACTION] Update Forge?: {getInitBumpForge}"
         Trace.log $"[ACTION] Update Remoting?: {getInitBumpRemoting}"
         Trace.log "[ACTION] Pushing to nuget"

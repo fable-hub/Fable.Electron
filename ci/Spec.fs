@@ -144,6 +144,10 @@ module Ops =
     //%ExampleArgsDef%START%
     module Args =
         [<Literal>]
+        let downloadMinorOnly = "--only-minor"
+        [<Literal>]
+        let downloadPatchOnly = "--only-minor"
+        [<Literal>]
         let help = "--help"
 
         [<Literal>]
@@ -239,6 +243,8 @@ type Args =
     static member debug = hasFlag Ops.Args.debug
     static member open' = hasFlag Ops.Args.open'
     static member watch = hasFlag Ops.Args.watch
+    static member downloadMinorOnly = hasFlag Ops.Args.downloadMinorOnly
+    static member downloadPatchOnly = hasFlag Ops.Args.downloadPatchOnly
 //%CliType%START%
 and Cli =
     static member spec =
@@ -248,10 +254,16 @@ Usage:
     Build.exe {Commands.generate} [options]
     Build.exe {Commands.generateApiDocs} [options]
     Build.exe {Commands.pack} [options]
-    Build.exe {Commands.cron} [options]
+    Build.exe {Commands.cron} [options] [crons]
     Build.exe {Commands.run} [run] [options]
     Build.exe {Commands.test} [test] [options]
     Build.exe {Commands.format} [options]
+
+Cron Options [crons]:
+    --only-minor            Only run a scheduled generation for minor releases of
+                            the current electron semver. (can use together with patch)
+    --only-patch            Only run a scheduled generation for patch releases of
+                            the current electron semver. (can use together with minor)
 
 Test Options [test]:
     --open                  Will run the test application and open the app instead of
