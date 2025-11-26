@@ -131,6 +131,10 @@ open Partas.Tools.SepochSemver
 //%gitnet1%START%
 Target.create Ops.gitnet
 <| fun para ->
+    if para.Context.IsRunningFinalTargets then
+        match para.Context.FinalTarget with
+        | Ops.gitnet -> Target.deactivateFinal Ops.gitnet
+        | _ -> ()
     let projects = runtime.CrackRepo
 
     let getProjectOrFail leaf =
