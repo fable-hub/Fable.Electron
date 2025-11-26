@@ -1,6 +1,7 @@
 ﻿name: Deploy Docusaurus Docs
 
 on:
+  workflow_call: 
   push:
     branches:
       - main

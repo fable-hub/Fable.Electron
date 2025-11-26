@@ -2,10 +2,8 @@
 # This will run tests only for branches which are making a pull request to main and develop.
 # Ensure any workflow in FAKE runs `post` cleans AFTER the test has run.
 on:
+  workflow_call: 
   workflow_dispatch:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main

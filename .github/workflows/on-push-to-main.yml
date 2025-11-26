@@ -1,9 +1,19 @@
-name: Binding Generator
+name: On Push to Main Branch (Except for CI)
 # Ensure any workflow in FAKE runs `post` cleans AFTER the test has run.
+# This workflow will run the tests, and package.
+# If a workflow does not change any of our .fs files, then we have no need to run
+# the whole suite, and we can just do docs et al.
 on:
   push:
     branches:
       - main
+    paths:
+      - '!ci/**.fs' # ignore the build system files as they have little-to-no relation
+      - '**.fs' # include everything else
+      - 'src/Fable.Electron/Fable.Electron.fsproj' # include proj files
+      - 'src/Fable.Electron.Forge/Fable.Electron.Forge.fsproj' # include proj files
+      - 'src/Fable.Electron.Remoting/Fable.Electron.Remoting.fsproj' # include proj files
+      - 'src/ElectronApi.Json.Parser/ElectronApi.Json.Parser.fsproj' # include proj files
   
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -24,7 +34,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  scheduled:
+  fake-ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
