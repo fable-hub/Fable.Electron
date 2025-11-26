@@ -576,7 +576,11 @@ let main argsv =
               ==> Ops.test
               ==> Ops.postTest
               ==> Ops.postDownload
-              ?==> [ Ops.gitnet; Ops.cron ]
+              ?==> [
+                  Ops.loadCache
+                  ==> Ops.gitnet
+                  Ops.cron
+              ]
               ==> Ops.cron ]
 
         run Ops.cron
