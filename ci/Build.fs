@@ -107,7 +107,7 @@ Target.create Ops.generate
 Target.create Ops.setupDocs <| fun _ -> Docs.setup Args.npmCi
 Target.create Ops.docs (ignore >> Docs.dev)
 Target.create Ops.build (fun _ -> Project.build Project.Targets.All)
-Target.create Ops.pack (fun _ -> Project.pack false Project.Targets.All)
+Target.create Ops.pack (fun _ -> Project.pack true Project.Targets.All)
 // Target.create Ops.push (ignore >> Project.push)
 Target.create Ops.push ignore
 Target.create Ops.generateApiDocs (ignore >> ApiDocs.validateDir >> ApiDocs.build)
@@ -551,8 +551,7 @@ let main argsv =
                  Ops.downloadLatest
                  Ops.generate
                  Ops.setupTest
-                 Ops.test ]
-          Ops.build ==> Ops.pack ==> Ops.push ]
+                 Ops.test ] ]
     //%TargetDeps%END%
     let run =
         if Args.debug then
@@ -575,7 +574,6 @@ let main argsv =
               ==> Ops.generate
               ==> Ops.activateGitnet
               ==> Ops.build
-              ==> Ops.pack
               ==> Ops.test
               ==> Ops.postTest
               ==> Ops.postDownload
@@ -583,7 +581,9 @@ let main argsv =
                   Ops.gitnet
                   Ops.cron
               ]
-              ==> Ops.cron ]
+              ==> Ops.cron
+              Ops.pack
+              ==> Ops.push ]
 
         run Ops.cron
     | Commands.pack -> run Ops.pack
