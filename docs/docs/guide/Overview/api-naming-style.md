@@ -1,6 +1,6 @@
 ﻿---
 sidebar_position: 2
-title: API Style
+title: Style Conventions
 ---
 # API Style
 

@@ -1,25 +1,14 @@
 ﻿---
-sidebar_position: 1
+sidebar_position: 0
 title: Introduction
 ---
 
 # Introduction
 
+![Flair](@site/static/img/flair-1.png)
+
 The `Fable.Electron` bindings are automatically generated from the same source
 material as the TypeScript type files, with some features for usage from F# and Fable.
-
-## Installation
-
-There are plans to modify the package generation to also include separate process
-specific packages.
-
-For the moment, you must install the `Fable.Electron` package and access the process
-specific APIs from their respective modules, and use the types from other modules
-when they are provided to you by your current process.
-
-```bash
-dotnet add package Fable.Electron
-```
 
 ## Fable.Electron.Remoting
 

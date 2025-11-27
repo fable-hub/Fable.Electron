@@ -48,6 +48,7 @@ module Npm =
     let install = setDir >> Npm.install
     /// Run the script 'start' for the npm package.json in the given dir
     let start = setDir >> Npm.run "start"
+    let watch = setDir >> Npm.run "watch"
     let test = setDir >> Npm.runTest "test"
 
 module ApiDocs =
@@ -233,6 +234,10 @@ module Electron =
             Npm.install testDir
 
     let test () = Npm.test testDir
+    
+    let openTest () = Npm.start testDir
+    
+    let watchTest () = Npm.watch testDir
 
     let isDirty () =
         Information.getCurrentSHA1 Root.``.``

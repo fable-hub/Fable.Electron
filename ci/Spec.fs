@@ -146,6 +146,9 @@ module Ops =
     
     [<Literal>]
     let downloadCache = "download-cache"
+    
+    [<Literal>]
+    let buildTool = "build-tool"
 module FlagArgs =
     module Common =
         [<Literal>]
@@ -218,6 +221,9 @@ module Commands =
 
     [<Literal>]
     let run = "run"
+    
+    [<Literal>]
+    let buildTool = "build-tool"
 
 
 [<Literal>]
@@ -267,6 +273,7 @@ Usage:
     Build.exe {Commands.run} [run] [options]
     Build.exe {Commands.test} [test] [options]
     Build.exe {Commands.format} [options]
+    Build.exe {Commands.buildTool}
 
 Cron Options [crons]:
     --only-minor            Only run a scheduled generation for minor releases of

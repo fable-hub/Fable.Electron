@@ -152,7 +152,10 @@ Target.create Ops.push (fun _ ->
     Target.deactivateFinal Ops.gitnet)
 Target.create Ops.generateApiDocs (ignore >> ApiDocs.validateDir >> ApiDocs.build)
 Target.create Ops.setupTest (fun _ -> Electron.installTests Args.npmCi)
-Target.create Ops.test (ignore >> Electron.test)
+Target.create Ops.test <| function
+    | _ when Args.watch -> Electron.watchTest ()
+    | _ when Args.open' -> Electron.openTest ()
+    | _ -> Electron.test ()
 Target.create Ops.postTest (ignore >> Laundry.fableClean)
 Target.create Ops.restore (ignore >> Laundry.restoreTools)
 Target.create Ops.format (ignore >> Laundry.format)
@@ -443,12 +446,31 @@ Target.create Ops.activateGitnet <| fun _ ->
 Target.create Ops.downloadCache <| fun _ ->
     Status.getCache()
     |> Electron.downloadRelease
+    
+Target.create Ops.buildTool <| fun _ ->
+    Project.pack true (Project.Targets.One Projects.Build)
+    Trace.trace "Build.fsproj has been packed into a tool that can be used locally."
+    Trace.traceImportant """
+Tool 'fable-electron' created in '/bin'.
+
+With DotNet 10.0.100+ use `dnx build --source ./bin` to initialise.
+Afterwards, you can run the build cli using `dnx build`.
+
+Otherwise, you can locally install the tool using `dotnet tool install --source ./bin build`,
+You can then run the tool using `dotnet fable-electron`.
+# WARNING - do not commit/push your version of the dotnet-tools.json if you take this approach.
+"""
 
 open Fake.Core.TargetOperators
 // ==========================================================
 // CI entry point
 [<EntryPoint>]
 let main argsv =
+    let printHelp () =
+        printfn $"%s{Cli.spec}"
+    if argsv |> Array.isEmpty
+    then printHelp (); 0
+    else
     argsv |> Args.setArgs
     //%TargetDeps%START%
     // ==========================================================
@@ -510,6 +532,7 @@ let main argsv =
 
     match argsv[0] with
     | _ when Args.help -> printfn $"%s{Cli.spec}"
+    | Commands.buildTool -> run Ops.buildTool
     | Commands.generateApiDocs -> run Ops.generateApiDocs
     | Commands.docs -> run Ops.docs
     | Commands.generate -> run Ops.generate

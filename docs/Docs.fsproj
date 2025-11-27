@@ -8,9 +8,12 @@
 
     <ItemGroup>
       <Content Include="docs\guide\intro.md" />
-      <Content Include="docs\guide\api-naming-style.md" />
-      <Content Include="docs\guide\features.mdx" />
-      <Content Include="docs\guide\electron-docs.md" />
+      <Folder Include="docs\guide\Features\" />
+      <Content Include="docs\guide\Overview\api-naming-style.md" />
+      <Content Include="docs\guide\Overview\features.mdx" />
+      <Content Include="docs\guide\Overview\electron-docs.md" />
+      <Content Include="docs\guide\Overview\installation.md" />
+      <Content Include="docs\guide\Overview\_category_.yml" />
       <Content Include="docs\guide\Inter-Process Communication\intro.md" />
       <Content Include="docs\guide\Inter-Process Communication\two-way-ipc.mdx" />
       <Content Include="docs\guide\Inter-Process Communication\one-way-ipc.mdx" />
@@ -63,6 +66,11 @@
       <Content Include="static\img\remoting_name_map.png" />
       <Content Include="static\img\social.png" />
       <Content Include="static\img\flair-1.png" />
+      <Content Include="static\img\electron_os_win.png" />
+      <Content Include="static\img\electron_os_win.svg" />
+      <Content Include="static\img\fable-electron-install.png" />
+      <Content Include="static\img\fable_remoting.png" />
+      <Content Include="static\img\generated.png" />
       <Content Include="static\.nojekyll" />
       <Content Include="README.md" />
       <Content Include="sidebars.js" />
