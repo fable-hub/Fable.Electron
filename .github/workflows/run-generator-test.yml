@@ -1,8 +1,5 @@
-name: On Push to Main Branch (Except for CI)
-# Ensure any workflow in FAKE runs `post` cleans AFTER the test has run.
-# This workflow will run the tests, and package.
-# If a workflow does not change any of our .fs files, then we have no need to run
-# the whole suite, and we can just do docs et al.
+name: Generator Change Tests
+# Runs the generator tests if we have made modifications to it in a pull request.
 on:
   pull_request:
     branches:
