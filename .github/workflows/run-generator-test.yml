@@ -8,7 +8,7 @@ on:
     paths:
       - '!**.fs'
       - 'src/ElectronApi.Json.Parser/**.fs'
-      - 'src/ElectronApi.Json.Parser/ElectronApi.Jsono.Parser.fsproj'
+      - 'src/ElectronApi.Json.Parser/ElectronApi.Json.Parser.fsproj'
   
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
