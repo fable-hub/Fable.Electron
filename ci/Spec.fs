@@ -39,6 +39,8 @@ module Projects =
 
     let Test =
         Folders.Tests.``Fable.Electron.Remoting.Tests``.``Fable.Electron.Remoting.Tests.fsproj``
+    let BuildTest =
+        Folders.Tests.``Build.Tests``.``Build.Tests.fsproj``
 
     let Docs = Root.docs.``Docs.fsproj``
 
@@ -141,12 +143,33 @@ module Ops =
 
     [<Literal>]
     let gitnet = "gitnet"
-    //%ExampleArgsDef%START%
-    module Args =
+module FlagArgs =
+    module Common =
+        [<Literal>]
+        let release = "--release"
+        
+        [<Literal>]
+        let nugetApi = "--nuget-key"
+
+        [<Literal>]
+        let ghKey = "--gh-key"
+        
+    module Run =
+        [<Literal>]
+        let target = "--target"
+module Flags =
+    module Cron =
         [<Literal>]
         let downloadMinorOnly = "--only-minor"
         [<Literal>]
         let downloadPatchOnly = "--only-minor"
+    module Test =
+        [<Literal>]
+        let open' = "--open"
+
+        [<Literal>]
+        let watch = "--watch"
+    module Common =
         [<Literal>]
         let help = "--help"
 
@@ -160,28 +183,10 @@ module Ops =
         let dry = "--dry-run" //%ExampleArgsDef%END%
 
         [<Literal>]
-        let release = "--release"
-
-        [<Literal>]
         let npmCi = "--npm-ci"
 
         [<Literal>]
         let skipTest = "--skip-test"
-
-        [<Literal>]
-        let nugetApi = "--nuget-key"
-
-        [<Literal>]
-        let ghKey = "--gh-key"
-
-        [<Literal>]
-        let target = "--target"
-
-        [<Literal>]
-        let open' = "--open"
-
-        [<Literal>]
-        let watch = "--watch"
 
         [<Literal>]
         let debug = "--debug" //%ExampleCommandsDef%START%
@@ -229,27 +234,28 @@ type Args =
 
     static member setArgs argsv =
         args <- (Cli.parser: Docopt).Parse(argsv) |> Some
-
-    static member detailed = hasFlag Ops.Args.detailed
-    static member quick = hasFlag Ops.Args.quick
-    static member dryRun = hasFlag Ops.Args.dry //%ArgsType%END%
-    static member help = hasFlag Ops.Args.help
-    static member release = getFlag Ops.Args.release
-    static member npmCi = hasFlag Ops.Args.npmCi
-    static member skipTest = hasFlag Ops.Args.skipTest
-    static member apiKey = getFlag Ops.Args.nugetApi
-    static member target = getFlag Ops.Args.target
-    static member gitClientToken = getFlag Ops.Args.ghKey
-    static member debug = hasFlag Ops.Args.debug
-    static member open' = hasFlag Ops.Args.open'
-    static member watch = hasFlag Ops.Args.watch
-    static member downloadMinorOnly = hasFlag Ops.Args.downloadMinorOnly
-    static member downloadPatchOnly = hasFlag Ops.Args.downloadPatchOnly
+    static member detailed = hasFlag Flags.Common.detailed
+    static member quick = hasFlag Flags.Common.quick
+    static member dryRun = hasFlag Flags.Common.dry //%ArgsType%END%
+    static member help = hasFlag Flags.Common.help
+    static member release = getFlag FlagArgs.Common.release
+    static member npmCi = hasFlag Flags.Common.npmCi
+    static member skipTest = hasFlag Flags.Common.skipTest
+    static member apiKey = getFlag FlagArgs.Common.nugetApi
+    static member target = getFlag FlagArgs.Run.target
+    static member gitClientToken = getFlag FlagArgs.Common.ghKey
+    static member debug = hasFlag Flags.Common.debug
+    static member open' = hasFlag Flags.Test.open'
+    static member watch = hasFlag Flags.Test.watch
+    static member downloadMinorOnly = hasFlag Flags.Cron.downloadMinorOnly
+    static member downloadPatchOnly = hasFlag Flags.Cron.downloadPatchOnly
+    
 //%CliType%START%
 and Cli =
     static member spec =
         $"""
 Usage:
+    Build.exe [options]
     Build.exe {Commands.docs} [options]
     Build.exe {Commands.generate} [options]
     Build.exe {Commands.generateApiDocs} [options]

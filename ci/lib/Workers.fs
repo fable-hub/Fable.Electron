@@ -423,13 +423,7 @@ module Versions =
                 Status.tryGetRelease ()
                 |> Option.bind (_.tagName.TrimStart('v') >> tryParseSepochSemver)
                 |> Option.map _.SemVer
-            let electronPackageVersion =
-                getInitVersionElectron
-                |> ValueOption.bind(function
-                    | GitNetTag.SepochTag(sepochSemver = { SemVer = semver })
-                    | GitNetTag.SemVerTag(semver = semver) -> ValueSome semver
-                    | _ -> ValueNone)
-                |> ValueOption.toOption
+            let electronPackageVersion = getInitVersionElectron
             let cachedElectronVersion =
                 Status.tryGetCache()
                 |> Option.bind (
@@ -450,7 +444,7 @@ module Versions =
                 this.Versions.CachedElectron
                 |> ValueOption.defaultValue(Semver.SemVersion(0,1,0))
             let currentVersionLessThanCached =
-                this.Versions.FableElectronPackage
+                this.Versions.FableElectronElectron
                 |> ValueOption.defaultValue (Semver.SemVersion(0,1,0))
                 |> _.ComparePrecedenceTo(cachedVersion)
                 |> (>) 0
@@ -462,14 +456,14 @@ module Versions =
                   Sepoch = Sepoch.Scope "Electron" }
                 
             match this, this.DeltaKind with
+            | _, (Major | Minor) ->
+                this.Versions.DownloadedElectron
+                |> makeSepochSemver
             | _, Patch
             | { Dirty = true }, _ ->
                 this.Versions.FableElectronPackage
                 |> makeSepochSemver
                 |> SepochSemver.bumpPatch
-            | _, (Major | Minor) ->
-                this.Versions.DownloadedElectron
-                |> makeSepochSemver
             | _ ->
                 this.Versions.FableElectronPackage
                 |> makeSepochSemver

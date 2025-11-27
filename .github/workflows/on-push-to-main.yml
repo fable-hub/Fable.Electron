@@ -8,12 +8,13 @@ on:
     branches:
       - main
     paths:
-      - '!ci/**.fs' # ignore the build system files as they have little-to-no relation
       - '**.fs' # include everything else
       - 'src/Fable.Electron/Fable.Electron.fsproj' # include proj files
       - 'src/Fable.Electron.Forge/Fable.Electron.Forge.fsproj' # include proj files
       - 'src/Fable.Electron.Remoting/Fable.Electron.Remoting.fsproj' # include proj files
       - 'src/ElectronApi.Json.Parser/ElectronApi.Json.Parser.fsproj' # include proj files
+      - '!ci/**.fs' # ignore the build system files as they have little-to-no relation
+      - '!tests/Build.Tests/**.fs' # ignore the build system tests for the same reason
   
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
