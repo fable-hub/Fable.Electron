@@ -7,10 +7,15 @@ on:
     branches:
       - main
       - develop
+    paths:
+      - 'Build.fsproj' # include the proj file
+      - 'ci/**.fs' # include the build system files 
+      - 'tests/Build.Tests/**.fs' # Include the build system tests
+      - 'tests/Build.Tests/Build.Tests.fsproj' # Include the build system proj file
   pull_request:
-      branches:
-        - main
-        - develop
+    branches:
+      - main
+      - develop
     paths:
       - 'Build.fsproj' # include the proj file
       - 'ci/**.fs' # include the build system files 
