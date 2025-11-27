@@ -143,6 +143,9 @@ module Ops =
 
     [<Literal>]
     let gitnet = "gitnet"
+    
+    [<Literal>]
+    let downloadCache = "download-cache"
 module FlagArgs =
     module Common =
         [<Literal>]

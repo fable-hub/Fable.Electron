@@ -5072,7 +5072,9 @@ module Types =
         /// <param name="opacity">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Set the initial opacity
         /// of the window, between 0.0 (fully transparent) and 1.0 (fully opaque). This is only implemented on Windows and macOS.</param>
         /// <param name="darkTheme">Forces using dark theme for the window, only works on some GTK+3 desktop environments. Default is <c>false</c>.</param>
-        /// <param name="transparent">Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless.</param>
+        /// <param name="transparent">Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless. When you
+        /// add a <c>View</c> to a <c>BaseWindow</c>, you'll need to call <c>view.setBackgroundColor</c> with a transparent background color on that view to
+        /// make its background transparent as well.</param>
         /// <param name="type">The type of window, default is normal window. See more about this below.</param>
         /// <param name="visualEffectState">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Specify how the material
         /// appearance should reflect window activity state on macOS. Must be used with the <c>vibrancy</c> property. Possible values are:</param>
@@ -5510,7 +5512,9 @@ module Types =
         member val darkTheme: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless.
+        /// Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless. When you add
+        /// a <c>View</c> to a <c>BaseWindow</c>, you'll need to call <c>view.setBackgroundColor</c> with a transparent background color on that view to make
+        /// its background transparent as well.
         /// </summary>
         [<Erase>]
         member val transparent: bool = Unchecked.defaultof<_> with get, set
@@ -5721,7 +5725,9 @@ module Types =
         /// <param name="opacity">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Set the initial opacity
         /// of the window, between 0.0 (fully transparent) and 1.0 (fully opaque). This is only implemented on Windows and macOS.</param>
         /// <param name="darkTheme">Forces using dark theme for the window, only works on some GTK+3 desktop environments. Default is <c>false</c>.</param>
-        /// <param name="transparent">Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless.</param>
+        /// <param name="transparent">Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless. When you
+        /// add a <c>View</c> to a <c>BaseWindow</c>, you'll need to call <c>view.setBackgroundColor</c> with a transparent background color on that view to
+        /// make its background transparent as well.</param>
         /// <param name="type">The type of window, default is normal window. See more about this below.</param>
         /// <param name="visualEffectState">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Specify how the material
         /// appearance should reflect window activity state on macOS. Must be used with the <c>vibrancy</c> property. Possible values are:</param>
@@ -6143,7 +6149,9 @@ module Types =
         member val darkTheme: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless.
+        /// Makes the window transparent. Default is <c>false</c>. On Windows, does not work unless the window is frameless. When you add
+        /// a <c>View</c> to a <c>BaseWindow</c>, you'll need to call <c>view.setBackgroundColor</c> with a transparent background color on that view to make
+        /// its background transparent as well.
         /// </summary>
         [<Erase>]
         member val transparent: bool = Unchecked.defaultof<_> with get, set
@@ -30271,9 +30279,10 @@ module Main =
 
         /// <summary>
         /// the promise will resolve when the page has finished loading (see <c>did-finish-load</c>), and rejects if the page fails to load
-        /// (see <c>did-fail-load</c>). A noop rejection handler is already attached, which avoids unhandled rejection errors.<br/><br/>Loads the <c>url</c> in the window. The
-        /// <c>url</c> must contain the protocol prefix, e.g. the <c>http://</c> or <c>file://</c>. If the load should bypass http cache then use
-        /// the <c>pragma</c> header to achieve it.
+        /// (see <c>did-fail-load</c>). A noop rejection handler is already attached, which avoids unhandled rejection errors. If the existing page has a
+        /// beforeUnload handler, <c>did-fail-load</c> will be called unless <c>will-prevent-unload</c> is handled.<br/><br/>Loads the <c>url</c> in the window. The <c>url</c> must contain the
+        /// protocol prefix, e.g. the <c>http://</c> or <c>file://</c>. If the load should bypass http cache then use the <c>pragma</c> header to
+        /// achieve it.
         /// </summary>
         /// <param name="url"></param>
         /// <param name="httpReferrer">An HTTP Referrer url.</param>
@@ -43140,9 +43149,11 @@ module Main =
 
         /// <summary>
         /// the promise will resolve when the page has finished loading (see <c>did-finish-load</c>), and rejects if the page fails to load
-        /// (see <c>did-fail-load</c>).<br/><br/>Same as <c>webContents.loadURL(url[, options])</c>.<br/><br/>The <c>url</c> can be a remote address (e.g. <c>http://</c>) or a path to a local HTML
-        /// file using the <c>file://</c> protocol.<br/><br/>To ensure that file URLs are properly formatted, it is recommended to use Node's <c>url.format</c> method:<br/><br/>You
-        /// can load a URL using a <c>POST</c> request with URL-encoded data by doing the following:
+        /// (see <c>did-fail-load</c>). A noop rejection handler is already attached, which avoids unhandled rejection errors. If the existing page has a
+        /// beforeUnload handler, <c>did-fail-load</c> will be called unless <c>will-prevent-unload</c> is handled.<br/><br/>Same as <c>webContents.loadURL(url[, options])</c>.<br/><br/>The <c>url</c> can be a remote address (e.g.
+        /// <c>http://</c>) or a path to a local HTML file using the <c>file://</c> protocol.<br/><br/>To ensure that file URLs are properly formatted,
+        /// it is recommended to use Node's <c>url.format</c> method:<br/><br/>You can load a URL using a <c>POST</c> request with URL-encoded data by
+        /// doing the following:
         /// </summary>
         /// <param name="url"></param>
         /// <param name="httpReferrer">An HTTP Referrer URL.</param>

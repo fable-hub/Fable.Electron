@@ -440,6 +440,10 @@ Target.create Ops.activateGitnet <| fun _ ->
     |> ignore
     Target.activateFinal Ops.gitnet
 
+Target.create Ops.downloadCache <| fun _ ->
+    Status.getCache()
+    |> Electron.downloadRelease
+
 open Fake.Core.TargetOperators
 // ==========================================================
 // CI entry point
@@ -486,6 +490,9 @@ let main argsv =
           // On the other hand, generate has plenty of soft dependencies itself
           Ops.generate <==? [ Ops.downloadApi; Ops.downloadInput; Ops.downloadLatest ]
           Ops.setupDocs =?> (Ops.docs, not Args.quick)
+          
+          Ops.loadCache
+          ==> Ops.downloadCache
 
           Ops.postDownload
           <==? [ Ops.downloadApi
