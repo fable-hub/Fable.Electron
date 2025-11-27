@@ -53,6 +53,5 @@ jobs:
         run: dotnet tool restore
         
       - name: Run tests
+        working-directory: ./tests/Build.Tests
         run: dotnet run -- --summary --colours 256 --no-spinner
-        with:
-          working-directory: ./tests/Build.Tests
