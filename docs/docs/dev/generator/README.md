@@ -1,16 +1,20 @@
-﻿---
-title: Source Generation
----
+﻿# ElectronApi.Json.Parser
 
-# Source Generation
+## General Structure
 
 ```mermaid
 flowchart 
     subgraph Parser
+      ApiDecoder.fs
     end
     subgraph Common
+        Types.fs
     end
     subgraph spec ["Spec & Utilities"]
+        direction TB
+        Spec.fs
+        Utils.fs
+        Fantomas.Utils.fs
     end
     subgraph source ["F# Mapping & Generation"]
       Prelude.fs
@@ -22,33 +26,40 @@ flowchart
     SourceMapper.fs --> Generator.fs
     spec --> source
     Common --> source
+    Common --> Fantomas.Utils.fs
     style source fill:#a5c0d4,stroke:#7bb8e7
+    style Parser fill:#a5c0d4,stroke:#7bb8e7
 ```
 
-## Prelude
+## Consideration for Future Direction
 
-The source generation process begins with preliminary remapping of the parsed
-API into types that are more 'F#/Fable'-centric in `Prelude`.
+A non-exhaustive list of considerations of future direction for generation,
+remoting, and/or bindings in general.
 
-As this is done, we cache information for types that are going to be generated
-later such as delegates, string enums, and event interfaces.
-
-## Processing
-
-Following the prelude, we define the mapping of our internal types to `Fantomas`,
-and condensation of information into unified records such as `GeneratorContainer`
-with which we can provide a single compilation method that acts across their
-unified API, generating attributes/docs easier.
-
-## Generation
-
-The generation step then provides the bindings and helpers to actioning the
-process from start to end; while also retrieving cached types/values and
-adding them to the generated source.
-
-### `GeneratorGrouper`
-
-The `GeneratorGrouper` type signifies a F# `module` as opposed to the conceptual
-module of electron is reflected more accurately by an F# `type` (class).
-
-These are used to group children types and finalized into `Fantomas` en masse.
+```mermaid
+flowchart
+    subgraph Generator
+        logging:["Log to file exceptions utilised and lifted/inlined types"]
+        emitConstants:["Emit constants for tagged union objects"]
+        refactor:["Replace/Improve PathKey to be more type protected"]
+        detangle:["Detangle/Improve Generation/SourceMapping logic"]
+        node:["Determine safety of inheriting Node API from Fable.Node"]
+        events:["Determine whether to hide `once` and `off` overloads"]
+        typeHandling:["Implementations for type conversion of potential future types like Pick, Omit etc"]
+    end
+    subgraph Bindings
+        wdio:["Provide more comprehensive WDIO bindings for testing"]
+        mocha:["Provide better abstraction over mocha architecture that is WDIO compatible"]
+    end
+    subgraph Tests
+        frameworks:["React & SolidJS test suites"]
+        integration:["Integration with dotnet test APIs so can be run from IDE"]
+    end
+    subgraph Templates
+        forge:["Provide starter template that mimics electron-forge (with maintainers)"]
+        testTemplate:["Test template setup"]
+    end
+    subgraph Docs
+        api:["Generate API for bindings using fsdocs and add to current docs or serve in different repo"]
+    end
+```

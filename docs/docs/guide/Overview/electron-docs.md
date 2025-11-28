@@ -1,15 +1,12 @@
 ﻿---
-title: Electron Docs
+title: Source Documentation
 ---
 
 # Electron Documentation
 
 The API is generated from the source with the full documentation included from
-electron.
+electron, allowing you to view it in your editor or IDE.
 
-However, if you want to further explore the more comprehensive documentation,
-you can [visit the Electron Documentation and API to learn more.](https://www.electronjs.org/docs/latest/api/app)
+![IDE screenshot of method with docs](@site/static/img/source-doc.png)
 
----
-
-More information is provided regarding development and contribution to the project.
+You can also [visit the Electron Documentation and API to learn more.](https://www.electronjs.org/docs/latest/api/app)
