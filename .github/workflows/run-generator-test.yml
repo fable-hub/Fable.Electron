@@ -1,0 +1,60 @@
+name: Generator Change Tests
+# Runs the generator tests if we have made modifications to it in a pull request.
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - '!**.fs'
+      - 'src/ElectronApi.Json.Parser/**.fs'
+      - 'src/ElectronApi.Json.Parser/ElectronApi.Json.Parser.fsproj'
+  
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  NODE_VERSION: 24.x
+  # Must explicitly set GH_TOKEN for gh cli in workflows
+  GH_TOKEN: ${{ github.token }}
+
+concurrency:
+  # If we call a workflow while another is scheduled; cancel
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  fake-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          # Require fetch-depth 0 for gitnet/changelog generation
+          fetch-depth: 0
+      
+      - name: Ownership Workaround
+        run: git config --global --add safe.directory '*'
+        
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache-dependency-path: ./tests/Fable.Electron.Remoting.Tests/package-lock.json
+          cache: npm
+        
+      - name: Install Chromium
+        uses: nanasess/setup-chromedriver@v2
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        
+      - name: Build cli
+        run: dotnet build ./Build.fsproj -c Release
+      
+      - name: Run Download Cache Target
+        run: ./bin/Release/net9.0/Build run --target download-cache
+      
+      - name: Generate Bindings
+        run: ./bin/Release/net9.0/Build run --target generate
+        
+      - name: Run tests
+        run: ./bin/Release/net9.0/Build run --target post-test

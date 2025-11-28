@@ -1,0 +1,57 @@
+name: Test Build System
+# This workflow only operates when there are changes to the CLI build system,
+# or its test.
+# It does not utilise the FAKE build system, but runs expecto tests
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'Build.fsproj' # include the proj file
+      - 'ci/**.fs' # include the build system files 
+      - 'tests/Build.Tests/**.fs' # Include the build system tests
+      - 'tests/Build.Tests/Build.Tests.fsproj' # Include the build system proj file
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'Build.fsproj' # include the proj file
+      - 'ci/**.fs' # include the build system files 
+      - 'tests/Build.Tests/**.fs' # Include the build system tests
+      - 'tests/Build.Tests/Build.Tests.fsproj' # Include the build system proj file
+  
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  # Must explicitly set GH_TOKEN for gh cli in workflows
+  GH_TOKEN: ${{ github.token }}
+
+concurrency:
+  # If we call a workflow while another is scheduled; cancel
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  run-build-ci-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          # Require fetch-depth 0 for gitnet/changelog generation
+          fetch-depth: 0
+      
+      - name: Ownership Workaround
+        run: git config --global --add safe.directory '*'
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        
+      - name: Restore Tools
+        run: dotnet tool restore
+        
+      - name: Run tests
+        working-directory: ./tests/Build.Tests
+        run: dotnet run -- --summary --colours 256 --no-spinner

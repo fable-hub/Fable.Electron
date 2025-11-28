@@ -1,23 +1,13 @@
 ﻿---
 sidebar_position: 2
-title: API Style
+title: Style Conventions
 ---
 # API Style
 
 A combined approach is used for the API styling, to allow minimal cognitive effort
 translating JS examples to F#, while maintaining common F# idioms.
 
-## JS Modules
-
-Within Electron, there are distinctions between static 'module' like classes
-(where an instance exists by default), to 'classes' which are created when
-required.
-
-The 'modules' are cased in `camelCase` similar to the source material.
-__All__ other __TYPE__ definitions utilise `PascalCasing`.
-
-All other methods and their parameters follow their original naming pattern of `camelCase`, with the
-use of backtick-stropping where required for reserved keywords.
+![Example access path breakdown](@site/static/img/enums-breakdown.png)
 
 ## StringEnums
 
@@ -27,6 +17,7 @@ The only addendum to this is that they are all contained in a root module `Enums
 For example, the string enum for a parameter named `policy` for method `setPolicy`
 of module `someModule` in the `Main` process will be located at `Enums.Main.SomeModule.SetPolicy`,
 with the type name being `Policy`.
+
 
 ```fsharp title='Example access path breakdown'
 Enums           // <- Container for all Enums
@@ -51,16 +42,50 @@ being `policy`, then the final access path would be `Enums.Main.SomeModule.SetPo
 with the type name `Policy`.
 :::
 
+## JS Modules
+
+Within Electron, there are distinctions between static 'module' like classes
+(where an instance exists by default), to 'classes' which are created when
+required.
+
+The 'modules' are cased in `camelCase` similar to the source material.
+__All__ other __TYPE__ definitions utilise `PascalCasing`.
+
+All other methods and their parameters follow their original naming pattern of `camelCase`, with the
+use of backtick-stropping where required for reserved keywords.
+
 ## POJOs
 
 We generate a POJO class definition where a parameter or other API surface uses 
 an options object that we are unable to inline.
 
+Imagine a method signature as follows:
+
+```jsx
+// main.js
+function foo (x, options = { y, z }, w) { ... }
+```
+
+As of Fable-5-alpha, attributes for inlining would not be able to manage this.
+
+In this case, we would generate a POJO for that parameter.
+
 The POJOs are located by their _access path_ similar to [`StringEnums`](#stringenums).
+
+```fsharp
+Main            // <-- Process module
+    .Foo        // <-- Function/method name
+    .Options    // <-- Parameter name = Gen Pojo name
+```
+
+And our generated binding for the function above might be something along the lines of:
+
+![`static member foo(x, options: Main.Foo.Options, w) = jsNative`](@site/static/img/foo.png)
+
 
 ## Structures
 
-In the Electron API, named POJOs are called `structures` and are available globally.
+In the Electron API, named-POJOs are called `structures` and are available globally.
 
 These structures are located within an F# `AutoOpen` module `Types`.
 

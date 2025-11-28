@@ -1,11 +1,15 @@
 ﻿module GitNet
 
+open System.Xml.XPath
+open Fake.DotNet
 open Partas.GitNet
+open Partas.Tools.SepochSemver
 open Spec
 open System.IO
 
 let private gitnetConfig =
     { GitNetConfig.initFSharp with
+        RepositoryPath = Root.``.``
         //%IgnoreProjects%START%
         Projects =
             { ProjectConfig.init with
@@ -14,6 +18,7 @@ let private gitnetConfig =
                       Projects.Generator
                       Projects.Test
                       Projects.Docs
+                      Projects.BuildTest
                       Projects.Folders.Tests.``Tests.Common``.``Tests.Common.fsproj`` ]
                     |> List.map Path.GetFileNameWithoutExtension } //%IgnoreProjects%END%
         AssemblyFiles = AssemblyFileManagement.None
@@ -86,7 +91,12 @@ let private getInitialBump scope =
     | _ -> ValueNone
 
 let getInitVersionForge = getInitialVersion "Forge"
-let getInitVersionElectron = getInitialVersion "Electron"
+let getInitVersionElectron =
+    (MSBuild.loadProject Projects.Electron)
+        .XPathSelectElement("//Version").Value
+    |> tryParseSepochSemver
+    |> Option.map _.SemVer
+    
 let getInitVersionRemoting = getInitialVersion "Remoting"
 let getInitBumpForge = getInitialBump "Forge"
 let getInitBumpElectron = getInitialBump "Electron"

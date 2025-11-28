@@ -2,6 +2,9 @@
 
 Fable bindings for [Electron](https://electronjs.org/).
 
+
+![flair](docs/static/img/flair-1.png)
+
 [See the documentation.](https://fable-hub.github.io/fable-electron/)
 
 Contributions are welcome!

@@ -24,6 +24,8 @@ Navigate to the root of the repository and run
 
 ```bash
 dotnet run -- --help
+# or
+dotnet run
 ```
 
 :::tip
@@ -32,28 +34,34 @@ The arguments after `--` are sent to the run project rather than being evaluated
 
 ![Image of help screen](./help.PNG)
 
-We have a few options to choose from, but we want to utilise the `generate-binding`
-command with the `--choose` flag.
+:::tip
+I like to utilise the last build output when I'm reusing the cli,
+so I just run `./bin/Debug/net9.0/build <COMMAND> [options]` after (this skips building).
+:::
 
-```bash
-dotnet run -- generate-binding --choose
-```
+There's a few commands that can be used, but the ones we're interested in are `download`, `generate`, `pack` and `test`.
 
-![Image of choices](./choose.PNG)
+### Download
 
-For the sake of this example, I'll choose an older version `37.9.0`
+Download will retrieve an `electron-api.json` from an electron release (which is what the generator uses to make the source code).
 
-![Image of finish](./success.PNG)
+If you haven't already downloaded one, then you can skip this step and just use `generate` (as this will download one if none are found).
+
+### Generate
+
+This will create the source code for the bindings.
+
+![Image of choices](./cli-generate.PNG)
+
+> You can use the `--release <VERS>` flag to skip the input request if you know what version you are after.
 
 Make sure to run a test to ensure the bindings are functional.
 
 > You'll need to change the electron version in `tests/Fable.Electron.Remoting.Tests/package.json` to match the generated binding.
 
-```bash
-dotnet run -- test
-# If you get module missing errors then use this instead:
-dotnet run -- test --npm-ci
-```
+![image of cli test](./cli-test.png)
+
+> If you get module missing errors then add the `--npm-ci` flag.
 
 ![Image of tests passing](./pass-tests.PNG)
 
@@ -62,20 +70,11 @@ Keep in mind, perhaps the version you are generating the binding for is not comp
 with our tests.
 
 At least make sure the bindings pack without errors.
-
-```bash
-dotnet run -- pack --skip-test
-```
 :::
 
 Following this, we'll pack the bindings for our use:
 
-```bash
-dotnet run -- pack
-# if you need to skip the tests, add --skip-test
-```
-
-![Pack success image](./pack-success.PNG)
+![Pack success image](./cli-pack.PNG)
 
 You now have your `Fable.Electron.X.X.X.nupkg` in the root `bin` directory!
 

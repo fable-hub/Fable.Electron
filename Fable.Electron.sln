@@ -41,6 +41,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Docs", "docs\Docs.fsproj", 
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fable.Electron.Forge", "src\Fable.Electron.Forge\Fable.Electron.Forge.fsproj", "{E0366D12-F76A-4691-ACA8-BB9BE4DFAC70}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Build.Tests", "tests\Build.Tests\Build.Tests.fsproj", "{FDAB3CF6-2171-4283-A022-7F2DB7510A71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{E0366D12-F76A-4691-ACA8-BB9BE4DFAC70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0366D12-F76A-4691-ACA8-BB9BE4DFAC70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0366D12-F76A-4691-ACA8-BB9BE4DFAC70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDAB3CF6-2171-4283-A022-7F2DB7510A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDAB3CF6-2171-4283-A022-7F2DB7510A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDAB3CF6-2171-4283-A022-7F2DB7510A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDAB3CF6-2171-4283-A022-7F2DB7510A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,5 +102,6 @@ Global
 		{2F908CB8-7F74-444F-B5F9-16CBF6625362} = {6BC35EF9-7D91-48E6-93D6-0A2AC6C38F44}
 		{8B7B62C3-BAD4-4A17-9E42-0754F5882D82} = {FE9AF4F1-7E20-45B7-A1C4-9A6CB6375B22}
 		{E0366D12-F76A-4691-ACA8-BB9BE4DFAC70} = {21269731-84DA-45D2-9C42-FE0849007477}
+		{FDAB3CF6-2171-4283-A022-7F2DB7510A71} = {6BC35EF9-7D91-48E6-93D6-0A2AC6C38F44}
 	EndGlobalSection
 EndGlobal
