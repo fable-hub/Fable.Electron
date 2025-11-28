@@ -515,6 +515,7 @@ let main argsv =
           
           Ops.loadCache
           ==> Ops.downloadCache
+          
 
           Ops.postDownload
           <==? [ Ops.downloadApi
@@ -535,11 +536,26 @@ let main argsv =
     | Commands.buildTool -> run Ops.buildTool
     | Commands.generateApiDocs -> run Ops.generateApiDocs
     | Commands.docs -> run Ops.docs
-    | Commands.generate -> run Ops.generate
+    | Commands.generate ->
+        if not <| File.exists Files.Api then
+            let dependencies = [
+                Ops.downloadApi
+                =?> (Ops.postDownload, Args.release.IsSome)
+                Ops.downloadInput
+                =?> (Ops.postDownload, Args.release.IsNone)
+                Ops.generate
+                ==> Ops.postDownload
+            ]
+            run Ops.postDownload
+        else
+            
+        run Ops.generate
     | Commands.run ->
         match Args.target with
         | None -> failwith "No target supplied to '--target <NAME>'"
         | Some target -> run target
+    | Commands.download ->
+          run Ops.postDownload
     | Commands.cron ->
         let dependencies =
             [ Ops.downloadLatest

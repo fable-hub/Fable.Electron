@@ -224,6 +224,9 @@ module Commands =
     
     [<Literal>]
     let buildTool = "build-tool"
+    
+    [<Literal>]
+    let download = "download"
 
 
 [<Literal>]
@@ -264,16 +267,17 @@ and Cli =
     static member spec =
         $"""
 Usage:
-    Build.exe [options]
-    Build.exe {Commands.docs} [options]
-    Build.exe {Commands.generate} [options]
-    Build.exe {Commands.generateApiDocs} [options]
-    Build.exe {Commands.pack} [options]
-    Build.exe {Commands.cron} [options] [crons]
-    Build.exe {Commands.run} [run] [options]
-    Build.exe {Commands.test} [test] [options]
-    Build.exe {Commands.format} [options]
-    Build.exe {Commands.buildTool}
+    fable-electron [options]
+    fable-electron {Commands.docs} [options]
+    fable-electron {Commands.download} [options]
+    fable-electron {Commands.generate} [options]
+    fable-electron {Commands.generateApiDocs} [options]
+    fable-electron {Commands.pack} [options]
+    fable-electron {Commands.cron} [options] [crons]
+    fable-electron {Commands.run} [run] [options]
+    fable-electron {Commands.test} [test] [options]
+    fable-electron {Commands.format} [options]
+    fable-electron {Commands.buildTool}
 
 Cron Options [crons]:
     --only-minor            Only run a scheduled generation for minor releases of
