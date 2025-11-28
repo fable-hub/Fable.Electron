@@ -59,7 +59,7 @@ Make sure to run a test to ensure the bindings are functional.
 
 > You'll need to change the electron version in `tests/Fable.Electron.Remoting.Tests/package.json` to match the generated binding.
 
-![image of cli test](./cli-test.png)
+![image of cli test](./cli-test.PNG)
 
 > If you get module missing errors then add the `--npm-ci` flag.
 
