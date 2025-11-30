@@ -4,6 +4,7 @@ name: On Push to Main Branch (Except for CI)
 # If a workflow does not change any of our .fs files, then we have no need to run
 # the whole suite, and we can just do docs et al.
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
