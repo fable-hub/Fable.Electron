@@ -1,11 +1,8 @@
 ﻿module Spec
 
-open System.IO
 open EasyBuild.FileSystemProvider
 open Fake.Core
 open Fake.Core.Context
-open Fake.IO
-open Partas.GitNet
 
 [<Literal>]
 let _rootPath = __SOURCE_DIRECTORY__ + "/.."
@@ -39,8 +36,8 @@ module Projects =
 
     let Test =
         Folders.Tests.``Fable.Electron.Remoting.Tests``.``Fable.Electron.Remoting.Tests.fsproj``
-    let BuildTest =
-        Folders.Tests.``Build.Tests``.``Build.Tests.fsproj``
+
+    let BuildTest = Folders.Tests.``Build.Tests``.``Build.Tests.fsproj``
 
     let Docs = Root.docs.``Docs.fsproj``
 
@@ -143,38 +140,43 @@ module Ops =
 
     [<Literal>]
     let gitnet = "gitnet"
-    
+
     [<Literal>]
     let downloadCache = "download-cache"
-    
+
     [<Literal>]
     let buildTool = "build-tool"
+
 module FlagArgs =
     module Common =
         [<Literal>]
         let release = "--release"
-        
+
         [<Literal>]
         let nugetApi = "--nuget-key"
 
         [<Literal>]
         let ghKey = "--gh-key"
-        
+
     module Run =
         [<Literal>]
         let target = "--target"
+
 module Flags =
     module Cron =
         [<Literal>]
         let downloadMinorOnly = "--only-minor"
+
         [<Literal>]
         let downloadPatchOnly = "--only-minor"
+
     module Test =
         [<Literal>]
         let open' = "--open"
 
         [<Literal>]
         let watch = "--watch"
+
     module Common =
         [<Literal>]
         let help = "--help"
@@ -221,10 +223,10 @@ module Commands =
 
     [<Literal>]
     let run = "run"
-    
+
     [<Literal>]
     let buildTool = "build-tool"
-    
+
     [<Literal>]
     let download = "download"
 
@@ -246,6 +248,7 @@ type Args =
 
     static member setArgs argsv =
         args <- (Cli.parser: Docopt).Parse(argsv) |> Some
+
     static member detailed = hasFlag Flags.Common.detailed
     static member quick = hasFlag Flags.Common.quick
     static member dryRun = hasFlag Flags.Common.dry //%ArgsType%END%
@@ -261,7 +264,7 @@ type Args =
     static member watch = hasFlag Flags.Test.watch
     static member downloadMinorOnly = hasFlag Flags.Cron.downloadMinorOnly
     static member downloadPatchOnly = hasFlag Flags.Cron.downloadPatchOnly
-    
+
 //%CliType%START%
 and Cli =
     static member spec =
@@ -274,7 +277,7 @@ Usage:
     fable-electron {Commands.generateApiDocs} [options]
     fable-electron {Commands.pack} [options]
     fable-electron {Commands.cron} [options] [crons]
-    fable-electron {Commands.run} [run] [options]
+    fable-electron {Commands.run} [run] [options] [crons] [test]
     fable-electron {Commands.test} [test] [options]
     fable-electron {Commands.format} [options]
     fable-electron {Commands.buildTool}
