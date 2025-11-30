@@ -1,27 +1,14 @@
 ﻿module Build.ci.Build
 
-open System.Collections.Generic
-open System.IO
-open System.Xml.Linq
 open Partas.Tools.SepochSemver
 open Workers
 open System.Text.Json
-open EasyBuild.Tools
-open EasyBuild.Tools.Git
-open Fake.Api
 open Fake.Core
 open Fake.IO
-open Fake.IO.Globbing
-open Fake.IO.Globbing.Operators
 open Fake.Tools.Git
 open Spec
 open Fake.Tools
-open Fake.DotNet
-open EasyBuild.Tools.ChangelogGen
-open Fake.JavaScript
 open Partas.GitNet
-open Partas.GitNet.RepoCracker
-open Partas.GitNet.BuildHelpers
 open GitNet
 
 initializeContext ()
@@ -72,64 +59,63 @@ Target.create Ops.downloadInput
 
 Target.create Ops.downloadLatest
 <| function
-| _ when Args.downloadMinorOnly || Args.downloadPatchOnly ->
-    Target.runSimple Ops.loadCache []
-    |> ignore
-    let currentElectronVersion =
-        let tagName = Status.getCache().tagName.TrimStart('v')
-        tagName
-        |> tryParseSepochSemver
-        |> Option.map _.SemVer
-        |> function
-            | Some ver -> ver
-            | None ->
-                failwith $"The `--only-minor` and `--only-patch` flags require the cache \
+    | _ when Args.downloadMinorOnly || Args.downloadPatchOnly ->
+        Target.runSimple Ops.loadCache [] |> ignore
+
+        let currentElectronVersion =
+            let tagName = Status.getCache().tagName.TrimStart('v')
+
+            tagName
+            |> tryParseSepochSemver
+            |> Option.map _.SemVer
+            |> function
+                | Some ver -> ver
+                | None ->
+                    failwith
+                        $"The `--only-minor` and `--only-patch` flags require the cache \
                             to have a compatible semver. Found {tagName} instead."
-    let parseTagName =
-        _.tagName.TrimStart('v')
-        >> tryParseSepochSemver
-        >> Option.map _.SemVer
-    Electron.getReleases()
-    |> List.filter (_.isPrerelease >> not)
-    |> List.filter (parseTagName >> function
-        | Some value when Args.downloadMinorOnly && Args.downloadPatchOnly ->
-            currentElectronVersion.Major = value.Major
-            && (
-                currentElectronVersion.Minor < value.Minor
-                || (
-                    currentElectronVersion.Minor = value.Minor
+
+        let parseTagName =
+            _.tagName.TrimStart('v') >> tryParseSepochSemver >> Option.map _.SemVer
+
+        Electron.getReleases ()
+        |> List.filter (_.isPrerelease >> not)
+        |> List.filter (
+            parseTagName
+            >> function
+                | Some value when Args.downloadMinorOnly && Args.downloadPatchOnly ->
+                    currentElectronVersion.Major = value.Major
+                    && (currentElectronVersion.Minor < value.Minor
+                        || (currentElectronVersion.Minor = value.Minor
+                            && currentElectronVersion.Patch < value.Patch))
+                | Some value when Args.downloadMinorOnly ->
+                    currentElectronVersion.Major = value.Major
+                    && currentElectronVersion.Minor < value.Minor
+                | Some value when Args.downloadPatchOnly ->
+                    currentElectronVersion.Major = value.Major
+                    && currentElectronVersion.Minor = value.Minor
                     && currentElectronVersion.Patch < value.Patch
-                )
-            )
-        | Some value when Args.downloadMinorOnly ->
-            currentElectronVersion.Major = value.Major
-            && currentElectronVersion.Minor < value.Minor
-        | Some value when Args.downloadPatchOnly ->
-            currentElectronVersion.Major = value.Major
-            && currentElectronVersion.Minor = value.Minor
-            && currentElectronVersion.Patch < value.Patch
-        | _ -> false
+                | _ -> false
         )
-    |> function
-        | [] ->
-            Electron.tryGetReleaseFromString (Status.getCache().tagName)
-        | releases ->
-            releases
-            |> List.maxBy _.createdAt
-            |> _.tagName
-            |> Electron.tryGetReleaseFromString
-    |> function
-        | Some release ->
-            Status.setRelease release
-            Electron.downloadRelease release
-        | None -> failwith "Was not able to identify the latest release using the 'gh' cli."
-| _ ->
-    Electron.tryGetRelease _.isLatest
-    |> function
-        | Some release ->
-            Status.setRelease release
-            Electron.downloadRelease release
-        | None -> failwith "Was not able to identify the latest release using the 'gh' cli."
+        |> function
+            | [] -> Electron.tryGetReleaseFromString (Status.getCache().tagName)
+            | releases ->
+                releases
+                |> List.maxBy _.createdAt
+                |> _.tagName
+                |> Electron.tryGetReleaseFromString
+        |> function
+            | Some release ->
+                Status.setRelease release
+                Electron.downloadRelease release
+            | None -> failwith "Was not able to identify the latest release using the 'gh' cli."
+    | _ ->
+        Electron.tryGetRelease _.isLatest
+        |> function
+            | Some release ->
+                Status.setRelease release
+                Electron.downloadRelease release
+            | None -> failwith "Was not able to identify the latest release using the 'gh' cli."
 
 Target.create Ops.postDownload (ignore >> Laundry.clean)
 
@@ -147,15 +133,20 @@ Target.create Ops.setupDocs <| fun _ -> Docs.setup Args.npmCi
 Target.create Ops.docs (ignore >> Docs.dev)
 Target.create Ops.build (fun _ -> Project.build Project.Targets.All)
 Target.create Ops.pack (fun _ -> Project.pack true Project.Targets.All)
+
 Target.create Ops.push (fun _ ->
-    Project.push()
+    Project.push ()
     Target.deactivateFinal Ops.gitnet)
+
 Target.create Ops.generateApiDocs (ignore >> ApiDocs.validateDir >> ApiDocs.build)
 Target.create Ops.setupTest (fun _ -> Electron.installTests Args.npmCi)
-Target.create Ops.test <| function
+
+Target.create Ops.test
+<| function
     | _ when Args.watch -> Electron.watchTest ()
     | _ when Args.open' -> Electron.openTest ()
     | _ -> Electron.test ()
+
 Target.create Ops.postTest (ignore >> Laundry.fableClean)
 Target.create Ops.restore (ignore >> Laundry.restoreTools)
 Target.create Ops.format (ignore >> Laundry.format)
@@ -171,7 +162,6 @@ Target.create Ops.loadCache
         |> JsonSerializer.Deserialize<ReleaseInfo>
         |> Status.setCache
 
-open Partas.Tools.SepochSemver
 //%gitnet1%START%
 Target.create Ops.gitnet
 <| fun para ->
@@ -179,14 +169,18 @@ Target.create Ops.gitnet
         match para.Context.FinalTarget with
         | Ops.gitnet -> Target.deactivateFinal Ops.gitnet
         | _ -> ()
+
     let projects, electronDeltaInfo = Versions.ElectronDelta.CreateFromContext()
+
     let project =
         {| electron = Project.Cracked.getProjectOrFail "Electron" projects
            forge = Project.Cracked.getProjectOrFail "Forge" projects
            remoting = Project.Cracked.getProjectOrFail "Remoting" projects |} //%gitnet1%END% //%gitnet2%START%
 
     let anyPackageUpdated =
-        electronDeltaInfo.IsElectronBump || getInitBumpRemoting.IsSome || getInitBumpForge.IsSome
+        electronDeltaInfo.IsElectronBump
+        || getInitBumpRemoting.IsSome
+        || getInitBumpForge.IsSome
 
     let packageRequiresPull =
         (electronDeltaInfo.DeltaKind.IsMajor && not electronDeltaInfo.IsProbablyPulled)
@@ -255,17 +249,17 @@ Package Requires Pull: {packageRequiresPull}
     | _, (Versions.Major | Versions.Minor | Versions.Patch as deltaKind), requiresPull ->
         // The message for the commit should still abide by ConventionalCommits.
         let commitMessage =
-            Versions.makeCommitMessage
-                ("Electron binding update to match " + Status.getRelease().tagName)
-                deltaKind
+            Versions.makeCommitMessage ("Electron binding update to match " + Status.getRelease().tagName) deltaKind
+
         let runOrDryLog message (fn: Lazy<_>) =
-            if Args.dryRun
-            then fn.Value
-            else Trace.log $"[ACTION] "
+            if not Args.dryRun then fn.Value else Trace.log $"[ACTION] "
+
         let runOrDryLogItems messages (fn: Lazy<_>) =
-            if Args.dryRun
-            then fn.Value
-            else Trace.logItems "[ACTION] " messages
+            if not Args.dryRun then
+                fn.Value
+            else
+                Trace.logItems "[ACTION] " messages
+
         lazy
             Branches.getRemoteBranches Root.``.``
             |> List.exists ((=) $"ci/electron/{Status.getRelease().tagName}")
@@ -274,51 +268,60 @@ Package Requires Pull: {packageRequiresPull}
                 | false -> Laundry.createBranch $"ci/electron/{Status.getRelease().tagName}"
                 | _ -> ()
         |> runOrDryLog $"[ACTION] Create branch: ci/electron/{Status.getRelease().tagName}"
-        lazy (
-            // If we don't have to make a pull, then we'll change the versions in the project files
-            // Otherwise, this change should be delegated to when we actually merge.
-            // Exception for this is the cache release info. We'll use that as our guide post
-            // for the merge version.
 
-            // If the electron version is different, we also update the property in the project file
-            // to match this.
-            if electronDeltaInfo.Versions.DownloadedElectron.Value
-               <> electronDeltaInfo.Versions.FableElectronElectron.Value then
-                project.electron
-                |> CrackedProject.withFsProj (
-                    CrackedProject.Document.withProperty "ElectronVersion" _.SetValue(electronDeltaInfo.Versions.DownloadedElectron.Value.ToString())
-                    // Return Ok to overwrite the project file
-                    // Return Error to prevent overwriting project file
-                    >> ignore
-                    >> Ok
-                )
-                |> ignore
-            let nextVersion = electronDeltaInfo.NextElectronVersion
-            [ project.electron, nextVersion.SemVer
-              match getInitBumpForge with
-              | ValueSome { SemVer = version } -> project.forge, version
-              | _ -> ()
-              match getInitBumpRemoting with
-              | ValueSome { SemVer = version } -> project.remoting, version
-              | _ -> () ]
-            |> List.iter (fun (proj, version) ->
-                let versionString = version.ToString()
-                proj
-                |> CrackedProject.withFsProj (
-                    CrackedProject.Document.withPackageVersion _.SetValue(versionString)
-                    >> CrackedProject.Document.withVersion _.SetValue(versionString)
-                    >> ignore
-                    >> Ok
-                )
-                |> ignore)
-        )
+        lazy
+            (
+             // If we don't have to make a pull, then we'll change the versions in the project files
+             // Otherwise, this change should be delegated to when we actually merge.
+             // Exception for this is the cache release info. We'll use that as our guide post
+             // for the merge version.
+
+             // If the electron version is different, we also update the property in the project file
+             // to match this.
+             if
+                 electronDeltaInfo.Versions.DownloadedElectron.Value
+                 <> electronDeltaInfo.Versions.FableElectronElectron.Value
+             then
+                 project.electron
+                 |> CrackedProject.withFsProj (
+                     CrackedProject.Document.withProperty
+                         "ElectronVersion"
+                         _.SetValue(electronDeltaInfo.Versions.DownloadedElectron.Value.ToString())
+                     // Return Ok to overwrite the project file
+                     // Return Error to prevent overwriting project file
+                     >> ignore
+                     >> Ok
+                 )
+                 |> ignore
+
+             let nextVersion = electronDeltaInfo.NextElectronVersion
+
+             [ project.electron, nextVersion.SemVer
+               match getInitBumpForge with
+               | ValueSome { SemVer = version } -> project.forge, version
+               | _ -> ()
+               match getInitBumpRemoting with
+               | ValueSome { SemVer = version } -> project.remoting, version
+               | _ -> () ]
+             |> List.iter (fun (proj, version) ->
+                 let versionString = version.ToString()
+
+                 proj
+                 |> CrackedProject.withFsProj (
+                     CrackedProject.Document.withPackageVersion _.SetValue(versionString)
+                     >> CrackedProject.Document.withVersion _.SetValue(versionString)
+                     >> ignore
+                     >> Ok
+                 )
+                 |> ignore))
         |> runOrDryLogItems
-            [ electronDeltaInfo.Versions.DownloadedElectron.ToString() |> sprintf "Set Fable.Electron ElectronVersion: %s"
-              electronDeltaInfo.NextElectronVersion.SemVer.ToString() |> sprintf "Set Fable.Electron Version: %s"
+            [ electronDeltaInfo.Versions.DownloadedElectron.ToString()
+              |> sprintf "Set Fable.Electron ElectronVersion: %s"
+              electronDeltaInfo.NextElectronVersion.SemVer.ToString()
+              |> sprintf "Set Fable.Electron Version: %s"
 
               match getInitBumpForge with
-              | ValueSome { SemVer = version } ->
-                  version.ToString() |> sprintf "Set Fable.Electron.Forge Version: %s"
+              | ValueSome { SemVer = version } -> version.ToString() |> sprintf "Set Fable.Electron.Forge Version: %s"
               | _ -> ()
               match getInitBumpRemoting with
               | ValueSome { SemVer = version } ->
@@ -326,8 +329,7 @@ Package Requires Pull: {packageRequiresPull}
               | _ -> () ]
 
         // Write the version/release info to the cache that this generation was based off
-        lazy
-            Status.getRelease () |> Electron.writeToCache
+        lazy (Status.getRelease () |> Electron.writeToCache)
         |> runOrDryLog $"Write to cache: {Status.getRelease ()}"
 
         [ project.electron; project.forge; project.remoting ] // We collect all the compiled files for each project, the project files
@@ -355,8 +357,8 @@ Package Requires Pull: {packageRequiresPull}
                       getInitBumpForge.Value
                   if getInitBumpRemoting.IsSome then
                       getInitBumpRemoting.Value ]
-            lazy
-                runtime.CommitTags tags
+
+            lazy runtime.CommitTags tags
             |> runOrDryLogItems (tags |> List.map (_.ToString() >> sprintf "Git Tag with: %s"))
 
         lazy
@@ -377,6 +379,7 @@ Package Requires Pull: {packageRequiresPull}
             // pushed to nuget if we're not doing a pull
             Target.WithContext.run 1 (if Args.dryRun then Ops.pack else Ops.push) []
             |> Target.raiseIfError
+
         lazy
             // This will push to main or push to the created branch
             Laundry.pushCurrentBranch ()
@@ -387,6 +390,7 @@ Package Requires Pull: {packageRequiresPull}
                 if para.Context.HasError then "[GEN ERROR] For " else ""
                 + "Electron "
                 + Status.getRelease().tagName
+
             let body =
                 if para.Context.HasError then
                     let rec addDetails (errors: (exn * Target) list) : string list =
@@ -404,6 +408,7 @@ Package Requires Pull: {packageRequiresPull}
                               "</details>"
                               "" ]
                             @ addDetails rest
+
                     addDetails para.Context.ErrorTargets
                     |> String.concat "\n"
                     |> sprintf
@@ -413,7 +418,8 @@ Once these are corrected, please consider merging this to `develop`
 
 %s"""
                 else
-                    let release = Status.getRelease()
+                    let release = Status.getRelease ()
+
                     $"""Bindings for electron {release.tagName} were generated successfully and passed tests.
 
 This electron release was created on {release.createdAt}.
@@ -438,19 +444,21 @@ It is recommended to merge to `develop` for major electron versions first.
         Trace.log "[ACTION] Pushing to nuget"
 //%gitnet5%END%
 
-Target.create Ops.activateGitnet <| fun _ ->
-    Target.runSimple Ops.loadCache []
-    |> ignore
+Target.create Ops.activateGitnet
+<| fun _ ->
+    Target.runSimple Ops.loadCache [] |> ignore
     Target.activateFinal Ops.gitnet
 
-Target.create Ops.downloadCache <| fun _ ->
-    Status.getCache()
-    |> Electron.downloadRelease
-    
-Target.create Ops.buildTool <| fun _ ->
+Target.create Ops.downloadCache
+<| fun _ -> Status.getCache () |> Electron.downloadRelease
+
+Target.create Ops.buildTool
+<| fun _ ->
     Project.pack true (Project.Targets.One Projects.Build)
     Trace.trace "Build.fsproj has been packed into a tool that can be used locally."
-    Trace.traceImportant """
+
+    Trace.traceImportant
+        """
 Tool 'fable-electron' created in '/bin'.
 
 With DotNet 10.0.100+ use `dnx build --source ./bin` to initialise.
@@ -466,116 +474,108 @@ open Fake.Core.TargetOperators
 // CI entry point
 [<EntryPoint>]
 let main argsv =
-    let printHelp () =
-        printfn $"%s{Cli.spec}"
-    if argsv |> Array.isEmpty
-    then printHelp (); 0
+    let printHelp () = printfn $"%s{Cli.spec}"
+
+    if argsv |> Array.isEmpty then
+        printHelp ()
+        0
     else
-    argsv |> Args.setArgs
-    //%TargetDeps%START%
-    // ==========================================================
-    // Set what operations of the CI must precede other operations
-    let dependencyMapping =
-        // Dependency on restore for any tool related actions
-        Ops.restore
-        ===> [ Ops.clean ==> Ops.fableClean
-               Ops.downloadApi
-               Ops.downloadInput
-               Ops.downloadLatest
-               Ops.listDetailedReleases
-               Ops.listReleases
-               Ops.generate
-               Ops.generateApiDocs
-               Ops.test
-               Ops.format ]
+        argsv |> Args.setArgs
+        //%TargetDeps%START%
+        // ==========================================================
+        // Set what operations of the CI must precede other operations
+        let dependencyMapping =
+            // Dependency on restore for any tool related actions
+            Ops.restore
+            ===> [ Ops.clean ==> Ops.fableClean
+                   Ops.downloadApi
+                   Ops.downloadInput
+                   Ops.downloadLatest
+                   Ops.listDetailedReleases
+                   Ops.listReleases
+                   Ops.generate
+                   Ops.generateApiDocs
+                   Ops.test
+                   Ops.format ]
 
-        Ops.gitnet <== [ Ops.loadCache ]
+            Ops.gitnet <== [ Ops.loadCache ]
 
-        Ops.gitnet
-        <==? [ Ops.postDownload; Ops.postTest; Ops.test; Ops.fableClean; Ops.format ]
-        |> ignore
+            Ops.gitnet
+            <==? [ Ops.postDownload; Ops.postTest; Ops.test; Ops.fableClean; Ops.format ]
+            |> ignore
 
-        [
-          // define setup requirements
-          Ops.setupTest =?> (Ops.test, not Args.quick) ==> Ops.postTest
-          // If generate occurs, it is a soft dependency
-          // for multiple targets
-          Ops.generate
-          ?==> [ Ops.test
-                 Ops.format
-                 Ops.generateApiDocs
-                 Ops.build
-                 Ops.pack
-                 Ops.push
-                 Ops.gitnet
-                 Ops.postDownload ]
-          // On the other hand, generate has plenty of soft dependencies itself
-          Ops.generate <==? [ Ops.downloadApi; Ops.downloadInput; Ops.downloadLatest ]
-          Ops.setupDocs =?> (Ops.docs, not Args.quick)
-          
-          Ops.loadCache
-          ==> Ops.downloadCache
-          
+            [
+              // define setup requirements
+              Ops.setupTest =?> (Ops.test, not Args.quick) ==> Ops.postTest
+              // If generate occurs, it is a soft dependency
+              // for multiple targets
+              Ops.generate
+              ?==> [ Ops.test
+                     Ops.format
+                     Ops.generateApiDocs
+                     Ops.build
+                     Ops.pack
+                     Ops.push
+                     Ops.gitnet
+                     Ops.postDownload ]
+              // On the other hand, generate has plenty of soft dependencies itself
+              Ops.generate <==? [ Ops.downloadApi; Ops.downloadInput; Ops.downloadLatest ]
+              Ops.setupDocs =?> (Ops.docs, not Args.quick)
 
-          Ops.postDownload
-          <==? [ Ops.downloadApi
-                 Ops.downloadInput
-                 Ops.downloadLatest
-                 Ops.generate
-                 Ops.setupTest
-                 Ops.test ] ]
-    //%TargetDeps%END%
-    let run =
-        if Args.debug then
-            Target.printDependencyGraph true
-        else
-            Target.runOrDefaultWithArguments
+              Ops.loadCache ==> Ops.downloadCache
 
-    match argsv[0] with
-    | _ when Args.help -> printfn $"%s{Cli.spec}"
-    | Commands.buildTool -> run Ops.buildTool
-    | Commands.generateApiDocs -> run Ops.generateApiDocs
-    | Commands.docs -> run Ops.docs
-    | Commands.generate ->
-        if not <| File.exists Files.Api then
-            let dependencies = [
-                Ops.downloadApi
-                =?> (Ops.postDownload, Args.release.IsSome)
-                Ops.downloadInput
-                =?> (Ops.postDownload, Args.release.IsNone)
-                Ops.generate
-                ==> Ops.postDownload
-            ]
-            run Ops.postDownload
-        else
-            
-        run Ops.generate
-    | Commands.run ->
-        match Args.target with
-        | None -> failwith "No target supplied to '--target <NAME>'"
-        | Some target -> run target
-    | Commands.download ->
-          run Ops.postDownload
-    | Commands.cron ->
-        let dependencies =
-            [ Ops.downloadLatest
-              ==> Ops.generate
-              ==> Ops.activateGitnet
-              ==> Ops.build
-              ==> Ops.test
-              ==> Ops.postTest
-              ==> Ops.postDownload
-              ?==> [
-                  Ops.gitnet
-                  Ops.cron
-              ]
-              ==> Ops.cron
-              Ops.pack
-              ==> Ops.push ]
 
-        run Ops.cron
-    | Commands.pack -> run Ops.pack
-    | Commands.test -> run (if Args.quick then Ops.test else Ops.postTest)
-    | maybeTarget -> run maybeTarget
+              Ops.postDownload
+              <==? [ Ops.downloadApi
+                     Ops.downloadInput
+                     Ops.downloadLatest
+                     Ops.generate
+                     Ops.setupTest
+                     Ops.test ] ]
+        //%TargetDeps%END%
+        let run =
+            if Args.debug then
+                Target.printDependencyGraph true
+            else
+                Target.runOrDefaultWithArguments
 
-    0
+        match argsv[0] with
+        | _ when Args.help -> printfn $"%s{Cli.spec}"
+        | Commands.buildTool -> run Ops.buildTool
+        | Commands.generateApiDocs -> run Ops.generateApiDocs
+        | Commands.docs -> run Ops.docs
+        | Commands.generate ->
+            if not <| File.exists Files.Api then
+                let dependencies =
+                    [ Ops.downloadApi =?> (Ops.postDownload, Args.release.IsSome)
+                      Ops.downloadInput =?> (Ops.postDownload, Args.release.IsNone)
+                      Ops.generate ==> Ops.postDownload ]
+
+                run Ops.postDownload
+            else
+
+                run Ops.generate
+        | Commands.run ->
+            match Args.target with
+            | None -> failwith "No target supplied to '--target <NAME>'"
+            | Some target -> run target
+        | Commands.download -> run Ops.postDownload
+        | Commands.cron ->
+            let dependencies =
+                [ Ops.downloadLatest
+                  ==> Ops.generate
+                  ==> Ops.activateGitnet
+                  ==> Ops.build
+                  ==> Ops.test
+                  ==> Ops.postTest
+                  ==> Ops.postDownload
+                  ?==> [ Ops.gitnet; Ops.cron ]
+                  ==> Ops.cron
+                  Ops.pack ==> Ops.push ]
+
+            run Ops.cron
+        | Commands.pack -> run Ops.pack
+        | Commands.test -> run (if Args.quick then Ops.test else Ops.postTest)
+        | maybeTarget -> run maybeTarget
+
+        0
