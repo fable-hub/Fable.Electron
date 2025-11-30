@@ -8,6 +8,10 @@
 
     <ItemGroup>
       <Content Include="docs\guide\intro.md" />
+        <Content Include="docs\guide\Tests\1-architecture.md"/>
+        <Content Include="docs\guide\Tests\2-setup.md"/>
+        <Content Include="docs\guide\Tests\3-headless-github-actions.md"/>
+        <Content Include="docs\guide\Tests\_category_.yaml"/>
       <Folder Include="docs\guide\Features\" />
       <Content Include="docs\guide\Overview\api-naming-style.md" />
       <Content Include="docs\guide\Overview\features.mdx" />
