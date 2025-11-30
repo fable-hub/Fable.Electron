@@ -260,14 +260,15 @@ Package Requires Pull: {packageRequiresPull}
             else
                 Trace.logItems "[ACTION] " messages
 
-        lazy
-            Branches.getRemoteBranches Root.``.``
-            |> List.exists ((=) $"ci/electron/{Status.getRelease().tagName}")
-            |> function
-                | true when not Args.dryRun -> failwith "A pull already exists for this release."
-                | false -> Laundry.createBranch $"ci/electron/{Status.getRelease().tagName}"
-                | _ -> ()
-        |> runOrDryLog $"[ACTION] Create branch: ci/electron/{Status.getRelease().tagName}"
+        if requiresPull then
+            lazy
+                Branches.getRemoteBranches Root.``.``
+                |> List.exists ((=) $"ci/electron/{Status.getRelease().tagName}")
+                |> function
+                    | true when not Args.dryRun -> failwith "A pull already exists for this release."
+                    | false -> Laundry.createBranch $"ci/electron/{Status.getRelease().tagName}"
+                    | _ -> ()
+            |> runOrDryLog $"[ACTION] Create branch: ci/electron/{Status.getRelease().tagName}"
 
         lazy
             (
