@@ -4,7 +4,7 @@ open Fable.Core
 open Fable.Core.JS
 
 [<Global>]
-let describe (name: string) (f: unit -> Promise<unit>) = jsNative
+let describe (name: string) (f: unit -> unit) = jsNative
 
 [<Global>]
 let it (msg: string) (f: unit -> Promise<unit>) : unit = jsNative
