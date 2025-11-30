@@ -1,13 +1,8 @@
 ﻿module Fable.Electron.Remoting.Tests.test.specs.test2_e2e_js
 
-open Fable.Electron
 open Fable.Core
 open Fable.Core.JsInterop
-open Fable.Electron.Remoting.Renderer
 open Fable.Mocha
-open Browser.Types
-open Node.Api
-open Shared
 open WDIO
 open Tests.Common.Mocha
 
@@ -30,124 +25,120 @@ let inline getInt (ele: JS.Promise<IWdioElement>) =
 
 describe "App loads correctly"
 <| fun _ ->
-    promise {
-        it "Switch window if required"
-        <| fun _ ->
-            promise {
-                let! dec = getDecButton ()
-                let dec = dec
+    it "Switch window if required"
+    <| fun _ ->
+        promise {
+            let! dec = getDecButton ()
+            let dec = dec
 
-                if dec?error then
-                    let! handles = browser.getWindowHandles ()
-                    let! currentHandle = browser.getWindowHandle ()
+            if dec?error then
+                let! handles = browser.getWindowHandles ()
+                let! currentHandle = browser.getWindowHandle ()
 
-                    do!
-                        handles
-                        |> Array.filter ((<>) currentHandle)
-                        |> Array.head
-                        |> browser.switchToWindow
+                do!
+                    handles
+                    |> Array.filter ((<>) currentHandle)
+                    |> Array.head
+                    |> browser.switchToWindow
 
-                    let! dec = getDecButton ()
-                    do! expect(dec).toBeExisting ()
-                else
-                    do! expect(dec).toBeExisting ()
-            }
-
-        it "Buttons and label exist"
-        <| fun _ ->
-            promise {
                 let! dec = getDecButton ()
                 do! expect(dec).toBeExisting ()
-                let! inc = getIncButton ()
-                do! expect(inc).toBeExisting ()
-                let! dis = getDisableButton ()
-                do! expect(dis).toBeExisting ()
-                let! en = getEnableButton ()
-                do! expect(en).toBeExisting ()
-                let! t = getLabel ()
-                do! expect(t).toBeExisting ()
+            else
+                do! expect(dec).toBeExisting ()
+        }
+
+    it "Buttons and label exist"
+    <| fun _ ->
+        promise {
+            let! dec = getDecButton ()
+            do! expect(dec).toBeExisting ()
+            let! inc = getIncButton ()
+            do! expect(inc).toBeExisting ()
+            let! dis = getDisableButton ()
+            do! expect(dis).toBeExisting ()
+            let! en = getEnableButton ()
+            do! expect(en).toBeExisting ()
+            let! t = getLabel ()
+            do! expect(t).toBeExisting ()
+        }
+
+    describe "Initial state is correct"
+    <| fun _ ->
+        it "Label is zero"
+        <| fun _ ->
+            promise {
+                let! t = getLabel () |> getInt
+                Expect.equal t 0 "Label should be 0"
             }
 
-        describe "Initial state is correct"
+        it "Enable is disabled"
         <| fun _ ->
-            it "Label is zero"
-            <| fun _ ->
-                promise {
-                    let! t = getLabel () |> getInt
-                    Expect.equal t 0 "Label should be 0"
-                }
+            promise {
+                let! en = getEnableButton ()
+                let! actual = en.isEnabled ()
+                Expect.isFalse actual "Enable should be disabled"
+            }
 
-            it "Enable is disabled"
-            <| fun _ ->
-                promise {
-                    let! en = getEnableButton ()
-                    let! actual = en.isEnabled ()
-                    Expect.isFalse actual "Enable should be disabled"
-                }
-
-            it "Disable is enabled"
-            <| fun _ ->
-                promise {
-                    let! dis = getDisableButton ()
-                    let! actual = dis.isEnabled ()
-                    Expect.isTrue actual "Disable should be enabled"
-                }
-    }
+        it "Disable is enabled"
+        <| fun _ ->
+            promise {
+                let! dis = getDisableButton ()
+                let! actual = dis.isEnabled ()
+                Expect.isTrue actual "Disable should be enabled"
+            }
 
 describe "Combination TWO Way and ONE Way IPC works"
 <| fun _ ->
-    promise {
-        it "Value responds to inc/dec clicks"
-        <| fun _ ->
-            promise {
-                let! label = getLabel ()
-                let! initialValue = label.getText().``then`` (int)
-                let! incButton = getIncButton ()
-                let! decButton = getDecButton ()
-                do! incButton.click ()
-                let! newValue = label.getText().``then`` (int)
-                Expect.notEqual newValue initialValue "Value should change"
-                Expect.equal newValue (initialValue + 1) "Value has increased by one"
-                do! decButton.click ()
-                let! newValue2 = label.getText().``then`` int
-                Expect.equal newValue2 initialValue "Value has decreased back to initial"
-            }
+    it "Value responds to inc/dec clicks"
+    <| fun _ ->
+        promise {
+            let! label = getLabel ()
+            let! initialValue = label.getText().``then`` int
+            let! incButton = getIncButton ()
+            let! decButton = getDecButton ()
+            do! incButton.click ()
+            let! newValue = label.getText().``then`` int
+            Expect.notEqual newValue initialValue "Value should change"
+            Expect.equal newValue (initialValue + 1) "Value has increased by one"
+            do! decButton.click ()
+            let! newValue2 = label.getText().``then`` int
+            Expect.equal newValue2 initialValue "Value has decreased back to initial"
+        }
 
-        it "Disable and Enable round trip correctly"
-        <| fun _ ->
-            promise {
-                let! dis = getDisableButton ()
-                let! en = getEnableButton ()
-                do! expect(dis).toBeEnabled ()
-                do! expect(en).toBeDisabled ()
-                do! dis.click ()
-                do! expect(dis).toBeDisabled ()
-                do! expect(en).toBeEnabled ()
-                do! en.click ()
-            }
+    it "Disable and Enable round trip correctly"
+    <| fun _ ->
+        promise {
+            let! dis = getDisableButton ()
+            let! en = getEnableButton ()
+            do! expect(dis).toBeEnabled ()
+            do! expect(en).toBeDisabled ()
+            do! dis.click ()
+            do! expect(dis).toBeDisabled ()
+            do! expect(en).toBeEnabled ()
+            do! en.click ()
+        }
 
-        it "Disable prevents inc/dec"
-        <| fun _ ->
-            promise {
-                let! dis = getDisableButton ()
-                let! en = getEnableButton ()
-                let! label = getLabel ()
-                do! expect(dis).toBeEnabled ()
-                do! expect(en).toBeDisabled ()
-                let! initialValue = label.getText().``then`` int
-                do! dis.click ()
+    it "Disable prevents inc/dec"
+    <| fun _ ->
+        promise {
+            let! dis = getDisableButton ()
+            let! en = getEnableButton ()
+            let! label = getLabel ()
+            do! expect(dis).toBeEnabled ()
+            do! expect(en).toBeDisabled ()
+            let! initialValue = label.getText().``then`` int
+            do! dis.click ()
 
-                let! inc = getIncButton ()
-                do! inc.click ()
-                do! inc.click ()
-                let! actual = label.getText().``then`` int
-                Expect.equal actual initialValue "Value should not have changed while disabled"
+            let! inc = getIncButton ()
+            do! inc.click ()
+            do! inc.click ()
+            let! actual = label.getText().``then`` int
+            Expect.equal actual initialValue "Value should not have changed while disabled"
 
-                do! en.click ()
-                do! inc.click ()
-                do! inc.click ()
-                let! newActual = label.getText().``then`` int
-                Expect.notEqual newActual initialValue "Value should have changed while enabled"
-                Expect.equal newActual (initialValue + 2) "Value should have increased by two"
-            }
-    }
+            do! en.click ()
+            do! inc.click ()
+            do! inc.click ()
+            let! newActual = label.getText().``then`` int
+            Expect.notEqual newActual initialValue "Value should have changed while enabled"
+            Expect.equal newActual (initialValue + 2) "Value should have increased by two"
+        }
