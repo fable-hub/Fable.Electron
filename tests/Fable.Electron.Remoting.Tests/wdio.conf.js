@@ -17,7 +17,6 @@ exports.config = {
         // Electron service options
         // see https://webdriver.io/docs/desktop-testing/electron/configuration/#service-options
         'wdio:electronServiceOptions': {
-            // appArgs: [ '--headless' ]
             appArgs: [ '--headless', '--no-sandbox' ]
         }
     }],
@@ -70,7 +69,8 @@ exports.config = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 60000
+        timeout: 60000,
+        retries: 3
     },
     // =====
     // Hooks

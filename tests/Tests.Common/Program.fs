@@ -1,11 +1,11 @@
 ﻿module WDIO
 
 open Fable.Core.JS
-open Fable.Core.Testing
 open Fable.Core
 
 [<AllowNullLiteral>]
 type IWdioElement =
+    abstract ``$``: selector: string -> Promise<IWdioElement>
     abstract getHTML: unit -> JS.Promise<string>
     abstract getText: unit -> JS.Promise<string>
     abstract click: unit -> JS.Promise<unit>
@@ -41,8 +41,36 @@ type IAssert =
     abstract toBeClickable: unit -> Promise<unit>
     abstract toBeDisabled: unit -> Promise<unit>
     abstract toBeEnabled: unit -> Promise<unit>
+    abstract toHaveComputedLabel: string -> Promise<unit>
+    abstract toHaveComputedRole: string -> Promise<unit>
+    abstract toHaveHref: string -> Promise<unit>
+    abstract toHaveLink: string -> Promise<unit>
+    abstract toHaveId: string -> Promise<unit>
     abstract toHaveText: string -> Promise<unit>
     abstract toHaveHTML: string -> Promise<unit>
+    abstract toBeDisplayedInViewport: unit -> Promise<unit>
+    abstract toHaveChildren: unit -> Promise<unit>
+    abstract toHaveChildren: int -> Promise<unit>
+    abstract toHaveChildren: {| gte: int |} -> Promise<unit>
+    abstract toHaveChildren: {| lte: int |} -> Promise<unit>
+    abstract toHaveChildren: {| gt: int |} -> Promise<unit>
+    abstract toHaveChildren: {| lt: int |} -> Promise<unit>
+    abstract toHaveChildren: {| gte: int; lte: int |} -> Promise<unit>
+    abstract toHaveChildren: {| gte: int; lt: int |} -> Promise<unit>
+    abstract toHaveChildren: {| gt: int; lte: int |} -> Promise<unit>
+    abstract toHaveChildren: {| gt: int; lt: int |} -> Promise<unit>
+    abstract toHaveWidth: int -> Promise<unit>
+    abstract toHaveHeight: int -> Promise<unit>
+    abstract toHaveSize: {| width: int; height: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: int -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| gte: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| lte: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| gt: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| lt: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| gte: int; lte: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| gte: int; lt: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| gt: int; lte: int |} -> Promise<unit>
+    abstract toBeElementsArrayOfSize: {| gt: int; lt: int |} -> Promise<unit>
 
 [<Global>]
 let expect (element: IWdioElement) : IAssert = jsNative
