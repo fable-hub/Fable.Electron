@@ -313,7 +313,7 @@ module Transpiler =
                         |> GeneratorContainer.create
                         |> GeneratorContainer.withAttributes [
                             "JS.Pojo"
-                            if structOrObject.PathKey.Name.ValueOrModifier = "IpcMainEvent" then
+                            if structOrObject.PathKey.Name.ValueOrModified = "IpcMainEvent" then
                                 "AllowNullLiteral"
                         ]
                         |> GeneratorContainer.withConstructor (
