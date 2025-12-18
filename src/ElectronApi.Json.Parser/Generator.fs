@@ -311,7 +311,11 @@ module Transpiler =
                     | Object structOrObject ->
                         structOrObject.PathKey
                         |> GeneratorContainer.create
-                        |> GeneratorContainer.withAttribute "JS.Pojo"
+                        |> GeneratorContainer.withAttributes [
+                            "JS.Pojo"
+                            if structOrObject.PathKey.Name.ValueOrModifier = "IpcMainEvent" then
+                                "AllowNullLiteral"
+                        ]
                         |> GeneratorContainer.withConstructor (
                             structOrObject.Properties |> List.map Parameter.InlinedObjectProp
                         )
