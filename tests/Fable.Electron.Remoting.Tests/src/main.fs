@@ -49,6 +49,18 @@ let mutable counter =
 
 let setCounter value = counter <- value
 
+let windowLoggerApi = {
+    Log = fun event msg ->
+        promise {
+            printfn $"Logging from window {event.sender.id}: {msg}"
+            let windowId = event.sender.id
+            let now = System.DateTime.Now.Ticks
+            let logMessage = $"[Window {windowId}- {now}]: {msg}"
+            Browser.Dom.console.log logMessage
+            return logMessage
+        }
+} 
+
 app
     .whenReady()
     .``then`` (fun () ->
@@ -75,6 +87,29 @@ app
                                         counter.Value
                                     else
                                         counter.Value + 1 }
+
+                        broker.SetValue counter.Value
+
+                        if counter.Disabled then
+                            return Error()
+                        else
+                            return Ok counter.Value
+                    }
+              SetValue =
+                fun (value: int) ->
+                    promise {
+                        setCounter
+                            { counter with
+                                ClickCount =
+                                    if counter.Disabled then
+                                        counter.ClickCount
+                                    else
+                                        counter.ClickCount + 1
+                                Value =
+                                    if counter.Disabled then
+                                        counter.Value
+                                    else
+                                        value }
 
                         broker.SetValue counter.Value
 
@@ -130,6 +165,7 @@ app
               ClickCount = fun () -> promise { return counter.ClickCount } }
 
         Remoting.init |> Remoting.buildHandler handler
+        Remoting.init |> Remoting.buildHandler windowLoggerApi
 
         app.onActivate (fun _ ->
             if BrowserWindow.getAllWindows().Length = 0 then
