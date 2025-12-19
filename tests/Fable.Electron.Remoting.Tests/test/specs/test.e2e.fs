@@ -12,9 +12,18 @@ let inline getIncButton () =
 let inline getDecButton () =
     browser.``$`` "#counter-button-decrement"
 
+let inline getSet42Button () =
+    browser.``$`` "#counter-set-42"
+
 let inline getDisableButton () = browser.``$`` "#counter-button-disable"
 let inline getEnableButton () = browser.``$`` "#counter-button-enable"
 let inline getLabel () = browser.``$`` "#counter-text"
+
+let inline getWindowLoggerButton () =
+    browser.``$`` "#window-logger-button"
+
+let inline getWindowLoggerOutput () =
+    browser.``$`` "#window-logger-output"
 
 let inline getInt (ele: JS.Promise<IWdioElement>) =
     promise {
@@ -56,10 +65,16 @@ describe "App loads correctly"
             do! expect(inc).toBeExisting ()
             let! dis = getDisableButton ()
             do! expect(dis).toBeExisting ()
+            let! set42 = getSet42Button ()
+            do! expect(set42).toBeExisting ()
             let! en = getEnableButton ()
             do! expect(en).toBeExisting ()
             let! t = getLabel ()
             do! expect(t).toBeExisting ()
+            let! winLogBtn = getWindowLoggerButton ()
+            do! expect(winLogBtn).toBeExisting ()
+            let! winLogOut = getWindowLoggerOutput ()
+            do! expect(winLogOut).toBeExisting ()
         }
 
     describe "Initial state is correct"
@@ -85,6 +100,14 @@ describe "App loads correctly"
                 let! dis = getDisableButton ()
                 let! actual = dis.isEnabled ()
                 Expect.isTrue actual "Disable should be enabled"
+            }
+
+        it "Window Logger output is empty"
+        <| fun _ ->
+            promise {
+                let! out = getWindowLoggerOutput ()
+                let! text = out.getText ()
+                Expect.equal text "Placeholder" "Window Logger output should be Placeholder"
             }
 
 describe "Combination TWO Way and ONE Way IPC works"
@@ -141,4 +164,28 @@ describe "Combination TWO Way and ONE Way IPC works"
             let! newActual = label.getText().``then`` int
             Expect.notEqual newActual initialValue "Value should have changed while enabled"
             Expect.equal newActual (initialValue + 2) "Value should have increased by two"
+        }
+
+    it "Set to 42 works (this tests passing values over two-way IPC)"
+    <| fun _ ->
+        promise {
+            let! label = getLabel ()
+            let! set42 = getSet42Button ()
+            do! set42.click ()
+            let! actual = label.getText().``then`` int
+            Expect.equal actual 42 "Value should be set to 42"
+        }
+
+    it "Window Logger logs actions correctly (this tests two-way with IpcMainEvent)"
+    <| fun _ ->
+        promise {
+            let! out = getWindowLoggerOutput ()
+            let! winLogBtn = getWindowLoggerButton ()
+            do! winLogBtn.click ()
+            let! text = out.getText ()
+            /// Should match something like: "[Window 1-639017411811680000]:Hello from Renderer!"
+            /// numbers will vary.
+            let regex = System.Text.RegularExpressions.Regex(@"^\[Window \d+-\d+\]:Hello from Renderer!$")
+            let rm = regex.IsMatch(text)
+            Expect.isTrue rm "Window Logger should log correct message"
         }

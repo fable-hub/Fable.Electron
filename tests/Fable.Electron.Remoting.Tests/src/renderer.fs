@@ -14,11 +14,16 @@ console.log "This message is being logged by 'renderer.js', included via VITE"
 
 let api = Remoting.init |> Remoting.buildClient<CounterHandler>
 
+let windowLoggerApi = Remoting.init |> Remoting.buildClient<WindowLogger>
+
 let incButton =
     document.getElementById ("counter-button-increment") :?> HTMLButtonElement
 
 let decButton =
     document.getElementById ("counter-button-decrement") :?> HTMLButtonElement
+
+let set42Button =
+    document.getElementById ("counter-set-42") :?> HTMLButtonElement
 
 let disableButton =
     document.getElementById ("counter-button-disable") :?> HTMLButtonElement
@@ -28,6 +33,13 @@ let enableButton =
 
 let counterText = document.getElementById ("counter-text") :?> HTMLHeadingElement
 
+let windowLoggerButton =
+    document.getElementById ("window-logger-button") :?> HTMLButtonElement
+
+let windowLoggerOutput =
+    document.getElementById ("window-logger-output") :?> HTMLDivElement
+
+
 incButton.addEventListener (
     "click",
     fun e ->
@@ -35,7 +47,7 @@ incButton.addEventListener (
             .Increment()
             .``then`` (
                 function
-                | Ok value -> console.log $"Counter value incremented to %i{value}"
+                | Ok value -> console.log $"Counter value incremented to {value}"
                 | _ ->
                     if disableButton.attributes.getNamedItem("disabled").nodeValue = "disabled" then
                         console.log "Counter value did not change - disabled"
@@ -52,7 +64,24 @@ decButton.addEventListener (
             .Decrement()
             .``then`` (
                 function
-                | Ok value -> console.log $"Counter value decremented to %i{value}"
+                | Ok value -> console.log $"Counter value decremented to {value}"
+                | _ ->
+                    if disableButton.attributes.getNamedItem("disabled").nodeValue = "disabled" then
+                        console.log "Counter value did not change - disabled"
+                    else
+                        failwith "Unable to change counter value but counter is not disabled"
+            )
+        |> ignore
+)
+
+set42Button.addEventListener(
+    "click",
+    fun e ->
+        api
+            .SetValue(42)
+            .``then`` (
+                function
+                | Ok value -> console.log $"Counter value set to {value}"
                 | _ ->
                     if disableButton.attributes.getNamedItem("disabled").nodeValue = "disabled" then
                         console.log "Counter value did not change - disabled"
@@ -88,6 +117,19 @@ enableButton.addEventListener (
         |> ignore
 )
 
+windowLoggerButton.addEventListener(
+    "click",
+    fun e ->
+        console.log("Calling window logger API from renderer...")
+        (windowLoggerApi
+          .Log Fable.Core.JS.undefined "Hello from Renderer!")
+          .``then`` (
+                fun (result: string) -> 
+                    windowLoggerOutput.innerText <- result
+            )
+        |> ignore
+)
+
 let handler =
     { SetValue = fun value -> counterText.innerText <- string value
       SetDisabled =
@@ -102,3 +144,6 @@ let handler =
     }
 
 Remoting.init |> Remoting.buildHandler handler
+
+
+Browser.Dom.console.log (Browser.Dom.window)
