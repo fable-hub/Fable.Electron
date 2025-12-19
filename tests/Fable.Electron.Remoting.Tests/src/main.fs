@@ -55,11 +55,11 @@ let windowLoggerApi = {
             printfn $"Logging from window {event.sender.id}: {msg}"
             let windowId = event.sender.id
             let now = System.DateTime.Now.Ticks
-            let logMessage = $"[Window {windowId}- {now}]: {msg}"
+            let logMessage = $"[Window {windowId}-{now}]:{msg}"
             Browser.Dom.console.log logMessage
             return logMessage
         }
-} 
+}
 
 app
     .whenReady()
