@@ -8,4 +8,5 @@ open Fable.Electron.Remoting.Preload
 open Shared
 
 Remoting.init |> Remoting.buildTwoWayBridge<CounterHandler>
+Remoting.init |> Remoting.buildTwoWayBridge<WindowLogger>
 Remoting.init |> Remoting.buildBridge<TextHandler>

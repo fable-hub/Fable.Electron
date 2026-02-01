@@ -136,9 +136,11 @@ module Type =
             match fcsTypes with
             | typs when typs |> List.forall _.IsPromise ->
                 typs
-                |> List.map (function
+                |> List.map (
+                    function
                     | Promise innerType -> innerType
-                    | _ -> failwith "UNREACHABLE")
+                    | _ -> failwith "UNREACHABLE"
+                )
                 |> ApiType.OneOf
                 |> List.singleton
                 |> FantomasFactory.makePromise
@@ -180,12 +182,14 @@ module Type =
 
                 let parameters =
                     normalizedParameters
-                    |> List.map (function
+                    |> List.map (
+                        function
                         | Named(_, info)
                         | Positional info ->
                             let wrap: FcsType -> _ = if info.Required then id else FantomasFactory.makeOption
                             info.Type |> FantomasFactory.mapToFantomas |> wrap
-                        | InlinedObjectProp _ -> failwith "Lambdas should not have inlined object props")
+                        | InlinedObjectProp _ -> failwith "Lambdas should not have inlined object props"
+                    )
 
                 let names =
                     normalizedParameters
@@ -193,7 +197,8 @@ module Type =
                         if i = normalizedParameters.Length - 1 then
                             SingleTextNode.make "->"
                         else
-                            SingleTextNode.make "*")
+                            SingleTextNode.make "*"
+                    )
 
                 let parameterNamePairs = names |> List.zip parameters
 
@@ -492,7 +497,8 @@ module EventInterfaces =
                                 Some(MultipleTextsNode.make "with get, set"),
                                 Range.Zero
                             )
-                            |> MemberDefn.AbstractSlot)
+                            |> MemberDefn.AbstractSlot
+                )
 
             let typeName =
                 let docs =
@@ -534,7 +540,8 @@ module EventInterfaces =
                     TypeDefnRegularNode(typeName, parameterMembers, Range.Zero)
                     |> Compatibility.wrapInCompatibilityDirective event.Compatibility
                     |> TypeDefn.Regular
-                ))
+                )
+        )
 
 type GeneratorContainer =
     { PathKey: Path.PathKey
@@ -716,7 +723,8 @@ module GeneratorContainer =
             function
             | Positional parameterInfo -> makeParameterDocLine parameterInfo $"arg{idx}"
             | Named(name, info) -> makeParameterDocLine info name.Name.ValueOrModified
-            | InlinedObjectProp prop -> makePropParameterDocLine prop)
+            | InlinedObjectProp prop -> makePropParameterDocLine prop
+        )
 
     let private makeDocNode (wrapperFunction: string list -> string list) (lines: string list) =
         lines
@@ -1140,12 +1148,14 @@ module GeneratorContainer =
             | Some parameters ->
                 parameters
                 |> List.sortByDescending _.Required
-                |> List.collect (function
+                |> List.collect (
+                    function
                     | Parameter.InlinedObjectProp prop -> makePropParameterWithDirectives prop
                     | Parameter.Positional info ->
                         idx <- idx + 1
                         makePositionalParameter idx info
-                    | Parameter.Named(name, info) -> makeNamedParameter name info)
+                    | Parameter.Named(name, info) -> makeNamedParameter name info
+                )
                 |> cutOffFirstTextNodeWithDirectiveMaybe (
                     parameters
                     |> List.tryHead
@@ -1249,7 +1259,8 @@ module GeneratorContainer =
                              prop
 
                      [ Choice2Of2(SingleTextNode.make ",")
-                       makePropParameter prop |> Pattern.Parameter |> Choice1Of2 ])
+                       makePropParameter prop |> Pattern.Parameter |> Choice1Of2 ]
+             )
              |> List.collect id
              |> cutOffFirstTextNodeWithDirectiveMaybe Unspecific
              |> wrapParametersIntoParenNode
@@ -1332,7 +1343,8 @@ module GeneratorContainer =
                           $"{functionPrefix}{event.PathKey.Name.ValueOrModified}"
                           parameter
                           unitReturnInfo
-              | _ -> () ])
+              | _ -> () ]
+        )
 
     let makeXmlDocs (this: GeneratorContainer) =
         [ match this.Process with
@@ -1390,9 +1402,11 @@ module GeneratorContainer =
         )
 
     let makeTypeNameNode =
-        makeTypeNameNodeWithNameMap (function
+        makeTypeNameNodeWithNameMap (
+            function
             | Path.PathKey.Module path -> path.Name.ValueOrSource |> toStroppedCamelCase |> _.ValueOrModified
-            | path -> path.Name.ValueOrModified |> toPascalCase)
+            | path -> path.Name.ValueOrModified |> toPascalCase
+        )
 
     let private makeSignatureParameterTypeNode
         isRequired
@@ -1456,7 +1470,8 @@ module GeneratorContainer =
                 prop.Type
                 |> Type.FantomasFactory.mapToFantomas
                 |> parenthesiseLambdas
-                |> makeDelegateParameterTupleNode prop.Required [] prop.PathKey.Name.ValueOrModified)
+                |> makeDelegateParameterTupleNode prop.Required [] prop.PathKey.Name.ValueOrModified
+        )
         |> List.collect id
         |> List.cutOffLast
         |> fun typs -> TypeTupleNode(typs, Range.Zero) |> Type.Tuple, SingleTextNode.make "->"
@@ -1575,7 +1590,8 @@ module GeneratorContainer =
                           prop.PathKey.Name.ValueOrModified
                           (prop.Type |> Type.FantomasFactory.mapToFantomas)
                           true
-                      |> MemberDefn.AbstractSlot) ]
+                      |> MemberDefn.AbstractSlot
+                  ) ]
 
         let attributes = eventInfo.TypeAttributes |> makeAttributesNode
 
@@ -1837,7 +1853,8 @@ module GeneratorGrouper =
                             SingleTextNode.make case.Value.ValueOrModified,
                             [],
                             Range.Zero
-                        ))
+                        )
+                )
                 |> fun cases ->
                     TypeDefnUnionNode(typeNameNode, None, cases, [], Range.Zero)
                     |> TypeDefn.Union

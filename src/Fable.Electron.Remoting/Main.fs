@@ -115,7 +115,8 @@ type Remoting =
                         channelName,
                         emitJsExpr
                             (impl.Item(field.FieldName))
-                            "async (...args) => { return await $0(args[0], ...(args[1])) }"
+                            // The first arg passed by the renderer will be the nonsensical filler value.
+                            "async (...args) => { return await $0(args[0], ...(args[1].slice(1))) }"
                     )
                 | false, true ->
                     // If not async and handles the IpcEvent, then we pass the ipc event
@@ -124,7 +125,8 @@ type Remoting =
                         channelName,
                         emitJsExpr
                             (impl.Item(field.FieldName))
-                            "async (...args) => { return $0(args[0], ...(args[1])) }"
+                            // The first arg passed by the renderer will be the nonsensical filler value.
+                            "async (...args) => { return $0(args[0], ...(args[1].slice(1))) }"
                     )
                 | true, false ->
                     // If we dont handle the IpcMainEvent, then we do not pass it to the proxy (index 0).

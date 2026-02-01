@@ -46,7 +46,8 @@ module Utils =
                     if idx = length then
                         [ ident ]
                     else
-                        [ ident; IdentifierOrDot.makeDot ])
+                        [ ident; IdentifierOrDot.makeDot ]
+                )
             |> Array.toList
             |> List.collect id
 
@@ -64,9 +65,11 @@ module Utils =
 
         member this.identList =
             this.Content
-            |> List.choose (function
+            |> List.choose (
+                function
                 | IdentifierOrDot.Ident ident -> ident.Text |> Some
-                | _ -> None)
+                | _ -> None
+            )
 
         member this.firstIdent = this.identList |> List.head
         member this.lastIdent = this.identList |> List.last
@@ -74,17 +77,21 @@ module Utils =
 
         member this.isKebab =
             this.Content
-            |> List.exists (function
+            |> List.exists (
+                function
                 | IdentifierOrDot.Ident ident -> ident.Text.Contains('-')
                 | IdentifierOrDot.KnownDot ident -> ident.Text.Contains('-')
-                | _ -> false)
+                | _ -> false
+            )
 
         member this.toCamelCase =
             this.Content
-            |> List.map (function
+            |> List.map (
+                function
                 | IdentifierOrDot.Ident ident
                 | IdentifierOrDot.KnownDot ident -> ident.Text
-                | _ -> "")
+                | _ -> ""
+            )
             |> List.toArray
             |> String.concat ""
             |> _.Trim('`')
@@ -95,7 +102,8 @@ module Utils =
                 else
                     let chars = str.ToCharArray()
                     chars[0] <- chars[0] |> System.Char.ToUpperInvariant
-                    chars |> string)
+                    chars |> string
+            )
             |> String.concat ""
 
     type AttributeNode with
@@ -190,14 +198,18 @@ module Utils =
         static member makeSimple(identifier: string, ?docs: string list, ?attributes: string list, ?suffix: string) =
             TypeNameNode(
                 docs
-                |> Option.bind (function
+                |> Option.bind (
+                    function
                     | [] -> None
-                    | texts -> Some texts)
+                    | texts -> Some texts
+                )
                 |> Option.map XmlDocNode.make,
                 attributes
-                |> Option.bind (function
+                |> Option.bind (
+                    function
                     | [] -> None
-                    | texts -> Some texts)
+                    | texts -> Some texts
+                )
                 |> Option.map MultipleAttributeListNode.make,
                 SingleTextNode.make "type",
                 None,
@@ -307,9 +319,11 @@ module Utils =
                           "static"
                       "member" ],
                 (isInline
-                 |> Option.bind (function
+                 |> Option.bind (
+                     function
                      | true -> SingleTextNode.make "inline" |> Some
-                     | false -> None)),
+                     | false -> None
+                 )),
                 None,
                 IdentListNode.make
                     [ if not isStatic then
@@ -439,22 +453,26 @@ module Utils =
                         TriviaNode(TriviaContent.Directive $"#if {directiveString}", Range.Zero)
                         |> node.AddBefore
 
-                        node),
+                        node
+                    ),
                     (fun (node: Node) ->
                         TriviaNode(TriviaContent.Directive "#endif", Range.Zero) |> node.AddAfter
-                        node)
+                        node
+                    )
                 | None -> id, id
 
             let separator = defaultArg separator ","
 
             identTypeTuples
-            |> List.collect (function
+            |> List.collect (
+                function
                 | ident, typ ->
                     [ SingleTextNode.make separator |> maybeDirectiveBefore :?> SingleTextNode
                       |> Choice2Of2
                       PatParameterNode.Create(ident, ?typ = typ) |> maybeDirectiveAfter :?> PatParameterNode
                       |> Pattern.Parameter
-                      |> Choice1Of2 ])
+                      |> Choice1Of2 ]
+            )
             |> function
                 | [] -> PatTupleNode([], Range.Zero)
                 | _ :: Choice1Of2(Pattern.Parameter node) :: tail ->
@@ -583,9 +601,11 @@ module Utils =
                 if
                     inheritString.IsSome
                     && (members
-                        |> List.exists (function
+                        |> List.exists (
+                            function
                             | MemberDefn.Inherit _ -> true
-                            | _ -> false))
+                            | _ -> false
+                        ))
                 then
                     failwith
                         "Tried to Create a TypeDefnRegularNode with an input inherit string, \
@@ -746,6 +766,7 @@ when there is already an existing inherit members"
                 UnionCaseNode.Create(
                     (name.ValueOrModified |> toPascalCase),
                     attributes = MultipleAttributeListNode.make [ $"CompiledName(\"{name.ValueOrSource}\")" ]
-                ))
+                )
+            )
             |> fun cases ->
                 TypeDefnUnionNode.Create(typeName, cases, ?members = members, ?docs = docs, ?attributes = attributes)

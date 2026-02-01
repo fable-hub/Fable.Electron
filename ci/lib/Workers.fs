@@ -2,8 +2,6 @@
 
 open System.IO
 open System.Text.Json
-open EasyBuild.Tools.Changelog
-open EasyBuild.Tools.ChangelogGen
 open ElectronApi.Json.Parser
 open Fake.Api
 open Fake.Core
@@ -13,7 +11,6 @@ open Fake.Tools
 open Fake.JavaScript
 open Fake.Tools.Git
 open GitNet
-open Octokit
 open Partas.GitNet
 open Partas.Tools.SepochSemver
 open Spec
@@ -67,7 +64,8 @@ module ApiDocs =
                 Input = Some VirtualRoot.fsdocs.``.``
                 MdComments = Some true
                 Projects = Some [ Projects.Electron; Projects.Forge; Projects.Remoting ]
-                Properties = Some "Configuration=Release" })
+                Properties = Some "Configuration=Release" }
+        )
 
 module Docs =
     let private dir = Root.docs.``.``
@@ -119,17 +117,32 @@ module Laundry =
             GitHub.createClientWithToken token
             |> (func >> Async.RunSynchronously >> Async.RunSynchronously)
 
+    /// Pushes all tags to origin
+    let pushTags () =
+        CommandHelper.directRunGitCommandAndFail root "push --tags origin"
 
+    /// Pushes the current branch, does not push tags
     let pushBranch branchName =
-        Git.Branches.pushBranch root "origin" branchName
+        Branches.pushBranch root "origin" branchName
 
-    let branchName () = Git.Information.getBranchName root
+    /// Pushes the current branch and tags
+    let pushBranchAndTags branchName =
+        Branches.pushBranch root "origin" branchName |> pushTags
 
+    /// Provides the current branch name
+    let branchName () = Information.getBranchName root
+
+    /// Does not push tags
     let pushCurrentBranch = branchName >> pushBranch
 
+    /// Pushes tags as well as the current branch
+    let pushCurrentBranchAndTags = branchName >> pushBranchAndTags
+
+    /// Creates a new branch with the given name and checks it out
     let createBranch newBranchName =
         CommandHelper.directRunGitCommandAndFail root $"checkout -b {newBranchName}"
 
+    /// Commits the given files to the staging area
     let commitFiles msg files =
         files |> List.iter (Git.Staging.stageFile root >> ignore)
         Git.Commit.exec root msg
@@ -150,6 +163,7 @@ module Laundry =
                 |> JsonSerializer.Deserialize<PullRequestInfo>
             with e ->
                 Trace.traceError e.Message
+
                 { reviewers = [||]
                   labels = [||]
                   projects = [||]
@@ -165,7 +179,8 @@ module Laundry =
                     Base = ValueSome targetBranch
                     Body = ValueSome body
                     Title = ValueSome title
-                    Head = ValueSome current })
+                    Head = ValueSome current }
+            )
             root
         |> ignore
 
@@ -203,8 +218,9 @@ module Electron =
 
     let downloadRelease = Electron.downloadElectronApi apiFile >> Async.RunSynchronously
 
-    let tryGetReleaseFromString input =
-        Electron.getReleases () |> List.tryFind (_.tagName.Trim('v') >> (=) input)
+    let tryGetReleaseFromString (input: string) =
+        Electron.getReleases ()
+        |> List.tryFind (_.tagName.Trim('v') >> (=) (input.Trim('v')))
 
     let private cacheFile = Root.ci.``cache.json``
 
@@ -234,9 +250,9 @@ module Electron =
             Npm.install testDir
 
     let test () = Npm.test testDir
-    
+
     let openTest () = Npm.start testDir
-    
+
     let watchTest () = Npm.watch testDir
 
     let isDirty () =
@@ -266,7 +282,8 @@ module Project =
                 DotNet.build (fun p ->
                     { p with
                         Configuration = DotNet.BuildConfiguration.Release
-                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true })
+                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true }
+                )
             )
         | Of projects ->
             projects
@@ -274,14 +291,16 @@ module Project =
                 DotNet.build (fun p ->
                     { p with
                         Configuration = DotNet.BuildConfiguration.Release
-                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true })
+                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true }
+                )
             )
         | One project ->
             project
             |> DotNet.build (fun p ->
                 { p with
                     Configuration = DotNet.BuildConfiguration.Release
-                    DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true })
+                    DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true }
+            )
 
     let fableBuild () =
         dotnet [ "fable"; "-e"; ".js" ] Root.src.``Fable.Electron``.``.``
@@ -292,7 +311,8 @@ module Project =
                 { p with
                     NoRestore = not restore
                     OutputPath = Some "bin"
-                    DotNet.PackOptions.MSBuildParams.DisableInternalBinLog = true })
+                    DotNet.PackOptions.MSBuildParams.DisableInternalBinLog = true }
+            )
 
         function
         | All -> buildProjects |> List.iter func
@@ -313,33 +333,36 @@ module Project =
                         { p with
                             DotNet.NuGetPushOptions.PushParams.Source = Some "https://api.nuget.org/v3/index.json"
                             DotNet.NuGetPushOptions.Common.CustomParams = Some "--skip-duplicate"
-                            DotNet.NuGetPushOptions.PushParams.ApiKey = Some key })
+                            DotNet.NuGetPushOptions.PushParams.ApiKey = Some key }
+                    )
                 )
             | None -> failwith "Require NuGet Key to be passed via --nuget-api-key <APIKEY> or via env var NUGET_KEY"
-    
+
     module Cracked =
-        open Partas.GitNet
-        let getProjectOrFail leaf projects: CrackedProject =
+        let getProjectOrFail leaf projects : CrackedProject =
             try
                 Seq.find _.ProjectFileName.EndsWith(leaf + ".fsproj") projects
             with e ->
-                Trace.traceError $"A required project was not found. Could \
+                Trace.traceError
+                    $"A required project was not found. Could \
                                 not find a project file ending with '{leaf}'"
+
                 raise e
-        
+
         let getElectronVersionProperty project =
             let mutable maybeVersion: string voption = ValueNone
+
             project
             |> CrackedProject.withFsProj (
-                CrackedProject.Document.withProperty "ElectronVersion" (
-                    _.Value
-                    >> Option.ofObj
-                    >> function
-                        | Some value -> maybeVersion <- ValueSome value
-                        | None -> ()
-                    )
+                CrackedProject.Document.withProperty
+                    "ElectronVersion"
+                    (_.Value
+                     >> Option.ofObj
+                     >> function
+                         | Some value -> maybeVersion <- ValueSome value
+                         | None -> ())
                 >> Error
-                )
+            )
             |> fun _ ->
                 maybeVersion
                 |> ValueOption.bind (tryParseSepochSemver >> Option.toValueOption)
@@ -351,6 +374,7 @@ module Versions =
         | Minor
         | Patch
         | Equal
+
     let makeCommitMessage message =
         function
         | Major -> "feat!: " + message
@@ -358,120 +382,123 @@ module Versions =
         | Patch -> "fix: " + message
         | Equal -> "chore: " + message
         >> fun message ->
-            [
-                message
-                ""
-                "This commit is automatically generated by the Fable.Electron CI."
-                ""
-                "generated: true"
-            ]
+            [ message
+              ""
+              "This commit is automatically generated by the Fable.Electron CI."
+              ""
+              "generated: true" ]
             |> String.concat "\n"
-    type ElectronDeltaVersions = {
-        FableElectronPackage: Semver.SemVersion voption
-        FableElectronElectron: Semver.SemVersion voption
-        CachedElectron: Semver.SemVersion voption
-        DownloadedElectron: Semver.SemVersion voption
-    }
-    type ElectronDelta = {
-        Versions: ElectronDeltaVersions
-        Dirty: bool
-        Major: int
-        Minor: int
-        Patch: int
-    } with
-        static member Init = {
-            Versions = {
-                FableElectronPackage = ValueNone
-                FableElectronElectron = ValueNone
-                CachedElectron = ValueNone
-                DownloadedElectron = ValueNone
-            }
-            Dirty = false
-            Major = 0
-            Minor = 0
-            Patch = 0
-        }
-        static member Create(?fableElectronPackage: Semver.SemVersion, ?fableElectronElectronProperty: Semver.SemVersion,
-                             ?cachedElectronVersion: Semver.SemVersion, ?downloadedVersion: Semver.SemVersion) =
-            let electronPkgVersion = defaultArg fableElectronPackage (Semver.SemVersion(0,1,0))
-            let cachedVersion = defaultArg cachedElectronVersion (Semver.SemVersion(0,1,0))
-            let fableElectronPropVersion = defaultArg fableElectronElectronProperty cachedVersion
-            let downloadedVers = defaultArg downloadedVersion (Semver.SemVersion(0,1,0))
-            {
-                Versions = {
-                    FableElectronPackage = fableElectronPackage |> Option.toValueOption
-                    FableElectronElectron = fableElectronElectronProperty |> Option.toValueOption
-                    CachedElectron = cachedElectronVersion |> Option.toValueOption
-                    DownloadedElectron = downloadedVersion |> Option.toValueOption
-                }
-                Dirty = Electron.isDirty()
-                Major = int (downloadedVers.Major - fableElectronPropVersion.Major)
-                Minor = int (downloadedVers.Minor - fableElectronPropVersion.Minor)
-                Patch = int (downloadedVers.Patch - fableElectronPropVersion.Patch)
-            }
+
+    type ElectronDeltaVersions =
+        { FableElectronPackage: Semver.SemVersion voption
+          FableElectronElectron: Semver.SemVersion voption
+          CachedElectron: Semver.SemVersion voption
+          DownloadedElectron: Semver.SemVersion voption }
+
+    type ElectronDelta =
+        { Versions: ElectronDeltaVersions
+          Dirty: bool
+          Major: int
+          Minor: int
+          Patch: int }
+
+        static member Init =
+            { Versions =
+                { FableElectronPackage = ValueNone
+                  FableElectronElectron = ValueNone
+                  CachedElectron = ValueNone
+                  DownloadedElectron = ValueNone }
+              Dirty = false
+              Major = 0
+              Minor = 0
+              Patch = 0 }
+
+        static member Create
+            (
+                ?fableElectronPackage: Semver.SemVersion,
+                ?fableElectronElectronProperty: Semver.SemVersion,
+                ?cachedElectronVersion: Semver.SemVersion,
+                ?downloadedVersion: Semver.SemVersion
+            ) =
+            let electronPkgVersion =
+                defaultArg fableElectronPackage (Semver.SemVersion(0, 1, 0))
+
+            let cachedVersion = defaultArg cachedElectronVersion (Semver.SemVersion(0, 1, 0))
+
+            let fableElectronPropVersion =
+                defaultArg fableElectronElectronProperty cachedVersion
+
+            let downloadedVers = defaultArg downloadedVersion (Semver.SemVersion(0, 1, 0))
+
+            { Versions =
+                { FableElectronPackage = fableElectronPackage |> Option.toValueOption
+                  FableElectronElectron = fableElectronElectronProperty |> Option.toValueOption
+                  CachedElectron = cachedElectronVersion |> Option.toValueOption
+                  DownloadedElectron = downloadedVersion |> Option.toValueOption }
+              Dirty = Electron.isDirty ()
+              Major = int (downloadedVers.Major - fableElectronPropVersion.Major)
+              Minor = int (downloadedVers.Minor - fableElectronPropVersion.Minor)
+              Patch = int (downloadedVers.Patch - fableElectronPropVersion.Patch) }
+
         member this.DeltaKind =
             if this.Major > 0 then Major
             elif this.Minor > 0 then Minor
             elif this.Patch > 0 || this.Dirty then Patch
             else Equal
+
         member this.IsElectronBump = this.DeltaKind <> Equal
+
         static member CreateFromContext() =
             let projects = runtime.CrackRepo
             let electron = Project.Cracked.getProjectOrFail "Electron" projects
             let forge = Project.Cracked.getProjectOrFail "Forge" projects
             let remoting = Project.Cracked.getProjectOrFail "Remoting" projects
-            
+
             let currentBindingElectronVersion =
-                Project.Cracked.getElectronVersionProperty electron
-                |> ValueOption.toOption
+                Project.Cracked.getElectronVersionProperty electron |> ValueOption.toOption
+
             let currentDownloadedVersion =
                 Status.tryGetRelease ()
                 |> Option.bind (_.tagName.TrimStart('v') >> tryParseSepochSemver)
                 |> Option.map _.SemVer
+
             let electronPackageVersion = getInitVersionElectron
+
             let cachedElectronVersion =
-                Status.tryGetCache()
-                |> Option.bind (
-                    _.tagName.TrimStart('v')
-                    >> tryParseSepochSemver
-                    >> Option.map _.SemVer
-                    )
+                Status.tryGetCache ()
+                |> Option.bind (_.tagName.TrimStart('v') >> tryParseSepochSemver >> Option.map _.SemVer)
+
             let delta =
                 ElectronDelta.Create(
                     ?fableElectronElectronProperty = currentBindingElectronVersion,
                     ?cachedElectronVersion = cachedElectronVersion,
                     ?downloadedVersion = currentDownloadedVersion,
                     ?fableElectronPackage = electronPackageVersion
-                    )
+                )
+
             projects, delta
+
         member this.IsProbablyPulled =
             let cachedVersion =
                 this.Versions.CachedElectron
-                |> ValueOption.defaultValue(Semver.SemVersion(0,1,0))
+                |> ValueOption.defaultValue (Semver.SemVersion(0, 1, 0))
+
             let currentVersionLessThanCached =
                 this.Versions.FableElectronElectron
-                |> ValueOption.defaultValue (Semver.SemVersion(0,1,0))
+                |> ValueOption.defaultValue (Semver.SemVersion(0, 1, 0))
                 |> _.ComparePrecedenceTo(cachedVersion)
                 |> (>) 0
-            this.DeltaKind.IsMajor && currentVersionLessThanCached 
-        
+
+            this.DeltaKind.IsMajor && currentVersionLessThanCached
+
         member this.NextElectronVersion =
-            let makeSepochSemver = fun semver ->
-                { SemVer = ValueOption.defaultValue(Semver.SemVersion(0,1,0)) semver
-                  Sepoch = Sepoch.Scope "Electron" }
-                
+            let makeSepochSemver =
+                fun semver ->
+                    { SemVer = ValueOption.defaultValue (Semver.SemVersion(0, 1, 0)) semver
+                      Sepoch = Sepoch.Scope "Electron" }
+
             match this, this.DeltaKind with
-            | _, (Major | Minor) ->
-                this.Versions.DownloadedElectron
-                |> makeSepochSemver
+            | _, (Major | Minor) -> this.Versions.DownloadedElectron |> makeSepochSemver
             | _, Patch
-            | { Dirty = true }, _ ->
-                this.Versions.FableElectronPackage
-                |> makeSepochSemver
-                |> SepochSemver.bumpPatch
-            | _ ->
-                this.Versions.FableElectronPackage
-                |> makeSepochSemver
-            
-                
-                
+            | { Dirty = true }, _ -> this.Versions.FableElectronPackage |> makeSepochSemver |> SepochSemver.bumpPatch
+            | _ -> this.Versions.FableElectronPackage |> makeSepochSemver

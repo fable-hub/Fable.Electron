@@ -13,221 +13,241 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 **Scope** | Current Release | Commit Count
 :--- | :---: | :---:
-[**Electron**](#electron) | [39.2.3](https://github.com/fable-hub/fable-electron/compare/6.0.0..._%28Electron%29_39.2.3) | 48 commits
-[**Forge**](#forge) | [6.1.0](https://github.com/fable-hub/fable-electron/compare/6.0.0..._%28Forge%29_6.1.0) | 16 commits
-[**Remoting**](#remoting) | [6.1.0](https://github.com/fable-hub/fable-electron/compare/6.0.0..._%28Remoting%29_6.1.0) | 22 commits
+[**Electron**](#electron) | [39.2.6](https://github.com/fable-hub/Fable.Electron/compare/6.0.0..._%28Electron%29_39.2.6) | 54 commits
+[**Forge**](#forge) | [7.0.0](https://github.com/fable-hub/Fable.Electron/compare/6.0.0..._%28Forge%29_7.0.0) | 22 commits
+[**Remoting**](#remoting) | [7.0.0](https://github.com/fable-hub/Fable.Electron/compare/6.0.0..._%28Remoting%29_7.0.0) | 28 commits
 
 
 -----------------------
 
 # Electron
 
-### [UNRELEASED](https://github.com/fable-hub/fable-electron/compare/_%28Electron%29_39.2.3...HEAD)
+### [UNRELEASED](https://github.com/fable-hub/Fable.Electron/compare/_%28Electron%29_39.2.6...HEAD)
 
-### [39.2.3](https://github.com/fable-hub/fable-electron/compare/6.0.0..._%28Electron%29_39.2.3) - (2025-11-26)
+### [39.2.6](https://github.com/fable-hub/Fable.Electron/compare/6.0.0..._%28Electron%29_39.2.6) - (2025-12-14)
 
 #### <!-- 1 --> Added
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/fable-electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/Fable.Electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
   
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/fable-electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
+* merge ci/electron/v39.2.3 (#14) by [@cabboose](https://github.com/cabboose) with [#70a75](https://github.com/fable-hub/Fable.Electron/commit/70a7585ede20df3f166be498a61ba692c31e409f)
   
 
-* merge ci/electron/v39.2.3 (#14) by [@cabboose](https://github.com/cabboose) with [#70a75](https://github.com/fable-hub/fable-electron/commit/70a7585ede20df3f166be498a61ba692c31e409f)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/Fable.Electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+  
+
+#### <!-- 2 --> Fixed
+
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
+  
+
+* update bindings to 39.2.4 (#21) by [@cabboose](https://github.com/cabboose) with [#e4182](https://github.com/fable-hub/Fable.Electron/commit/e4182617efb335d3cd3060497420822211a877c0)
+  
+
+* Electron binding update to match v39.2.6 by [@GitHub Action](https://github.com/GitHub Action) with [#700bc](https://github.com/fable-hub/Fable.Electron/commit/700bc8a2ce8caa9a6ba48450a70fdf29449ee719)
   
 
 #### <!-- 6 --> Others
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/fable-electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/Fable.Electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
   
 
-* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/fable-electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
+* transform doc emphasis; provide alt event gen attribute expr by [@cabboose](https://github.com/cabboose) with [#6a9f7](https://github.com/fable-hub/Fable.Electron/commit/6a9f786dba08faab4c71c4551b2bfa305deb05e1)
   
 
-* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/fable-electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
+* Workflow that allows automatic versioning for main pushes (#15) by [@cabboose](https://github.com/cabboose) with [#4238e](https://github.com/fable-hub/Fable.Electron/commit/4238e3cd728c85bd57ee78421949321f95944fec)
   
 
-* transform doc emphasis; provide alt event gen attribute expr by [@cabboose](https://github.com/cabboose) with [#6a9f7](https://github.com/fable-hub/fable-electron/commit/6a9f786dba08faab4c71c4551b2bfa305deb05e1)
+* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/fable-electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
+* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/Fable.Electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
   
 
-* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/fable-electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
+* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/Fable.Electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
   
 
-* flesh out CLI spec for build and apply fantomas by [@cabboose](https://github.com/cabboose) with [#32f16](https://github.com/fable-hub/fable-electron/commit/32f160121c1a0ee924a65b516c4e408029e2a001)
+* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/Fable.Electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
   
 
-* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/fable-electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
+* flesh out CLI spec for build and apply fantomas by [@cabboose](https://github.com/cabboose) with [#32f16](https://github.com/fable-hub/Fable.Electron/commit/32f160121c1a0ee924a65b516c4e408029e2a001)
   
 
-### [6.0.0](https://github.com/fable-hub/fable-electron/compare/5.5.0...6.0.0) - (2020-05-24)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+  
+
+* enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
+  
+
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+  
+
+### [6.0.0](https://github.com/fable-hub/Fable.Electron/compare/5.5.0...6.0.0) - (2020-05-24)
 
 #### <!-- 6 --> Others
 
-* Update for Electron 9.0 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#73b83](https://github.com/fable-hub/fable-electron/commit/73b83b83c4fc65ce0c314174a36af579ee41c76e)
+* Update for Electron 9.0 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#73b83](https://github.com/fable-hub/Fable.Electron/commit/73b83b83c4fc65ce0c314174a36af579ee41c76e)
   
 
-### [5.5.0](https://github.com/fable-hub/fable-electron/compare/5.4.0...5.5.0) - (2020-05-16)
+### [5.5.0](https://github.com/fable-hub/Fable.Electron/compare/5.4.0...5.5.0) - (2020-05-16)
 
 #### <!-- 6 --> Others
 
-* Update for Electron 8.3 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3328b](https://github.com/fable-hub/fable-electron/commit/3328bb3a6eac1cf1b2eb93facb2d7b1612cff7c1)
+* Update for Electron 8.3 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3328b](https://github.com/fable-hub/Fable.Electron/commit/3328bb3a6eac1cf1b2eb93facb2d7b1612cff7c1)
   
 
-* Update from official docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#a2f92](https://github.com/fable-hub/fable-electron/commit/a2f925a96f83367811597d9b328eca43456b71aa)
+* Update from official docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#a2f92](https://github.com/fable-hub/Fable.Electron/commit/a2f925a96f83367811597d9b328eca43456b71aa)
   
 
-### [5.4.0](https://github.com/fable-hub/fable-electron/compare/5.3.0...5.4.0) - (2020-04-04)
+### [5.4.0](https://github.com/fable-hub/Fable.Electron/compare/5.3.0...5.4.0) - (2020-04-04)
 
 #### <!-- 6 --> Others
 
-* Update based on fixed docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#01d23](https://github.com/fable-hub/fable-electron/commit/01d23296caf8214d22e0645865a85727c7162523)
+* Update based on fixed docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#01d23](https://github.com/fable-hub/Fable.Electron/commit/01d23296caf8214d22e0645865a85727c7162523)
   
 
-### [5.3.0](https://github.com/fable-hub/fable-electron/compare/5.2.0...5.3.0) - (2020-03-28)
+### [5.3.0](https://github.com/fable-hub/Fable.Electron/compare/5.2.0...5.3.0) - (2020-03-28)
 
 #### <!-- 6 --> Others
 
-* Update for Electron 8.2 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#4c41f](https://github.com/fable-hub/fable-electron/commit/4c41fa1dd9624a2165109120a7c9977b51637046)
+* Update for Electron 8.2 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#4c41f](https://github.com/fable-hub/Fable.Electron/commit/4c41fa1dd9624a2165109120a7c9977b51637046)
   
 
-### [5.2.0](https://github.com/fable-hub/fable-electron/compare/5.1.0...5.2.0) - (2020-03-21)
+### [5.2.0](https://github.com/fable-hub/Fable.Electron/compare/5.1.0...5.2.0) - (2020-03-21)
 
 #### <!-- 6 --> Others
 
-* Update for Electron 8.1 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#03f80](https://github.com/fable-hub/fable-electron/commit/03f807a0b4ec3a79549e2a68932f9da689ba75a7)
+* Update for Electron 8.1 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#03f80](https://github.com/fable-hub/Fable.Electron/commit/03f807a0b4ec3a79549e2a68932f9da689ba75a7)
   
 
-* Update docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3375a](https://github.com/fable-hub/fable-electron/commit/3375a2d9a97f4290ecec8dab96d873995193f33b)
+* Update docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3375a](https://github.com/fable-hub/Fable.Electron/commit/3375a2d9a97f4290ecec8dab96d873995193f33b)
   
 
-### [5.1.0](https://github.com/fable-hub/fable-electron/compare/5.0.0...5.1.0) - (2020-02-24)
+### [5.1.0](https://github.com/fable-hub/Fable.Electron/compare/5.0.0...5.1.0) - (2020-02-24)
 
 #### <!-- 6 --> Others
 
-* Minor update based on updated Electron docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#ed09b](https://github.com/fable-hub/fable-electron/commit/ed09bbe913e816552452280d9c6f9951cf5446b3)
+* Minor update based on updated Electron docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#ed09b](https://github.com/fable-hub/Fable.Electron/commit/ed09bbe913e816552452280d9c6f9951cf5446b3)
   
 
-### [5.0.0](https://github.com/fable-hub/fable-electron/compare/4.3.0...5.0.0) - (2020-02-10)
+### [5.0.0](https://github.com/fable-hub/Fable.Electron/compare/4.3.0...5.0.0) - (2020-02-10)
 
 #### <!-- 6 --> Others
 
-* Update for Electron 8 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#f448a](https://github.com/fable-hub/fable-electron/commit/f448a17bb875c457e754ef615e59043d4c02023f)
+* Update for Electron 8 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#f448a](https://github.com/fable-hub/Fable.Electron/commit/f448a17bb875c457e754ef615e59043d4c02023f)
   
 
-* Update doc comments by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3b552](https://github.com/fable-hub/fable-electron/commit/3b5526af820787e72d9a1d6020baba366843618d)
+* Update doc comments by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3b552](https://github.com/fable-hub/Fable.Electron/commit/3b5526af820787e72d9a1d6020baba366843618d)
   
 
-### [4.3.0](https://github.com/fable-hub/fable-electron/compare/4.2.0...4.3.0) - (2019-12-08)
+### [4.3.0](https://github.com/fable-hub/Fable.Electron/compare/4.2.0...4.3.0) - (2019-12-08)
 
 #### <!-- 6 --> Others
 
-* Update from Electron docs: Login Request -> AuthenticationResponseDetails by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#5b925](https://github.com/fable-hub/fable-electron/commit/5b92587bbfc304aade93d40ca1b81173b4595e0a)
+* Update from Electron docs: Login Request -> AuthenticationResponseDetails by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#5b925](https://github.com/fable-hub/Fable.Electron/commit/5b92587bbfc304aade93d40ca1b81173b4595e0a)
   
 
-### [4.2.0](https://github.com/fable-hub/fable-electron/compare/4.1.0...4.2.0) - (2019-11-09)
+### [4.2.0](https://github.com/fable-hub/Fable.Electron/compare/4.1.0...4.2.0) - (2019-11-09)
 
 #### <!-- 6 --> Others
 
-* Update based on fixed Electron docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#e8339](https://github.com/fable-hub/fable-electron/commit/e83396b1dadf1ccc967dc2692a00dcafcccdf17a)
+* Update based on fixed Electron docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#e8339](https://github.com/fable-hub/Fable.Electron/commit/e83396b1dadf1ccc967dc2692a00dcafcccdf17a)
   
 
-### [4.1.0](https://github.com/fable-hub/fable-electron/compare/4.0.0...4.1.0) - (2019-11-06)
+### [4.1.0](https://github.com/fable-hub/Fable.Electron/compare/4.0.0...4.1.0) - (2019-11-06)
 
 #### <!-- 6 --> Others
 
-* Update for Electron 7.1 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#592bd](https://github.com/fable-hub/fable-electron/commit/592bd66193c6302046658f96035b3e369f8175f4)
+* Update for Electron 7.1 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#592bd](https://github.com/fable-hub/Fable.Electron/commit/592bd66193c6302046658f96035b3e369f8175f4)
   
 
-### [4.0.0](https://github.com/fable-hub/fable-electron/compare/3.0.0...4.0.0) - (2019-11-01)
+### [4.0.0](https://github.com/fable-hub/Fable.Electron/compare/3.0.0...4.0.0) - (2019-11-01)
 
 #### <!-- 6 --> Others
 
-* Update for Electron 7 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#730c1](https://github.com/fable-hub/fable-electron/commit/730c1f2332d04bf40090fa63306aee6e497f0658)
+* Update for Electron 7 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#730c1](https://github.com/fable-hub/Fable.Electron/commit/730c1f2332d04bf40090fa63306aee6e497f0658)
   
 
-### [3.0.0](https://github.com/fable-hub/fable-electron/compare/2.0.0...3.0.0) - (2019-09-11)
+### [3.0.0](https://github.com/fable-hub/Fable.Electron/compare/2.0.0...3.0.0) - (2019-09-11)
 
 #### <!-- 6 --> Others
 
-* Use Action wrappers for multi-parameter callback properties by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#15c0c](https://github.com/fable-hub/fable-electron/commit/15c0c4d7f82da44160b5934000663203f2231f04)
+* Use Action wrappers for multi-parameter callback properties by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#15c0c](https://github.com/fable-hub/Fable.Electron/commit/15c0c4d7f82da44160b5934000663203f2231f04)
   
 
-### [2.0.0](https://github.com/fable-hub/fable-electron/compare/1.0.0...2.0.0) - (2019-08-20)
+### [2.0.0](https://github.com/fable-hub/Fable.Electron/compare/1.0.0...2.0.0) - (2019-08-20)
 
 #### <!-- 6 --> Others
 
-* Make MessageBoxOptions.icon also accept string by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#bcffb](https://github.com/fable-hub/fable-electron/commit/bcffb111efc02688d936a0c7b2ea80137ef2ba74)
+* Make MessageBoxOptions.icon also accept string by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#bcffb](https://github.com/fable-hub/Fable.Electron/commit/bcffb111efc02688d936a0c7b2ea80137ef2ba74)
   
 
-* Update from API docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#37902](https://github.com/fable-hub/fable-electron/commit/37902e9c7d1fd336484a6fa1528b1f066cf832b9)
+* Update from API docs by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#37902](https://github.com/fable-hub/Fable.Electron/commit/37902e9c7d1fd336484a6fa1528b1f066cf832b9)
   
 
-### [1.0.0](https://github.com/fable-hub/fable-electron/compare/v0.37.7...1.0.0) - (2019-07-31)
+### [1.0.0](https://github.com/fable-hub/Fable.Electron/compare/v0.37.7...1.0.0) - (2019-07-31)
 
 #### <!-- 6 --> Others
 
-* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#71086](https://github.com/fable-hub/fable-electron/commit/71086a486528066b5a3c30351858e3635c7e7b7e)
+* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#177cd](https://github.com/fable-hub/Fable.Electron/commit/177cd0535980dbc0ddad29a76cf1cbb0a23c4a1b)
   
 
-* AutoUpdater documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#097b4](https://github.com/fable-hub/fable-electron/commit/097b49c90e8b200fdca4382aa27d073d68f0fec2)
+* Move bindings to separate file; use top-level namespace instead of module by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#006a3](https://github.com/fable-hub/Fable.Electron/commit/006a3276770209bc4fddf8bf33d92eda42639fc3)
   
 
-* Add femto support by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#1cb02](https://github.com/fable-hub/fable-electron/commit/1cb029b9c78f038b8ac532aa92aa28d50a84c974)
+* Improve BrowserWindow and BrowserWindowProxy by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#ce011](https://github.com/fable-hub/Fable.Electron/commit/ce011d209e1d1b383a7b0d4636339b9ce629ecc9)
   
 
-* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#35cb8](https://github.com/fable-hub/fable-electron/commit/35cb8fb7a3397cceec30095a24a8245f876ca741)
+* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#35cb8](https://github.com/fable-hub/Fable.Electron/commit/35cb8fb7a3397cceec30095a24a8245f876ca741)
   
 
-* Change unit to Event according to docs and https://github.com/electron/electron/pull/19465 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#62350](https://github.com/fable-hub/fable-electron/commit/62350b161f316949ca201b4d619b63ad2214b38e)
+* Remove setters from assumed get-only properties by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3c550](https://github.com/fable-hub/Fable.Electron/commit/3c5504f4fcfd7cb581c1022cfad5c5030f674291)
   
 
-* API/doc improvements/fixes by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#07ebc](https://github.com/fable-hub/fable-electron/commit/07ebcff78374e6eafe8326ef1aac62a54f27338c)
+* BrowserView documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#e18d3](https://github.com/fable-hub/Fable.Electron/commit/e18d3c253616590544b9cdda13d62e6c9df6d17e)
   
 
-* Remove setters from assumed get-only properties by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3c550](https://github.com/fable-hub/fable-electron/commit/3c5504f4fcfd7cb581c1022cfad5c5030f674291)
+* Improve/fix docs/API by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#f5100](https://github.com/fable-hub/Fable.Electron/commit/f51007bfb8525071dd61c49a60254e380627de8c)
   
 
-* Update according to new docs for 6.0.0 release by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#b8798](https://github.com/fable-hub/fable-electron/commit/b8798856820703aa5373699dc1197f9d7b76593d)
+* API/doc improvements/fixes by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#07ebc](https://github.com/fable-hub/Fable.Electron/commit/07ebcff78374e6eafe8326ef1aac62a54f27338c)
   
 
-* Improve BrowserWindow by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#0fecf](https://github.com/fable-hub/fable-electron/commit/0fecf186943e8f15fc941384c7807c3972642ce5)
+* Improve BrowserWindow by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#0fecf](https://github.com/fable-hub/Fable.Electron/commit/0fecf186943e8f15fc941384c7807c3972642ce5)
   
 
-* Improve BrowserWindow and BrowserWindowProxy by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#ce011](https://github.com/fable-hub/fable-electron/commit/ce011d209e1d1b383a7b0d4636339b9ce629ecc9)
+* Re-flow comments by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#0e871](https://github.com/fable-hub/Fable.Electron/commit/0e871d93f47f82d75ef4895616ce4ece5098b596)
   
 
-* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#b10f0](https://github.com/fable-hub/fable-electron/commit/b10f0da91dbce8d0e006ac99432643c7a0ef2e5d)
+* Change unit to Event according to docs and https://github.com/electron/electron/pull/19465 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#62350](https://github.com/fable-hub/Fable.Electron/commit/62350b161f316949ca201b4d619b63ad2214b38e)
   
 
-* Move bindings to separate file; use top-level namespace instead of module by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#006a3](https://github.com/fable-hub/fable-electron/commit/006a3276770209bc4fddf8bf33d92eda42639fc3)
+* Add femto support by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#1cb02](https://github.com/fable-hub/Fable.Electron/commit/1cb029b9c78f038b8ac532aa92aa28d50a84c974)
   
 
-* Re-flow comments by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#0e871](https://github.com/fable-hub/fable-electron/commit/0e871d93f47f82d75ef4895616ce4ece5098b596)
+* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3242a](https://github.com/fable-hub/Fable.Electron/commit/3242a21d560917161133d6f167e09d95f9a023a4)
   
 
-* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#3242a](https://github.com/fable-hub/fable-electron/commit/3242a21d560917161133d6f167e09d95f9a023a4)
+* Update for Electron 6 beta 12 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#47ddf](https://github.com/fable-hub/Fable.Electron/commit/47ddf847627b1dfcebe9a58b885bccdd96bdd8db)
   
 
-* Update for Electron 6 beta 12 by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#47ddf](https://github.com/fable-hub/fable-electron/commit/47ddf847627b1dfcebe9a58b885bccdd96bdd8db)
+* Update according to new docs for 6.0.0 release by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#b8798](https://github.com/fable-hub/Fable.Electron/commit/b8798856820703aa5373699dc1197f9d7b76593d)
   
 
-* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#177cd](https://github.com/fable-hub/fable-electron/commit/177cd0535980dbc0ddad29a76cf1cbb0a23c4a1b)
+* Update for Electron 5 and add infrastructure by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#65ceb](https://github.com/fable-hub/Fable.Electron/commit/65ceb3756879836b0c54d3ccd0881140a9e3094d)
   
 
-* Update for Electron 5 and add infrastructure by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#65ceb](https://github.com/fable-hub/fable-electron/commit/65ceb3756879836b0c54d3ccd0881140a9e3094d)
+* Fix typos by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#15994](https://github.com/fable-hub/Fable.Electron/commit/1599424da1207d73820536df338e24a451f25956)
   
 
-* Fix typos by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#15994](https://github.com/fable-hub/fable-electron/commit/1599424da1207d73820536df338e24a451f25956)
+* AutoUpdater documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#097b4](https://github.com/fable-hub/Fable.Electron/commit/097b49c90e8b200fdca4382aa27d073d68f0fec2)
   
 
-* Improve/fix docs/API by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#f5100](https://github.com/fable-hub/fable-electron/commit/f51007bfb8525071dd61c49a60254e380627de8c)
+* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#b10f0](https://github.com/fable-hub/Fable.Electron/commit/b10f0da91dbce8d0e006ac99432643c7a0ef2e5d)
   
 
-* BrowserView documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#e18d3](https://github.com/fable-hub/fable-electron/commit/e18d3c253616590544b9cdda13d62e6c9df6d17e)
+* Fixes and improvements to API and documentation by [@Christer van der Meeren](https://github.com/Christer van der Meeren) with [#71086](https://github.com/fable-hub/Fable.Electron/commit/71086a486528066b5a3c30351858e3635c7e7b7e)
   
 
 <div align="right"><a href="#quick-navigation">(back to top)</a></div>
@@ -236,60 +256,80 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 # Forge
 
-### [UNRELEASED](https://github.com/fable-hub/fable-electron/compare/_%28Forge%29_6.1.0...HEAD)
+### [UNRELEASED](https://github.com/fable-hub/Fable.Electron/compare/_%28Forge%29_7.0.0...HEAD)
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/fable-electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/Fable.Electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
   
 
-* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/fable-electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
   
 
-* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/fable-electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
+* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/Fable.Electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
   
 
-* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/fable-electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
+* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/fable-electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
+* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/Fable.Electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
   
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/fable-electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/Fable.Electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
   
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/fable-electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
+* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/Fable.Electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
   
 
-* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/fable-electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/Fable.Electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
   
 
-### [6.1.0](https://github.com/fable-hub/fable-electron/compare/6.0.0..._%28Forge%29_6.1.0) - (2025-11-26)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+  
+
+* enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
+  
+
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+  
+
+### [7.0.0](https://github.com/fable-hub/Fable.Electron/compare/6.0.0..._%28Forge%29_7.0.0) - (2025-12-14)
 
 #### <!-- 1 --> Added
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/fable-electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/Fable.Electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
   
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/fable-electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/Fable.Electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+  
+
+#### <!-- 2 --> Fixed
+
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
   
 
 #### <!-- 6 --> Others
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/fable-electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/Fable.Electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
   
 
-* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/fable-electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
+* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/fable-electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
+* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/Fable.Electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
   
 
-* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/fable-electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
+* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/Fable.Electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
   
 
-* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/fable-electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
+* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/Fable.Electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
   
 
-* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/fable-electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+  
+
+* enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
+  
+
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
   
 
 <div align="right"><a href="#quick-navigation">(back to top)</a></div>
@@ -298,78 +338,98 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 # Remoting
 
-### [UNRELEASED](https://github.com/fable-hub/fable-electron/compare/_%28Remoting%29_6.1.0...HEAD)
+### [UNRELEASED](https://github.com/fable-hub/Fable.Electron/compare/_%28Remoting%29_7.0.0...HEAD)
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/fable-electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/Fable.Electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
   
 
-* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/fable-electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
   
 
-* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/fable-electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
+* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/Fable.Electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
   
 
-* transform doc emphasis; provide alt event gen attribute expr by [@cabboose](https://github.com/cabboose) with [#6a9f7](https://github.com/fable-hub/fable-electron/commit/6a9f786dba08faab4c71c4551b2bfa305deb05e1)
+* transform doc emphasis; provide alt event gen attribute expr by [@cabboose](https://github.com/cabboose) with [#6a9f7](https://github.com/fable-hub/Fable.Electron/commit/6a9f786dba08faab4c71c4551b2bfa305deb05e1)
   
 
-* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/fable-electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
+* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/fable-electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
+* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/Fable.Electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
   
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/fable-electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/Fable.Electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
   
 
-* flesh out CLI spec for build and apply fantomas by [@cabboose](https://github.com/cabboose) with [#32f16](https://github.com/fable-hub/fable-electron/commit/32f160121c1a0ee924a65b516c4e408029e2a001)
+* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/Fable.Electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
   
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/fable-electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/Fable.Electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
   
 
-* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/fable-electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
+* flesh out CLI spec for build and apply fantomas by [@cabboose](https://github.com/cabboose) with [#32f16](https://github.com/fable-hub/Fable.Electron/commit/32f160121c1a0ee924a65b516c4e408029e2a001)
   
 
-* implement region markers; improve remoting docs with code snippets by [@cabboose](https://github.com/cabboose) with [#03717](https://github.com/fable-hub/fable-electron/commit/037170c47c282ea1047f11c804dc83036b015148)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
   
 
-### [6.1.0](https://github.com/fable-hub/fable-electron/compare/6.0.0..._%28Remoting%29_6.1.0) - (2025-11-26)
+* enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
+  
+
+* implement region markers; improve remoting docs with code snippets by [@cabboose](https://github.com/cabboose) with [#03717](https://github.com/fable-hub/Fable.Electron/commit/037170c47c282ea1047f11c804dc83036b015148)
+  
+
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+  
+
+### [7.0.0](https://github.com/fable-hub/Fable.Electron/compare/6.0.0..._%28Remoting%29_7.0.0) - (2025-12-14)
 
 #### <!-- 1 --> Added
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/fable-electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/Fable.Electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
   
 
-* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#1637d](https://github.com/fable-hub/fable-electron/commit/1637d5b59378f0b44a4db4217ef3170d07bcce4c)
+* Electron binding update to match v39.2.3 by [@GitHub Action](https://github.com/GitHub Action) with [#04d59](https://github.com/fable-hub/Fable.Electron/commit/04d595134197b4000200cb8cf692a18aefe5ea42)
+  
+
+#### <!-- 2 --> Fixed
+
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
   
 
 #### <!-- 6 --> Others
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/fable-electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/Fable.Electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
   
 
-* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/fable-electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
+* transform doc emphasis; provide alt event gen attribute expr by [@cabboose](https://github.com/cabboose) with [#6a9f7](https://github.com/fable-hub/Fable.Electron/commit/6a9f786dba08faab4c71c4551b2bfa305deb05e1)
   
 
-* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/fable-electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
+* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* transform doc emphasis; provide alt event gen attribute expr by [@cabboose](https://github.com/cabboose) with [#6a9f7](https://github.com/fable-hub/fable-electron/commit/6a9f786dba08faab4c71c4551b2bfa305deb05e1)
+* incomplete meta data update for projects for CI tests by [@cabboose](https://github.com/cabboose) with [#a31fb](https://github.com/fable-hub/Fable.Electron/commit/a31fbecb473902a16e5fc9c532a4c03f948a35a2)
   
 
-* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/fable-electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
+* init by [@cabboose](https://github.com/cabboose) with [#7fac9](https://github.com/fable-hub/Fable.Electron/commit/7fac9f0c65f11ed78e75e4b122918c48237e24c5)
   
 
-* update meta-data in projects by [@cabboose](https://github.com/cabboose) with [#e1d0f](https://github.com/fable-hub/fable-electron/commit/e1d0f6a12847ef35ee01dfe67bf94a0d9be97210)
+* update proj meta data with 'IsPackable' by [@cabboose](https://github.com/cabboose) with [#bc419](https://github.com/fable-hub/Fable.Electron/commit/bc4199c37654c50359f54af843436a8f2968b2f5)
   
 
-* flesh out CLI spec for build and apply fantomas by [@cabboose](https://github.com/cabboose) with [#32f16](https://github.com/fable-hub/fable-electron/commit/32f160121c1a0ee924a65b516c4e408029e2a001)
+* flesh out CLI spec for build and apply fantomas by [@cabboose](https://github.com/cabboose) with [#32f16](https://github.com/fable-hub/Fable.Electron/commit/32f160121c1a0ee924a65b516c4e408029e2a001)
   
 
-* release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/fable-electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
   
 
-* implement region markers; improve remoting docs with code snippets by [@cabboose](https://github.com/cabboose) with [#03717](https://github.com/fable-hub/fable-electron/commit/037170c47c282ea1047f11c804dc83036b015148)
+* enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
+  
+
+* implement region markers; improve remoting docs with code snippets by [@cabboose](https://github.com/cabboose) with [#03717](https://github.com/fable-hub/Fable.Electron/commit/037170c47c282ea1047f11c804dc83036b015148)
+  
+
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
   
 
 <div align="right"><a href="#quick-navigation">(back to top)</a></div>

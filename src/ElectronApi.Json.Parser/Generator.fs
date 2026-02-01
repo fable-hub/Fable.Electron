@@ -45,10 +45,12 @@ let private pathTail: NamePath -> NamePath =
 /// <param name="grouper"></param>
 let private groupContainsNestedModuleName (name: Name) (grouper: GeneratorGrouper) =
     grouper.Children
-    |> List.exists (function
+    |> List.exists (
+        function
         | Nested { PathKey = ValueSome path } ->
             name.ValueOrSource |> toPascalCase = (path.Name.ValueOrSource |> toPascalCase)
-        | _ -> false)
+        | _ -> false
+    )
 
 /// <summary>
 /// Applies the given <c>GeneratorGrouper</c> mapping function recursively along a name path,
@@ -71,12 +73,14 @@ let rec private mapGroupForPath
             { grouper with
                 Children =
                     grouper.Children
-                    |> List.map (function
+                    |> List.map (
+                        function
                         | Nested({ PathKey = ValueSome nestedPath } as group) when
                             (nestedPath.Name.ValueOrSource |> toPascalCase) = (name.ValueOrSource |> toPascalCase)
                             ->
                             mapGroupForPath func path group |> Nested
-                        | child -> child) }
+                        | child -> child
+                    ) }
         else
             grouper
             |> GeneratorGrouper.addNestedGroup (
@@ -123,10 +127,12 @@ let private mapNestedGroup
         { generatorGrouper with
             Children =
                 generatorGrouper.Children
-                |> List.map (function
+                |> List.map (
+                    function
                     | Nested({ PathKey = ValueSome path } as group) when path.Name.ValueOrModified = keyName ->
                         Nested(func group)
-                    | child -> child) }
+                    | child -> child
+                ) }
 
     result
 
@@ -143,7 +149,8 @@ let private tryWith (funcs: ('a -> 'b option) list) (orElse: 'a -> 'b) (input: '
         (fun state func ->
             match state with
             | None -> func input
-            | _ -> state)
+            | _ -> state
+        )
         None
     |> Option.defaultWith (fun () -> orElse input)
 
@@ -162,12 +169,13 @@ let rec private finalizeGeneratorGroup: GeneratorGrouper -> ModuleDecl list =
               GeneratorGrouper.makeDefaultEventInterfaceAndTypeAlias
               GeneratorGrouper.makeDefaultEventStringConstant ]
             (function
-             // On failing to produce a `Some` from above, we apply the default transformer/fantomas compiler
-             | Child typ -> GeneratorContainer.makeDefaultTypeDecl typ
-             // Any nested groups are finalized in a similar manner
-             | Nested group -> finalizeGeneratorGroup group |> (GeneratorGrouper.makeNestedModule group)
-             // Principally, the other child types should be handled in the above
-             | _ -> failwith "handled")
+            // On failing to produce a `Some` from above, we apply the default transformer/fantomas compiler
+            | Child typ -> GeneratorContainer.makeDefaultTypeDecl typ
+            // Any nested groups are finalized in a similar manner
+            | Nested group -> finalizeGeneratorGroup group |> (GeneratorGrouper.makeNestedModule group)
+            // Principally, the other child types should be handled in the above
+            | _ -> failwith "handled"
+            )
     )
 
 /// <summary>
@@ -233,7 +241,8 @@ module Transpiler =
                         _.AddRootModule(Path.Module.Module(Path.ModulePath.Root, Source "Types"))
                     |> Child
                 )
-            | ModifiedResult.Element result -> state |> addToGroup (result.ToGeneratorContainer() |> Child))
+            | ModifiedResult.Element result -> state |> addToGroup (result.ToGeneratorContainer() |> Child)
+        )
 
     let private fillEventInterfaceCache =
         fun group ->
@@ -311,7 +320,10 @@ module Transpiler =
                     | Object structOrObject ->
                         structOrObject.PathKey
                         |> GeneratorContainer.create
-                        |> GeneratorContainer.withAttribute "JS.Pojo"
+                        |> GeneratorContainer.withAttributes
+                            [ "JS.Pojo"
+                              if structOrObject.PathKey.Name.ValueOrModified = "IpcMainEvent" then
+                                  "AllowNullLiteral" ]
                         |> GeneratorContainer.withConstructor (
                             structOrObject.Properties |> List.map Parameter.InlinedObjectProp
                         )
@@ -319,7 +331,8 @@ module Transpiler =
                         |> fun child -> state |> addToGroup (Child child)
                     | _ ->
                         failwith $"Unhandled type in generator: {item}"
-                        state)
+                        state
+                )
                 group
         //%Injection%START%
         // Add other material, such as prebaked interfaces and constants
@@ -346,7 +359,8 @@ module Transpiler =
                     |> addToGroup (
                         item.AddRootModule(Path.Module.Module(Path.ModulePath.Root, Source "Constants"))
                         |> GeneratorGroupChild.EventConstant
-                    ))
+                    )
+                )
                 group
         // Generate the source and write to target
         |> fun group ->

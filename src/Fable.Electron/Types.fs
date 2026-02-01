@@ -5,6 +5,7 @@
 open System.ComponentModel
 open System.Runtime.CompilerServices
 open Fable.Core
+open Browser.Types
 
 // Code for accelerators taken from previous work by F# Fable Community members on Fable.Electron;
 // specifically Christer van der Meeren @cmeeren
@@ -317,6 +318,149 @@ type Record<'Key, 'Value> =
     abstract member Item: 'Key -> 'Value with get, set
 
 type EventEmitter = interface end
+
+// ========== Electron 40.0.0 + ==============
+// Uses the relatively new API from 2024 for video frames.
+// This is not bound by Fable.Browser
+// We provide a naive implementation here.
+module VideoFrameImageOptions =
+    [<StringEnum; RequireQualifiedAccess>]
+    type Alpha =
+        | Keep
+        | Discard
+
+[<JS.Pojo>]
+type VideoFrameImageOptions(
+    ?duration: float,
+    ?timestamp: float,
+    ?alpha: VideoFrameImageOptions.Alpha,
+    ?visibleRect: {| x: float; y: float; width: float; height: float |},
+    ?displayWidth: float,
+    ?displayHeight: float,
+    ?flip: bool,
+    ?rotation: float
+    ) =
+    [<Erase>] member val duration = duration with get, set
+    [<Erase>] member val timestamp = timestamp with get, set
+    [<Erase>] member val alpha = alpha with get, set
+    [<Erase>] member val visibleRect = visibleRect with get, set
+    [<Erase>] member val displayWidth = displayWidth with get, set
+    [<Erase>] member val displayHeight = displayHeight with get, set
+    [<Erase>] member val flip = flip with get, set
+    [<Erase>] member val rotation = rotation with get, set
+[<Erase>]
+module VideoFrameDataOptions =
+    [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+    type Format =
+        | I420
+        | I420A
+        | I422
+        | I444
+        | NV12
+        | RGBA
+        | RGBX
+        | BGRA
+        | BGRX
+[<JS.Pojo>]
+type VideoFrameDataOptions(
+    format: VideoFrameDataOptions.Format,
+    codedWidth: float,
+    codedHeight: float,
+    timestamp: int,
+    colorSpace: {| primaries: string; transfer: string; matrix: string; fullRange: bool |},
+    transfer: obj[],
+    ?duration: int,
+    ?layout: {| offset: int; stride: int |},
+    ?visibleRect: {| x: float; y: float; width: float; height: float |},
+    ?displayWidth: float,
+    ?displayHeight: float,
+    ?flip: bool,
+    ?rotation: float
+    ) =
+    [<Erase>] member val format = format with get, set
+    [<Erase>] member val codedWidth = codedWidth with get, set
+    [<Erase>] member val codedHeight = codedHeight with get, set
+    [<Erase>] member val timestamp = timestamp with get, set
+    [<Erase>] member val colorSpace = colorSpace with get, set
+    [<Erase>] member val transfer = transfer with get, set
+    [<Erase>] member val duration = duration with get, set
+    [<Erase>] member val layout = layout with get, set
+    [<Erase>] member val visibleRect = visibleRect with get, set
+    [<Erase>] member val displayWidth = displayWidth with get, set
+    [<Erase>] member val displayHeight = displayHeight with get, set
+    [<Erase>] member val flip = flip with get, set
+    [<Erase>] member val rotation = rotation with get, set
+[<Erase>]
+module VideoFrame =
+    [<RequireQualifiedAccess; StringEnum(CaseRules.None)>]
+    type Format =
+        | RGBA
+        | RGBX
+        | BGRA
+        | BGRX
+    [<RequireQualifiedAccess; StringEnum(CaseRules.KebabCase)>]
+    type ColorSpace =
+        | Srgb
+        | DisplayP3
+
+/// <summary>
+/// Naive binding for VideoFrame to allow Electron 40.1.0 +
+/// </summary>
+[<Global>]
+[<AllowNullLiteral>]
+type VideoFrame private () =
+    class end
+    new(image: U5<SVGImageElement, HTMLVideoElement, HTMLCanvasElement, VideoFrame, obj>, options: VideoFrameImageOptions) = VideoFrame()
+    [<ParamObject(1)>]
+    new(
+        image: U5<SVGImageElement, HTMLVideoElement, HTMLCanvasElement, VideoFrame, obj>,
+        ?duration: float,
+        ?timestamp: float,
+        ?alpha: VideoFrameImageOptions.Alpha,
+        ?visibleRect: {| x: float; y: float; width: float; height: float |},
+        ?displayWidth: float,
+        ?displayHeight: float,
+        ?flip: bool,
+        ?rotation: float
+    ) = VideoFrame()
+    new(data: obj[], options: VideoFrameDataOptions) = VideoFrame()
+    [<ParamObject(1)>]
+    new(
+        data: obj[],
+        format: VideoFrameDataOptions.Format,
+        codedWidth: float,
+        codedHeight: float,
+        timestamp: int,
+        colorSpace: {| primaries: string; transfer: string; matrix: string; fullRange: bool |},
+        transfer: obj[],
+        ?duration: int,
+        ?layout: {| offset: int; stride: int |},
+        ?visibleRect: {| x: float; y: float; width: float; height: float |},
+        ?displayWidth: float,
+        ?displayHeight: float,
+        ?flip: bool,
+        ?rotation: float
+    ) = VideoFrame()
+    member _.format: string = jsNative
+    member _.codedWidth: float = jsNative
+    member _.codedHeight: float = jsNative
+    member _.codedRect: obj = jsNative
+    member _.visibleRect: obj = jsNative
+    member _.displayWidth: float = jsNative
+    member _.displayHeight: float = jsNative
+    member _.timestamp: int = jsNative
+    member _.duration: float = jsNative
+    member _.colorSpace: {| primaries: string; transfer: string; matrix: string; fullRange: bool |} = jsNative
+    member _.flip: bool = jsNative
+    member _.rotation: float = jsNative
+    [<ParamObject(0)>]
+    member _.allocationSize(
+        ?rect: {| x: float; y: float; width: float; height: float |},
+        ?format: VideoFrame.Format,
+        ?colorSpace: VideoFrame.ColorSpace
+        ): int = jsNative
+    member _.clone(): VideoFrame = jsNative
+    member _.close(): unit = jsNative
 
 [<AutoOpen; EditorBrowsable(EditorBrowsableState.Never)>]
 module AutoOpenExtensions =
