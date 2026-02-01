@@ -23,11 +23,13 @@ let private transformCodeBlocks (input: string) =
     Regex.Replace(fencedReplaced, @"`([^`]+)`", "<c>$1</c>")
 
 let normalizeDocs =
-    String.collect (function
+    String.collect (
+        function
         | '<' -> "&lt;"
         | '>' -> "&gt;"
         | '&' -> "&amp;"
-        | c -> string c)
+        | c -> string c
+    )
     >> transformCodeBlocks
     >> transformEmphasis
 
@@ -61,7 +63,8 @@ type DocumentationTag =
 module DocumentationTag =
     let decode: Decoder<DocumentationTag> =
         Decode.string
-        |> Decode.andThen (function
+        |> Decode.andThen (
+            function
             | "os_macos" -> Decode.succeed OS_MACOS
             | "os_mas" -> Decode.succeed OS_MAS
             | "os_windows" -> Decode.succeed OS_WINDOWS
@@ -69,7 +72,8 @@ module DocumentationTag =
             | "stability_experimental" -> Decode.succeed STABILITY_EXPERIMENTAL
             | "stability_deprecated" -> Decode.succeed STABILITY_DEPRECATED
             | "availability_readonly" -> Decode.succeed AVAILABILITY_READONLY
-            | invalid -> Decode.fail $"{invalid} is not a known DocumentationTag")
+            | invalid -> Decode.fail $"{invalid} is not a known DocumentationTag"
+        )
 
 /// <summary>
 /// When a type uses the <c>String</c> TypeInformation, it may be identified as a
@@ -82,7 +86,8 @@ module PossibleStringValue =
     let decode: Decoder<PossibleStringValue> =
         Decode.object (fun get ->
             { Value = get.Required.Field "value" Decode.string
-              Description = get.Required.Field "description" Decode.string |> normalizeDocs })
+              Description = get.Required.Field "description" Decode.string |> normalizeDocs }
+        )
 
 [<RequireQualifiedAccess>]
 module TypeInformationKind =
@@ -97,7 +102,8 @@ module TypeInformationKind =
         let decode: Decoder<InfoArray> =
             Decode.object (fun get ->
                 { Collection = get.Required.Field "collection" Decode.bool
-                  Type = Decode.array TypeInformation.decode |> get.Required.Field "type" })
+                  Type = Decode.array TypeInformation.decode |> get.Required.Field "type" }
+            )
 
     /// <summary>
     /// This field is used for primitive types, or referencing other types. The string value
@@ -114,7 +120,8 @@ module TypeInformationKind =
         let decode: Decoder<InfoString> =
             Decode.object (fun get ->
                 { Collection = get.Required.Field "collection" Decode.bool
-                  Type = get.Required.Field "type" Decode.string })
+                  Type = get.Required.Field "type" Decode.string }
+            )
 
     /// <summary>
     /// Indicates the type is a string; in the case of a <c>StringEnum</c>-like construct,
@@ -149,7 +156,8 @@ module TypeInformationKind =
                         { Collection = get.Required.Field "collection" Decode.bool
                           PossibleValues =
                             Decode.array PossibleStringValue.decode |> get.Optional.Field "possibleValues" }
-                    | _ -> (Decode.string |> Decode.andThen Decode.fail) |> get.Required.Field "type")
+                    | _ -> (Decode.string |> Decode.andThen Decode.fail) |> get.Required.Field "type"
+            )
 
     /// <summary>
     /// Indicates the type is a POJO, and identifies the fields in <c>Properties</c>
@@ -186,7 +194,8 @@ module TypeInformationKind =
                           Properties =
                             Decode.array PropertyDocumentationBlock.decode
                             |> get.Required.Field "properties" }
-                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail))
+                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail)
+            )
 
     /// <summary>
     /// Identifies a type that is an event.
@@ -233,7 +242,8 @@ module TypeInformationKind =
                           EventProperties =
                             Decode.array PropertyDocumentationBlock.decode
                             |> get.Required.Field "eventProperties" }
-                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail))
+                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail)
+            )
 
     type EventRef =
         { Collection: bool
@@ -248,7 +258,8 @@ module TypeInformationKind =
                         { Collection = get.Required.Field "collection" Decode.bool
                           EventPropertiesReference =
                             get.Required.Field "eventPropertiesReference" TypeInformation.decode }
-                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail))
+                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail)
+            )
 
     /// <summary>
     /// <example>
@@ -286,7 +297,8 @@ module TypeInformationKind =
                             Decode.array MethodParameterDocumentation.decode
                             |> get.Required.Field "parameters"
                           Returns = Decode.option TypeInformation.decode |> get.Required.Field "returns" }
-                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail))
+                    | _ -> get.Required.Field "type" (Decode.string |> Decode.andThen Decode.fail)
+            )
 
 type TypeInformationKind =
     | InfoArray of TypeInformationKind.InfoArray
@@ -331,7 +343,8 @@ module TypeInformation =
                           // V This must be last
                           TypeInformationKind.InfoString.decode
                           |> Decode.map (TypeInformationKind.InfoString >> wrapper) ]
-                ))
+                )
+        )
 
 type MethodParameterDocumentation =
     { Name: string
@@ -346,7 +359,8 @@ module MethodParameterDocumentation =
             { Name = get.Required.Field "name" Decode.string
               Description = get.Required.Field "description" Decode.string |> normalizeDocs
               Required = get.Required.Field "required" Decode.bool
-              TypeInformation = get.Required.Raw TypeInformation.decode })
+              TypeInformation = get.Required.Raw TypeInformation.decode }
+        )
 
 type EventParameterDocumentation =
     { Name: string
@@ -361,7 +375,8 @@ module EventParameterDocumentation =
             { Name = get.Required.Field "name" Decode.string
               Description = get.Required.Field "description" Decode.string |> normalizeDocs
               Required = get.Required.Field "required" Decode.bool
-              TypeInformation = get.Required.Raw TypeInformation.decode })
+              TypeInformation = get.Required.Raw TypeInformation.decode }
+        )
 
 type DocumentationBlock =
     {
@@ -382,7 +397,8 @@ module DocumentationBlock =
             { Name = get.Required.Field "name" Decode.string
               Description = get.Required.Field "description" Decode.string |> normalizeDocs
               AdditionalTags = get.Required.Field "additionalTags" (Decode.array DocumentationTag.decode)
-              UrlFragment = get.Optional.Field "urlFragment" Decode.string })
+              UrlFragment = get.Optional.Field "urlFragment" Decode.string }
+        )
 
 type MethodDocumentationBlock =
     {
@@ -403,7 +419,8 @@ module MethodDocumentationBlock =
               Parameters =
                 Decode.array MethodParameterDocumentation.decode
                 |> get.Required.Field "parameters"
-              Returns = Decode.option TypeInformation.decode |> get.Required.Field "returns" })
+              Returns = Decode.option TypeInformation.decode |> get.Required.Field "returns" }
+        )
 
 type EventDocumentationBlock =
     {
@@ -417,7 +434,8 @@ module EventDocumentationBlock =
             { DocumentationBlock = get.Required.Raw DocumentationBlock.decode
               Parameters =
                 Decode.array EventParameterDocumentation.decode
-                |> get.Required.Field "parameters" })
+                |> get.Required.Field "parameters" }
+        )
 
 type PropertyDocumentationBlock =
     {
@@ -432,7 +450,8 @@ module PropertyDocumentationBlock =
         Decode.object (fun get ->
             { DocumentationBlock = get.Required.Raw DocumentationBlock.decode
               Required = get.Required.Field "required" Decode.bool
-              TypeInformation = get.Required.Raw TypeInformation.decode })
+              TypeInformation = get.Required.Raw TypeInformation.decode }
+        )
 
 type BaseDocumentationContainer =
     {
@@ -459,7 +478,8 @@ module BaseDocumentationContainer =
               Version = get.Required.Field "version" Decode.string
               Slug = get.Required.Field "slug" Decode.string
               WebsiteUrl = get.Required.Field "websiteUrl" Decode.string
-              RepoUrl = get.Required.Field "repoUrl" Decode.string })
+              RepoUrl = get.Required.Field "repoUrl" Decode.string }
+        )
 
 type ProcessBlock =
     { Main: bool
@@ -473,7 +493,8 @@ module ProcessBlock =
             { Main = get.Required.Field "main" Decode.bool
               Renderer = get.Required.Field "renderer" Decode.bool
               Utility = get.Required.Field "utility" Decode.bool
-              Exported = get.Required.Field "exported" Decode.bool })
+              Exported = get.Required.Field "exported" Decode.bool }
+        )
 
 type ModuleDocumentationContainer =
     { Process: ProcessBlock
@@ -500,7 +521,8 @@ module ModuleDocumentationContainer =
                         Decode.array ClassDocumentationContainer.decode
                         |> get.Required.Field "exportedClasses"
                       BaseDocumentationContainer = get.Required.Raw BaseDocumentationContainer.decode }
-                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type")
+                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type"
+        )
 
 /// <summary>
 /// As determined by the information presented, Structures are - in effect - <c>global</c> types.
@@ -521,7 +543,8 @@ module StructureDocumentationContainer =
                         Decode.array PropertyDocumentationBlock.decode
                         |> get.Required.Field "properties"
                       BaseDocumentationContainer = get.Required.Raw BaseDocumentationContainer.decode }
-                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type")
+                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type"
+        )
 
 type ConstructorMethod =
     { Signature: string
@@ -533,7 +556,8 @@ module ConstructorMethod =
             { Signature = get.Required.Field "signature" Decode.string
               Parameters =
                 Decode.array MethodParameterDocumentation.decode
-                |> get.Required.Field "parameters" })
+                |> get.Required.Field "parameters" }
+        )
 
 type ClassDocumentationContainer =
     { Process: ProcessBlock
@@ -573,7 +597,8 @@ module ClassDocumentationContainer =
                         Decode.array PropertyDocumentationBlock.decode
                         |> get.Required.Field "instanceProperties"
                       BaseDocumentationContainer = get.Required.Raw BaseDocumentationContainer.decode }
-                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type")
+                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type"
+        )
 
 type ElementDocumentationContainer =
     { Process: ProcessBlock
@@ -595,7 +620,8 @@ module ElementDocumentationContainer =
                         Decode.array PropertyDocumentationBlock.decode
                         |> get.Required.Field "properties"
                       BaseDocumentationContainer = get.Required.Raw BaseDocumentationContainer.decode }
-                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type")
+                | _ -> Decode.string |> Decode.andThen Decode.fail |> get.Required.Field "type"
+        )
 
 type ParsedDocumentation =
     | Module of ModuleDocumentationContainer
@@ -638,9 +664,11 @@ module ExtensionAssistant =
             cache.TryAdd(name, (typ, ValueNone)) |> ignore
 
             classes
-            |> Array.iter (function
+            |> Array.iter (
+                function
                 | { BaseDocumentationContainer = { Name = className } } as classTyp ->
-                    cache.TryAdd(className, (Class classTyp, ValueSome modTyp)) |> ignore)
+                    cache.TryAdd(className, (Class classTyp, ValueSome modTyp)) |> ignore
+            )
 
             typ
         | Class { BaseDocumentationContainer = { Name = name } }

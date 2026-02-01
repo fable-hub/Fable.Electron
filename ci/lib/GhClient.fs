@@ -226,15 +226,14 @@ module Gh =
             rawCommand args workingDir
             |> CreateProcess.ensureExitCode
             |> Proc.startAndAwait
-            |> fun proc ->
-                async {
-                    let! result = proc
+            |> fun proc -> async {
+                let! result = proc
 
-                    if result.ExitCode = 0 then
-                        return ()
-                    else
-                        failwith result.Result.Error
-                }
+                if result.ExitCode = 0 then
+                    return ()
+                else
+                    failwith result.Result.Error
+            }
 
     let createPr (args: PrCreateArgs -> PrCreateArgs) workingDir =
         runRawCommand (args PrCreateArgs.Init).ToArgs workingDir

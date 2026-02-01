@@ -38,6 +38,7 @@
 
     <ItemGroup>
       <PackageReference Include="Fable.Browser.Dom" Version="2.20.0" />
+      <PackageReference Include="Fable.Browser.Svg" Version="2.4.0" />
       <PackageReference Include="Fable.Browser.Url" Version="1.4.0" />
       <PackageReference Include="Fable.Core" Version="5.0.0-beta.1" />
       <PackageReference Include="Fable.Fetch" Version="2.7.0" />

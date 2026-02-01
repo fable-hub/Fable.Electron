@@ -91,12 +91,12 @@ let private getInitialBump scope =
     | _ -> ValueNone
 
 let getInitVersionForge = getInitialVersion "Forge"
+
 let getInitVersionElectron =
-    (MSBuild.loadProject Projects.Electron)
-        .XPathSelectElement("//Version").Value
+    (MSBuild.loadProject Projects.Electron).XPathSelectElement("//Version").Value
     |> tryParseSepochSemver
     |> Option.map _.SemVer
-    
+
 let getInitVersionRemoting = getInitialVersion "Remoting"
 let getInitBumpForge = getInitialBump "Forge"
 let getInitBumpElectron = getInitialBump "Electron"
