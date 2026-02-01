@@ -21,5 +21,6 @@ type TextHandler =
     { SetValue: int -> unit
       SetDisabled: bool -> unit }
 
-type WindowLogger =
-    { Log: IpcMainEvent -> string -> Promise<string> }
+type WindowLogger = {
+    Log: IpcMainEvent -> string -> Promise<string>
+}
