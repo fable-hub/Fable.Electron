@@ -157,7 +157,8 @@ module Path =
                             | 2, value ->
                                 { state with
                                     ProcessMappedResult.Utility = value }
-                            | _ -> state)
+                            | _ -> state
+                        )
                         result
                     |> OkProcessMap
 

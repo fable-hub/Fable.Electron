@@ -22,8 +22,7 @@ let incButton =
 let decButton =
     document.getElementById ("counter-button-decrement") :?> HTMLButtonElement
 
-let set42Button =
-    document.getElementById ("counter-set-42") :?> HTMLButtonElement
+let set42Button = document.getElementById ("counter-set-42") :?> HTMLButtonElement
 
 let disableButton =
     document.getElementById ("counter-button-disable") :?> HTMLButtonElement
@@ -74,7 +73,7 @@ decButton.addEventListener (
         |> ignore
 )
 
-set42Button.addEventListener(
+set42Button.addEventListener (
     "click",
     fun e ->
         api
@@ -117,16 +116,13 @@ enableButton.addEventListener (
         |> ignore
 )
 
-windowLoggerButton.addEventListener(
+windowLoggerButton.addEventListener (
     "click",
     fun e ->
-        console.log("Calling window logger API from renderer...")
-        (windowLoggerApi
-          .Log Fable.Core.JS.undefined "Hello from Renderer!")
-          .``then`` (
-                fun (result: string) -> 
-                    windowLoggerOutput.innerText <- result
-            )
+        console.log ("Calling window logger API from renderer...")
+
+        (windowLoggerApi.Log Fable.Core.JS.undefined "Hello from Renderer!")
+            .``then`` (fun (result: string) -> windowLoggerOutput.innerText <- result)
         |> ignore
 )
 

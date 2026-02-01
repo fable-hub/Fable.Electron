@@ -205,7 +205,8 @@ module Compatibility =
                     | OS_LINUX -> { currentCompat with Linux = true }
                     | _ -> failwith "Unreachable"
                     |> Specified
-                | _ -> state)
+                | _ -> state
+            )
             state
 
 type StabilityStatus =
@@ -232,7 +233,8 @@ module StabilityStatus =
                 function
                 | DocumentationTag.STABILITY_DEPRECATED -> { state with Deprecated = true }
                 | DocumentationTag.STABILITY_EXPERIMENTAL -> { state with Experimental = true }
-                | _ -> state)
+                | _ -> state
+            )
             state
 
 module ReadOnly =
@@ -556,10 +558,12 @@ module Type =
             // come up
             | { Type = ident } when
                 ident
-                |> String.forall (function
+                |> String.forall (
+                    function
                     | c when Char.IsAsciiLetterOrDigit c -> true
                     | '.' -> true
-                    | _ -> false)
+                    | _ -> false
+                )
                 |> not
                 ->
                 match ident with
@@ -933,15 +937,19 @@ module Method =
         let cacheNonLastObjects: Parameter list -> unit =
             List.rev
             >> List.tail
-            >> List.map (function
+            >> List.map (
+                function
                 | Named(_, { Type = typ })
                 | Positional { Type = typ } -> typ
                 // This should not exist before this function
-                | InlinedObjectProp _ -> failwith "Tried to inline an already inlined parameter option")
+                | InlinedObjectProp _ -> failwith "Tried to inline an already inlined parameter option"
+            )
             >> List.filter _.IsObject
-            >> List.iter (function
+            >> List.iter (
+                function
                 | Type.Object o -> objectParameterCache.Add o
-                | _ -> failwith "UNREACHABLE")
+                | _ -> failwith "UNREACHABLE"
+            )
 
         let inlineObject: StructOrObject -> Parameter list =
             _.Properties >> List.map Parameter.InlinedObjectProp
@@ -1028,16 +1036,20 @@ module Class =
             let cacheNonLastObjects: Parameter list -> unit =
                 List.rev
                 >> List.tail
-                >> List.map (function
+                >> List.map (
+                    function
                     | Named(_, { Type = typ })
                     | Positional { Type = typ } -> typ
                     // This should not exist before this function
-                    | InlinedObjectProp _ -> failwith "Tried to inline an already inlined parameter option")
+                    | InlinedObjectProp _ -> failwith "Tried to inline an already inlined parameter option"
+                )
                 >> List.filter _.IsObject
                 // >> List.iter (function Type.Object o -> objectParameterCache.Add o | _ -> failwith "UNREACHABLE")
-                >> List.iter (function
+                >> List.iter (
+                    function
                     | Type.Object o -> Type.Cache.Add o |> ignore
-                    | _ -> failwith "UNREACHABLE")
+                    | _ -> failwith "UNREACHABLE"
+                )
 
             let inlineObject: StructOrObject -> Parameter list =
                 _.Properties >> List.map Parameter.InlinedObjectProp
@@ -1098,10 +1110,12 @@ module Class =
         { Process = container.Process
           Constructor =
             container.ConstructorMethod
-            |> Option.map (function
+            |> Option.map (
+                function
                 | { Parameters = parameters } ->
                     let ctx = { ctx with PathKey = ctx.PathKey }
-                    parameters |> Array.map (Type.readMethodParameter ctx) |> Array.toList)
+                    parameters |> Array.map (Type.readMethodParameter ctx) |> Array.toList
+            )
           InstanceName =
             container.InstanceName
             |> function
@@ -1306,21 +1320,24 @@ let private unifyWith (extensionDoc: ParsedDocumentation) (inputDoc: ParsedDocum
                 |> Array.filter (fun docEvent ->
                     moduleDocumentationContainer.Events
                     |> Array.exists (_.DocumentationBlock.Name >> (=) docEvent.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append moduleDocumentationContainer.Events
             Methods =
                 documentationContainer.Methods
                 |> Array.filter (fun docMethod ->
                     moduleDocumentationContainer.Methods
                     |> Array.exists (_.DocumentationBlock.Name >> (=) docMethod.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append moduleDocumentationContainer.Methods
             Properties =
                 documentationContainer.Properties
                 |> Array.filter (fun docProp ->
                     moduleDocumentationContainer.Properties
                     |> Array.exists (_.DocumentationBlock.Name >> (=) docProp.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append moduleDocumentationContainer.Properties }
         |> ParsedDocumentation.Module
     | ParsedDocumentation.Class classDocumentationContainer, ParsedDocumentation.Class documentationContainer ->
@@ -1330,35 +1347,40 @@ let private unifyWith (extensionDoc: ParsedDocumentation) (inputDoc: ParsedDocum
                 |> Array.filter (fun docEvent ->
                     classDocumentationContainer.InstanceEvents
                     |> Array.exists (_.DocumentationBlock.Name >> (=) docEvent.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append classDocumentationContainer.InstanceEvents
             InstanceMethods =
                 documentationContainer.InstanceMethods
                 |> Array.filter (fun doc ->
                     classDocumentationContainer.InstanceMethods
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append classDocumentationContainer.InstanceMethods
             InstanceProperties =
                 documentationContainer.InstanceProperties
                 |> Array.filter (fun doc ->
                     classDocumentationContainer.InstanceProperties
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append classDocumentationContainer.InstanceProperties
             StaticMethods =
                 documentationContainer.StaticMethods
                 |> Array.filter (fun doc ->
                     classDocumentationContainer.StaticMethods
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append classDocumentationContainer.StaticMethods
             StaticProperties =
                 documentationContainer.StaticProperties
                 |> Array.filter (fun doc ->
                     classDocumentationContainer.StaticProperties
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append classDocumentationContainer.StaticProperties }
         |> ParsedDocumentation.Class
 
@@ -1370,7 +1392,8 @@ let private unifyWith (extensionDoc: ParsedDocumentation) (inputDoc: ParsedDocum
                 |> Array.filter (fun doc ->
                     structureDocumentationContainer.Properties
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append structureDocumentationContainer.Properties }
         |> ParsedDocumentation.Structure
     | ParsedDocumentation.Element elementDocumentationContainer, ParsedDocumentation.Element documentationContainer ->
@@ -1380,21 +1403,24 @@ let private unifyWith (extensionDoc: ParsedDocumentation) (inputDoc: ParsedDocum
                 |> Array.filter (fun doc ->
                     elementDocumentationContainer.Properties
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append elementDocumentationContainer.Properties
             Events =
                 documentationContainer.Events
                 |> Array.filter (fun doc ->
                     elementDocumentationContainer.Events
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append elementDocumentationContainer.Events
             Methods =
                 documentationContainer.Methods
                 |> Array.filter (fun doc ->
                     elementDocumentationContainer.Methods
                     |> Array.exists (_.DocumentationBlock.Name >> (=) doc.DocumentationBlock.Name)
-                    |> not)
+                    |> not
+                )
                 |> Array.append elementDocumentationContainer.Methods }
         |> ParsedDocumentation.Element
     | inputDoc, extensionDoc ->
