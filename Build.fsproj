@@ -28,7 +28,7 @@
       <PackageReference Include="Fake.DotNet.Fsdocs" Version="6.1.4" />
       <PackageReference Include="Fake.JavaScript.Npm" Version="6.1.4" />
       <PackageReference Include="Fake.Tools.Git" Version="6.1.4" />
-      <PackageReference Include="Partas.GitNet" Version="2.0.4" />
+      <PackageReference Include="Partas.GitNet" Version="3.0.0" />
         <PackageReference Include="FSharp.Core" Version="10.0.100" />
         <PackageReference Update="FSharp.Core" Version="10.0.100" />
     </ItemGroup>
