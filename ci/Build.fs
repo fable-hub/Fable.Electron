@@ -28,7 +28,8 @@ Target.create Ops.downloadApi
         |> Option.orElseWith (fun () -> failwith $"Could not download a release matching the input '{value}'")
         |> Option.iter (fun releaseInfo ->
             Status.setRelease releaseInfo
-            Electron.downloadRelease releaseInfo)
+            Electron.downloadRelease releaseInfo
+        )
     | None -> failwithf $"Target %s{Ops.downloadApi} requires the argument '--release <RELEASE>' to be set"
 
 Target.create Ops.downloadInput
@@ -126,7 +127,8 @@ Target.create Ops.generate
         failwith
             "Attempted to generate from an electron-api.json, but none were downloaded.\n \
                   Either run target 'generate-release' or place the electron-api.json in the \
-                  '/temp' folder at the root of the repository directory.")
+                  '/temp' folder at the root of the repository directory."
+    )
     |> ignore
 
 Target.create Ops.setupDocs <| fun _ -> Docs.setup Args.npmCi
@@ -134,9 +136,12 @@ Target.create Ops.docs (ignore >> Docs.dev)
 Target.create Ops.build (fun _ -> Project.build Project.Targets.All)
 Target.create Ops.pack (fun _ -> Project.pack true Project.Targets.All)
 
-Target.create Ops.push (fun _ ->
-    Project.push ()
-    Target.deactivateFinal Ops.gitnet)
+Target.create
+    Ops.push
+    (fun _ ->
+        Project.push ()
+        Target.deactivateFinal Ops.gitnet
+    )
 
 Target.create Ops.generateApiDocs (ignore >> ApiDocs.validateDir >> ApiDocs.build)
 Target.create Ops.setupTest (fun _ -> Electron.installTests Args.npmCi)
@@ -314,7 +319,8 @@ Package Requires Pull: {packageRequiresPull}
                      >> ignore
                      >> Ok
                  )
-                 |> ignore))
+                 |> ignore
+             ))
         |> runOrDryLogItems
             [ electronDeltaInfo.Versions.DownloadedElectron.ToString()
               |> sprintf "Set Fable.Electron ElectronVersion: %s"
@@ -337,7 +343,8 @@ Package Requires Pull: {packageRequiresPull}
         |> List.collect (fun proj ->
             CrackedProject.getCompiledFilePaths proj
             |> List.map (Path.combine proj.ProjectDirectory)
-            |> List.append [ CrackedProject.projectFileName proj ])
+            |> List.append [ CrackedProject.projectFileName proj ]
+        )
         // We also add the cache file
         |> List.append [ Path.combine "ci" "cache.json" ]
         // We stage the files and then commit
@@ -383,7 +390,7 @@ Package Requires Pull: {packageRequiresPull}
 
         lazy
             // This will push to main or push to the created branch
-            Laundry.pushCurrentBranch ()
+            Laundry.pushCurrentBranchAndTags ()
         |> runOrDryLog "Push to branch"
         // If we have to make a pull, we'll generate the pull using GH CLI
         if requiresPull then

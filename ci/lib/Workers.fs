@@ -64,7 +64,8 @@ module ApiDocs =
                 Input = Some VirtualRoot.fsdocs.``.``
                 MdComments = Some true
                 Projects = Some [ Projects.Electron; Projects.Forge; Projects.Remoting ]
-                Properties = Some "Configuration=Release" })
+                Properties = Some "Configuration=Release" }
+        )
 
 module Docs =
     let private dir = Root.docs.``.``
@@ -116,17 +117,32 @@ module Laundry =
             GitHub.createClientWithToken token
             |> (func >> Async.RunSynchronously >> Async.RunSynchronously)
 
+    /// Pushes all tags to origin
+    let pushTags () =
+        CommandHelper.directRunGitCommandAndFail root "push --tags origin"
 
+    /// Pushes the current branch, does not push tags
     let pushBranch branchName =
-        Git.Branches.pushBranch root "origin" branchName
+        Branches.pushBranch root "origin" branchName
 
-    let branchName () = Git.Information.getBranchName root
+    /// Pushes the current branch and tags
+    let pushBranchAndTags branchName =
+        Branches.pushBranch root "origin" branchName |> pushTags
 
+    /// Provides the current branch name
+    let branchName () = Information.getBranchName root
+
+    /// Does not push tags
     let pushCurrentBranch = branchName >> pushBranch
 
+    /// Pushes tags as well as the current branch
+    let pushCurrentBranchAndTags = branchName >> pushBranchAndTags
+
+    /// Creates a new branch with the given name and checks it out
     let createBranch newBranchName =
         CommandHelper.directRunGitCommandAndFail root $"checkout -b {newBranchName}"
 
+    /// Commits the given files to the staging area
     let commitFiles msg files =
         files |> List.iter (Git.Staging.stageFile root >> ignore)
         Git.Commit.exec root msg
@@ -163,7 +179,8 @@ module Laundry =
                     Base = ValueSome targetBranch
                     Body = ValueSome body
                     Title = ValueSome title
-                    Head = ValueSome current })
+                    Head = ValueSome current }
+            )
             root
         |> ignore
 
@@ -265,7 +282,8 @@ module Project =
                 DotNet.build (fun p ->
                     { p with
                         Configuration = DotNet.BuildConfiguration.Release
-                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true })
+                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true }
+                )
             )
         | Of projects ->
             projects
@@ -273,14 +291,16 @@ module Project =
                 DotNet.build (fun p ->
                     { p with
                         Configuration = DotNet.BuildConfiguration.Release
-                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true })
+                        DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true }
+                )
             )
         | One project ->
             project
             |> DotNet.build (fun p ->
                 { p with
                     Configuration = DotNet.BuildConfiguration.Release
-                    DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true })
+                    DotNet.BuildOptions.MSBuildParams.DisableInternalBinLog = true }
+            )
 
     let fableBuild () =
         dotnet [ "fable"; "-e"; ".js" ] Root.src.``Fable.Electron``.``.``
@@ -291,7 +311,8 @@ module Project =
                 { p with
                     NoRestore = not restore
                     OutputPath = Some "bin"
-                    DotNet.PackOptions.MSBuildParams.DisableInternalBinLog = true })
+                    DotNet.PackOptions.MSBuildParams.DisableInternalBinLog = true }
+            )
 
         function
         | All -> buildProjects |> List.iter func
@@ -312,7 +333,8 @@ module Project =
                         { p with
                             DotNet.NuGetPushOptions.PushParams.Source = Some "https://api.nuget.org/v3/index.json"
                             DotNet.NuGetPushOptions.Common.CustomParams = Some "--skip-duplicate"
-                            DotNet.NuGetPushOptions.PushParams.ApiKey = Some key })
+                            DotNet.NuGetPushOptions.PushParams.ApiKey = Some key }
+                    )
                 )
             | None -> failwith "Require NuGet Key to be passed via --nuget-api-key <APIKEY> or via env var NUGET_KEY"
 

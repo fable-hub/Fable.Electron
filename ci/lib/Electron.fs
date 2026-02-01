@@ -18,7 +18,8 @@ let downloadElectronApi outputFile release =
                 Release = Some release
                 Flags.Output = Some outputFile
                 Flags.SkipExisting = true
-                Flags.Overwrite = false })
+                Flags.Overwrite = false }
+        )
         "."
 
 /// Will overwrite
@@ -31,5 +32,6 @@ let downloadAndOverwriteElectronApi outputFile release =
                 Release = Some release
                 Flags.Output = Some outputFile
                 Flags.SkipExisting = false
-                Flags.Overwrite = true })
+                Flags.Overwrite = true }
+        )
         "."
