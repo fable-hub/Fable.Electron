@@ -2037,6 +2037,261 @@ module Types =
         [<Erase>]
         member val url: string = Unchecked.defaultof<_> with get, set
 
+    /// <summary>
+    /// Use <c>sharedTexture.subtle.finishTransferSharedTexture</c> to get <c>SharedTextureImportedSubtle</c> back.
+    /// </summary>
+    [<JS.Pojo>]
+    type SharedTextureTransfer
+        /// <param name="transfer">The opaque transfer data of the shared texture. This can be transferred across Electron processes.</param>
+        /// <param name="syncToken">The opaque sync token data for frame creation.</param>
+        /// <param name="pixelFormat">The pixel format of the transferring texture.</param>
+        /// <param name="codedSize">The full dimensions of the shared texture.</param>
+        /// <param name="visibleRect">A subsection of [0, 0, codedSize.width(), codedSize.height()]. In common cases, it is the full section area.</param>
+        /// <param name="timestamp">A timestamp in microseconds that will be reflected to <c>VideoFrame</c>.</param>
+        (
+            transfer: string,
+            syncToken: string,
+            pixelFormat: string,
+            codedSize: Size,
+            visibleRect: Rectangle,
+            timestamp: float
+        ) =
+        class
+        end
+
+        /// <summary>
+        /// The opaque transfer data of the shared texture. This can be transferred across Electron processes.
+        /// </summary>
+        [<Erase>]
+        member val transfer: string = Unchecked.defaultof<_> with get
+
+        /// <summary>
+        /// The opaque sync token data for frame creation.
+        /// </summary>
+        [<Erase>]
+        member val syncToken: string = Unchecked.defaultof<_> with get
+
+        /// <summary>
+        /// The pixel format of the transferring texture.
+        /// </summary>
+        [<Erase>]
+        member val pixelFormat: string = Unchecked.defaultof<_> with get
+
+        /// <summary>
+        /// The full dimensions of the shared texture.
+        /// </summary>
+        [<Erase>]
+        member val codedSize: Size = Unchecked.defaultof<_> with get
+
+        /// <summary>
+        /// A subsection of [0, 0, codedSize.width(), codedSize.height()]. In common cases, it is the full section area.
+        /// </summary>
+        [<Erase>]
+        member val visibleRect: Rectangle = Unchecked.defaultof<_> with get
+
+        /// <summary>
+        /// A timestamp in microseconds that will be reflected to <c>VideoFrame</c>.
+        /// </summary>
+        [<Erase>]
+        member val timestamp: float = Unchecked.defaultof<_> with get
+
+    [<JS.Pojo>]
+    type SharedTextureSyncToken
+        /// <param name="syncToken">The opaque data for sync token.</param>
+        (syncToken: string) =
+        class
+        end
+
+        /// <summary>
+        /// The opaque data for sync token.
+        /// </summary>
+        [<Erase>]
+        member val syncToken: string = Unchecked.defaultof<_> with get, set
+
+    [<JS.Pojo>]
+    type SharedTextureSubtle
+        /// <param name="importSharedTexture">Imports the shared texture from the given options. Returns the imported shared texture.</param>
+        /// <param name="finishTransferSharedTexture">Finishes the transfer of the shared texture and gets the transferred shared texture. Returns the imported shared texture from
+        /// the transfer object.</param>
+        (
+            importSharedTexture: SharedTextureImportTextureInfo -> SharedTextureImportedSubtle,
+            finishTransferSharedTexture: SharedTextureTransfer -> SharedTextureImportedSubtle
+        ) =
+        class
+        end
+
+        /// <summary>
+        /// Imports the shared texture from the given options. Returns the imported shared texture.
+        /// </summary>
+        [<Erase>]
+        member val importSharedTexture: SharedTextureImportTextureInfo -> SharedTextureImportedSubtle =
+            Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Finishes the transfer of the shared texture and gets the transferred shared texture. Returns the imported shared texture from the
+        /// transfer object.
+        /// </summary>
+        [<Erase>]
+        member val finishTransferSharedTexture: SharedTextureTransfer -> SharedTextureImportedSubtle =
+            Unchecked.defaultof<_> with get, set
+
+    [<JS.Pojo>]
+    type SharedTextureImported
+        /// <param name="textureId">The unique identifier of the imported shared texture.</param>
+        /// <param name="getVideoFrame">Create a <c>VideoFrame</c> that uses the imported shared texture in the current process. You can call <c>VideoFrame.close()</c> once you've
+        /// finished using the object. The underlying resources will wait for GPU finish internally.</param>
+        /// <param name="release">Release this object's reference of the imported shared texture. The underlying resource will be alive until every reference is
+        /// released.</param>
+        /// <param name="subtle">Provides subtle APIs to interact with the imported shared texture for advanced users.</param>
+        (
+            textureId: string,
+            getVideoFrame: unit -> VideoFrame,
+            release: unit -> unit,
+            subtle: SharedTextureImportedSubtle
+        ) =
+        class
+        end
+
+        /// <summary>
+        /// The unique identifier of the imported shared texture.
+        /// </summary>
+        [<Erase>]
+        member val textureId: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Create a <c>VideoFrame</c> that uses the imported shared texture in the current process. You can call <c>VideoFrame.close()</c> once you've finished
+        /// using the object. The underlying resources will wait for GPU finish internally.
+        /// </summary>
+        [<Erase>]
+        member val getVideoFrame: unit -> VideoFrame = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Release this object's reference of the imported shared texture. The underlying resource will be alive until every reference is released.
+        /// </summary>
+        [<Erase>]
+        member val release: unit -> unit = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Provides subtle APIs to interact with the imported shared texture for advanced users.
+        /// </summary>
+        [<Erase>]
+        member val subtle: SharedTextureImportedSubtle = Unchecked.defaultof<_> with get, set
+
+    [<JS.Pojo>]
+    type SharedTextureImportedSubtle
+        /// <param name="getVideoFrame">Create a <c>VideoFrame</c> that uses the imported shared texture in the current process. You can call <c>VideoFrame.close()</c> once you've
+        /// finished using the object. The underlying resources will wait for GPU finish internally.</param>
+        /// <param name="release">Release the resources. If you transferred and get multiple <c>SharedTextureImported</c> objects, you have to <c>release</c> every one of them.
+        /// The resource on the GPU process will be destroyed when the last one is released.</param>
+        /// <param name="startTransferSharedTexture">Create a <c>SharedTextureTransfer</c> that can be serialized and transferred to other processes.</param>
+        /// <param name="getFrameCreationSyncToken">This method is for advanced users. If used, it is typically called after <c>finishTransferSharedTexture</c>, and should be passed to
+        /// the object which was called <c>startTransferSharedTexture</c> to prevent the source object release the underlying resource before the target object actually
+        /// acquire the reference at gpu process asyncly.</param>
+        /// <param name="setReleaseSyncToken">This method is for advanced users. If used, this object's underlying resource will not be released until the set
+        /// sync token is fulfilled at gpu process. By using sync tokens, users are not required to use release callbacks for
+        /// lifetime management.</param>
+        (
+            getVideoFrame: unit -> VideoFrame,
+            release: Option<unit -> unit> -> unit,
+            startTransferSharedTexture: unit -> SharedTextureTransfer,
+            getFrameCreationSyncToken: unit -> SharedTextureSyncToken,
+            setReleaseSyncToken: SharedTextureSyncToken -> unit
+        ) =
+        class
+        end
+
+        /// <summary>
+        /// Create a <c>VideoFrame</c> that uses the imported shared texture in the current process. You can call <c>VideoFrame.close()</c> once you've finished
+        /// using the object. The underlying resources will wait for GPU finish internally.
+        /// </summary>
+        [<Erase>]
+        member val getVideoFrame: unit -> VideoFrame = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Release the resources. If you transferred and get multiple <c>SharedTextureImported</c> objects, you have to <c>release</c> every one of them. The
+        /// resource on the GPU process will be destroyed when the last one is released.
+        /// </summary>
+        [<Erase>]
+        member val release: Option<unit -> unit> -> unit = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Create a <c>SharedTextureTransfer</c> that can be serialized and transferred to other processes.
+        /// </summary>
+        [<Erase>]
+        member val startTransferSharedTexture: unit -> SharedTextureTransfer = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// This method is for advanced users. If used, it is typically called after <c>finishTransferSharedTexture</c>, and should be passed to the
+        /// object which was called <c>startTransferSharedTexture</c> to prevent the source object release the underlying resource before the target object actually acquire
+        /// the reference at gpu process asyncly.
+        /// </summary>
+        [<Erase>]
+        member val getFrameCreationSyncToken: unit -> SharedTextureSyncToken = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// This method is for advanced users. If used, this object's underlying resource will not be released until the set sync
+        /// token is fulfilled at gpu process. By using sync tokens, users are not required to use release callbacks for lifetime
+        /// management.
+        /// </summary>
+        [<Erase>]
+        member val setReleaseSyncToken: SharedTextureSyncToken -> unit = Unchecked.defaultof<_> with get, set
+
+    [<JS.Pojo>]
+    type SharedTextureImportTextureInfo
+        /// <param name="pixelFormat">The pixel format of the texture.</param>
+        /// <param name="colorSpace">The color space of the texture.</param>
+        /// <param name="codedSize">The full dimensions of the shared texture.</param>
+        /// <param name="visibleRect">A subsection of [0, 0, codedSize.width, codedSize.height]. In common cases, it is the full section area.</param>
+        /// <param name="timestamp">A timestamp in microseconds that will be reflected to <c>VideoFrame</c>.</param>
+        /// <param name="handle">The shared texture handle.</param>
+        (
+            pixelFormat: Enums.Types.SharedTextureImportTextureInfo.PixelFormat,
+            codedSize: Size,
+            handle: SharedTextureHandle,
+            ?colorSpace: ColorSpace,
+            ?visibleRect: Rectangle,
+            ?timestamp: float
+        ) =
+        class
+        end
+
+        /// <summary>
+        /// The pixel format of the texture.
+        /// </summary>
+        [<Erase>]
+        member val pixelFormat: Enums.Types.SharedTextureImportTextureInfo.PixelFormat =
+            Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The color space of the texture.
+        /// </summary>
+        [<Erase>]
+        member val colorSpace: ColorSpace = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The full dimensions of the shared texture.
+        /// </summary>
+        [<Erase>]
+        member val codedSize: Size = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// A subsection of [0, 0, codedSize.width, codedSize.height]. In common cases, it is the full section area.
+        /// </summary>
+        [<Erase>]
+        member val visibleRect: Rectangle = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// A timestamp in microseconds that will be reflected to <c>VideoFrame</c>.
+        /// </summary>
+        [<Erase>]
+        member val timestamp: float = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The shared texture handle.
+        /// </summary>
+        [<Erase>]
+        member val handle: SharedTextureHandle = Unchecked.defaultof<_> with get, set
+
     [<JS.Pojo>]
     type SharedTextureHandle
         /// <param name="ntHandle">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || NT HANDLE holds the
@@ -5088,9 +5343,8 @@ module Types =
         /// <param name="trafficLightPosition">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Set a custom position
         /// for the traffic light buttons in frameless windows.</param>
         /// <param name="roundedCorners">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Whether frameless window should
-        /// have rounded corners. Default is <c>true</c>. Setting this property to <c>false</c> will prevent the window from being fullscreenable on macOS.
-        /// On Windows versions older than Windows 11 Build 22000 this property has no effect, and frameless windows will not have
-        /// rounded corners.</param>
+        /// have rounded corners. Default is <c>true</c>. On Windows versions older than Windows 11 Build 22000 this property has no effect,
+        /// and frameless windows will not have rounded corners.</param>
         /// <param name="thickFrame">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || Use <c>WS_THICKFRAME</c> style for
         /// frameless windows on Windows, which adds the standard window frame. Setting it to <c>false</c> will remove window shadow and window
         /// animations, and disable window resizing via dragging the window edges. Default is <c>true</c>.</param>
@@ -5573,9 +5827,8 @@ module Types =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
-        /// Whether frameless window should have rounded corners. Default is <c>true</c>. Setting this property to <c>false</c> will prevent the window from
-        /// being fullscreenable on macOS. On Windows versions older than Windows 11 Build 22000 this property has no effect, and frameless
-        /// windows will not have rounded corners.
+        /// Whether frameless window should have rounded corners. Default is <c>true</c>. On Windows versions older than Windows 11 Build 22000 this
+        /// property has no effect, and frameless windows will not have rounded corners.
         /// </summary>
         [<Erase>]
         member val roundedCorners: bool = Unchecked.defaultof<_> with get, set
@@ -5741,9 +5994,8 @@ module Types =
         /// <param name="trafficLightPosition">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Set a custom position
         /// for the traffic light buttons in frameless windows.</param>
         /// <param name="roundedCorners">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Whether frameless window should
-        /// have rounded corners. Default is <c>true</c>. Setting this property to <c>false</c> will prevent the window from being fullscreenable on macOS.
-        /// On Windows versions older than Windows 11 Build 22000 this property has no effect, and frameless windows will not have
-        /// rounded corners.</param>
+        /// have rounded corners. Default is <c>true</c>. On Windows versions older than Windows 11 Build 22000 this property has no effect,
+        /// and frameless windows will not have rounded corners.</param>
         /// <param name="thickFrame">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || Use <c>WS_THICKFRAME</c> style for
         /// frameless windows on Windows, which adds the standard window frame. Setting it to <c>false</c> will remove window shadow and window
         /// animations, and disable window resizing via dragging the window edges. Default is <c>true</c>.</param>
@@ -6210,9 +6462,8 @@ module Types =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
-        /// Whether frameless window should have rounded corners. Default is <c>true</c>. Setting this property to <c>false</c> will prevent the window from
-        /// being fullscreenable on macOS. On Windows versions older than Windows 11 Build 22000 this property has no effect, and frameless
-        /// windows will not have rounded corners.
+        /// Whether frameless window should have rounded corners. Default is <c>true</c>. On Windows versions older than Windows 11 Build 22000 this
+        /// property has no effect, and frameless windows will not have rounded corners.
         /// </summary>
         [<Erase>]
         member val roundedCorners: bool = Unchecked.defaultof<_> with get, set
@@ -6366,6 +6617,22 @@ module Enums =
                 | [<CompiledName("record-continuously")>] RecordContinuously
                 | [<CompiledName("record-as-much-as-possible")>] RecordAsMuchAsPossible
                 | [<CompiledName("trace-to-console")>] TraceToConsole
+
+        module SharedTextureImportTextureInfo =
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type PixelFormat =
+                /// <summary>
+                /// 32bpp BGRA (byte-order), 1 plane.
+                /// </summary>
+                | [<CompiledName("bgra")>] Bgra
+                /// <summary>
+                /// 32bpp RGBA (byte-order), 1 plane.
+                /// </summary>
+                | [<CompiledName("rgba")>] Rgba
+                /// <summary>
+                /// Half float RGBA, 1 plane.
+                /// </summary>
+                | [<CompiledName("rgbaf16")>] Rgbaf16
 
         module ResolvedEndpoint =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -8946,7 +9213,7 @@ module Renderer =
             type Info
                 /// <param name="securityOrigin">Security origin for the isolated world.</param>
                 /// <param name="csp">Content Security Policy for the isolated world.</param>
-                /// <param name="name">Name for isolated world. Useful in devtools.</param>
+                /// <param name="name">Name for isolated world. Useful in DevTools.</param>
                 (?securityOrigin: string, ?csp: string, ?name: string) =
                 class
                 end
@@ -8964,7 +9231,7 @@ module Renderer =
                 member val csp: string = Unchecked.defaultof<_> with get, set
 
                 /// <summary>
-                /// Name for isolated world. Useful in devtools.
+                /// Name for isolated world. Useful in DevTools.
                 /// </summary>
                 [<Erase>]
                 member val name: string = Unchecked.defaultof<_> with get, set
@@ -9009,6 +9276,79 @@ module Renderer =
                 /// <param name="words"></param>
                 /// <param name="callback"></param>
                 type SpellCheck = delegate of words: string[] * callback: (string[] -> unit) -> unit
+
+    module SharedTexture =
+        module SendSharedTexture =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="frame">The target frame to transfer the shared texture to. For <c>WebContents</c>, you can pass <c>webContents.mainFrame</c>. If you provide a
+                /// <c>webFrameMain</c> that is not a main frame, you'll need to enable <c>webPreferences.nodeIntegrationInSubFrames</c> for this, since this feature requires IPC between
+                /// main and the frame.</param>
+                /// <param name="importedSharedTexture">The imported shared texture.</param>
+                (frame: Main.WebFrameMain, importedSharedTexture: SharedTextureImported) =
+                class
+                end
+
+                /// <summary>
+                /// The target frame to transfer the shared texture to. For <c>WebContents</c>, you can pass <c>webContents.mainFrame</c>. If you provide a <c>webFrameMain</c>
+                /// that is not a main frame, you'll need to enable <c>webPreferences.nodeIntegrationInSubFrames</c> for this, since this feature requires IPC between main
+                /// and the frame.
+                /// </summary>
+                [<Erase>]
+                member val frame: Main.WebFrameMain = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// The imported shared texture.
+                /// </summary>
+                [<Erase>]
+                member val importedSharedTexture: SharedTextureImported = Unchecked.defaultof<_> with get, set
+
+        module ImportSharedTexture =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="textureInfo">The information of the shared texture to import.</param>
+                /// <param name="allReferencesReleased">Called when all references in all processes are released. You should keep the imported texture valid until this callback
+                /// is called.</param>
+                (textureInfo: SharedTextureImportTextureInfo, ?allReferencesReleased: unit -> unit) =
+                class
+                end
+
+                /// <summary>
+                /// The information of the shared texture to import.
+                /// </summary>
+                [<Erase>]
+                member val textureInfo: SharedTextureImportTextureInfo = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Called when all references in all processes are released. You should keep the imported texture valid until this callback is
+                /// called.
+                /// </summary>
+                [<Erase>]
+                member val allReferencesReleased: unit -> unit = Unchecked.defaultof<_> with get, set
+
+        module SetSharedTextureReceiver =
+            module Callback =
+                [<JS.Pojo>]
+                type ReceivedSharedTextureData
+                    /// <param name="importedSharedTexture">The imported shared texture.</param>
+                    (importedSharedTexture: SharedTextureImported) =
+                    class
+                    end
+
+                    /// <summary>
+                    /// The imported shared texture.
+                    /// </summary>
+                    [<Erase>]
+                    member val importedSharedTexture: SharedTextureImported = Unchecked.defaultof<_> with get, set
+
+            /// <param name="receivedSharedTextureData">The data received from the main process.</param>
+            /// <param name="...args">Additional arguments passed from the main process.</param>
+            type Callback =
+                delegate of
+                    receivedSharedTextureData:
+                        Renderer.SharedTexture.SetSharedTextureReceiver.Callback.ReceivedSharedTextureData *
+                    [<System.ParamArray>] args: obj[] ->
+                        Promise<unit>
 
     module IpcRenderer =
         module RemoveListener =
@@ -11118,7 +11458,7 @@ module Renderer =
         /// can provide any integer here.</param>
         /// <param name="securityOrigin">Security origin for the isolated world.</param>
         /// <param name="csp">Content Security Policy for the isolated world.</param>
-        /// <param name="name">Name for isolated world. Useful in devtools.</param>
+        /// <param name="name">Name for isolated world. Useful in DevTools.</param>
         [<Erase; ParamObject(1)>]
         static member inline setIsolatedWorldInfo
             (worldId: int, ?securityOrigin: string, ?csp: string, ?name: string)
@@ -11431,7 +11771,9 @@ module Renderer =
 
         /// <summary>
         /// Resolves when the operation has been completed. Rejects if there was an error while deleting the requested item.<br/><br/>This moves a
-        /// path to the OS-specific trash location (Trash on macOS, Recycle Bin on Windows, and a desktop-environment-specific location on Linux).
+        /// path to the OS-specific trash location (Trash on macOS, Recycle Bin on Windows, and a desktop-environment-specific location on Linux).<br/><br/>The path
+        /// must use the default path separator for the platform (backslash on Windows). Use <c>path.resolve()</c> from the <c>node:path</c> module to ensure
+        /// correct handling on all filesystems.
         /// </summary>
         /// <param name="path">path to the item to be moved to the trash.</param>
         [<Erase>]
@@ -11474,6 +11816,63 @@ module Renderer =
         static member inline readShortcutLink(shortcutPath: string) : ShortcutDetails = Unchecked.defaultof<_>
         #endif
 
+
+    /// <summary>
+    /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
+    /// &gt; Import shared textures into Electron and converts platform specific handles into <c>VideoFrame</c>. Supports all Web rendering systems, and can
+    /// be transferred across Electron processes. Read here for more information.<br/><br/>Process: Main, Renderer
+    /// </summary>
+    [<Import("sharedTexture", "electron")>]
+    type sharedTexture private () =
+        class
+        end
+
+        /// <summary>
+        /// Imports the shared texture from the given options.<br/><br/>&gt; [!NOTE] This method is only available in the main process.<br/><br/>The imported shared
+        /// texture.
+        /// </summary>
+        /// <param name="textureInfo">The information of the shared texture to import.</param>
+        /// <param name="allReferencesReleased">Called when all references in all processes are released. You should keep the imported texture valid until this callback
+        /// is called.</param>
+        [<Erase; ParamObject(0); Experimental("Experimental according to Electron")>]
+        static member inline importSharedTexture
+            (textureInfo: SharedTextureImportTextureInfo, ?allReferencesReleased: unit -> unit)
+            : SharedTextureImported =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Send the imported shared texture to a renderer process. You must register a receiver at renderer process before calling this
+        /// method. This method has a 1000ms timeout. Ensure the receiver is set and the renderer process is alive before calling
+        /// this method.<br/><br/>&gt; [!NOTE] This method is only available in the main process.<br/><br/>Resolves when the transfer is complete.
+        /// </summary>
+        /// <param name="options">Options for sending shared texture.</param>
+        /// <param name="...args">Additional arguments to pass to the renderer process.</param>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member inline sendSharedTexture
+            (options: Renderer.SharedTexture.SendSharedTexture.Options, ``...args``: obj[])
+            : Promise<unit> =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Set a callback to receive imported shared textures from the main process.<br/><br/>&gt; [!NOTE] This method is only available in the
+        /// renderer process.
+        /// </summary>
+        /// <param name="callback">The function to receive the imported shared texture.</param>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member inline setSharedTextureReceiver
+            (
+                callback:
+                    Renderer.SharedTexture.SetSharedTextureReceiver.Callback.ReceivedSharedTextureData
+                        * obj[]
+                        -> Promise<unit>
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// A <c>SharedTextureSubtle</c> property, provides subtle APIs for interacting with shared texture for advanced users.
+        /// </summary>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member val subtle: SharedTextureSubtle = Unchecked.defaultof<_> with get, set
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
@@ -11628,8 +12027,8 @@ module Renderer =
         static member val noAsar: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// A <c>boolean</c> that controls whether or not deprecation warnings are printed to <c>stderr</c>. Setting this to <c>true</c> will silence deprecation
-        /// warnings. This property is used instead of the <c>--no-deprecation</c> command line flag.
+        /// A <c>boolean</c> (optional) that controls whether or not deprecation warnings are printed to <c>stderr</c>. Setting this to <c>true</c> will silence
+        /// deprecation warnings. This property is used instead of the <c>--no-deprecation</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val noDeprecation: bool = Unchecked.defaultof<_> with get, set
@@ -12276,10 +12675,10 @@ module Renderer =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
-    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer (non-sandboxed only)<br/><br/>&gt; [!IMPORTANT] If you want to call
-    /// this API from a renderer process with context isolation enabled, place the API call in your preload script and expose
-    /// it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard. To manipulate it you need to pass <c>selection</c>
-    /// to each method:
+    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipoard</c> API
+    /// from the renderer process is deprecated.<br/><br/>&gt; [!IMPORTANT] If you want to call this API from a renderer process, place the
+    /// API call in your preload script and expose it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard.
+    /// To manipulate it you need to pass <c>selection</c> to each method:
     /// </summary>
     [<Import("clipboard", "electron")>]
     type clipboard =
@@ -14966,7 +15365,7 @@ module Main =
             abstract member sessionId: string with get, set
 
         /// <summary>
-        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or devtools is invoked for the
+        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or DevTools is invoked for the
         /// attached <c>webContents</c>.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
@@ -16873,14 +17272,14 @@ module Main =
             [<JS.Pojo>]
             type Options
                 /// <param name="allowFileAccess">Whether to allow the extension to read local files over <c>file://</c> protocol and inject content scripts into <c>file://</c> pages.
-                /// This is required e.g. for loading devtools extensions on <c>file://</c> URLs. Defaults to false.</param>
+                /// This is required e.g. for loading DevTools extensions on <c>file://</c> URLs. Defaults to false.</param>
                 (allowFileAccess: bool) =
                 class
                 end
 
                 /// <summary>
                 /// Whether to allow the extension to read local files over <c>file://</c> protocol and inject content scripts into <c>file://</c> pages. This
-                /// is required e.g. for loading devtools extensions on <c>file://</c> URLs. Defaults to false.
+                /// is required e.g. for loading DevTools extensions on <c>file://</c> URLs. Defaults to false.
                 /// </summary>
                 [<Erase>]
                 member val allowFileAccess: bool = Unchecked.defaultof<_> with get, set
@@ -20389,23 +20788,23 @@ module Main =
         module OpenDevTools =
             [<JS.Pojo>]
             type Options
-                /// <param name="mode">Opens the devtools with specified dock state, can be <c>left</c>, <c>right</c>, <c>bottom</c>, <c>undocked</c>, <c>detach</c>. Defaults to last used dock
+                /// <param name="mode">Opens the DevTools with specified dock state, can be <c>left</c>, <c>right</c>, <c>bottom</c>, <c>undocked</c>, <c>detach</c>. Defaults to last used dock
                 /// state. In <c>undocked</c> mode it's possible to dock back. In <c>detach</c> mode it's not.</param>
-                /// <param name="activate">Whether to bring the opened devtools window to the foreground. The default is <c>true</c>.</param>
+                /// <param name="activate">Whether to bring the opened DevTools window to the foreground. The default is <c>true</c>.</param>
                 /// <param name="title">A title for the DevTools window (only in <c>undocked</c> or <c>detach</c> mode).</param>
                 (mode: Main.Enums.WebContents.OpenDevTools.Options.Mode, ?activate: bool, ?title: string) =
                 class
                 end
 
                 /// <summary>
-                /// Opens the devtools with specified dock state, can be <c>left</c>, <c>right</c>, <c>bottom</c>, <c>undocked</c>, <c>detach</c>. Defaults to last used dock state.
+                /// Opens the DevTools with specified dock state, can be <c>left</c>, <c>right</c>, <c>bottom</c>, <c>undocked</c>, <c>detach</c>. Defaults to last used dock state.
                 /// In <c>undocked</c> mode it's possible to dock back. In <c>detach</c> mode it's not.
                 /// </summary>
                 [<Erase>]
                 member val mode: Main.Enums.WebContents.OpenDevTools.Options.Mode = Unchecked.defaultof<_> with get, set
 
                 /// <summary>
-                /// Whether to bring the opened devtools window to the foreground. The default is <c>true</c>.
+                /// Whether to bring the opened DevTools window to the foreground. The default is <c>true</c>.
                 /// </summary>
                 [<Erase>]
                 member val activate: bool = Unchecked.defaultof<_> with get, set
@@ -21201,6 +21600,79 @@ module Main =
             /// <param name="object"></param>
             type Callback = delegate of event: string * userInfo: Record<string, obj> * object: string -> unit
 
+    module SharedTexture =
+        module SendSharedTexture =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="frame">The target frame to transfer the shared texture to. For <c>WebContents</c>, you can pass <c>webContents.mainFrame</c>. If you provide a
+                /// <c>webFrameMain</c> that is not a main frame, you'll need to enable <c>webPreferences.nodeIntegrationInSubFrames</c> for this, since this feature requires IPC between
+                /// main and the frame.</param>
+                /// <param name="importedSharedTexture">The imported shared texture.</param>
+                (frame: Main.WebFrameMain, importedSharedTexture: SharedTextureImported) =
+                class
+                end
+
+                /// <summary>
+                /// The target frame to transfer the shared texture to. For <c>WebContents</c>, you can pass <c>webContents.mainFrame</c>. If you provide a <c>webFrameMain</c>
+                /// that is not a main frame, you'll need to enable <c>webPreferences.nodeIntegrationInSubFrames</c> for this, since this feature requires IPC between main
+                /// and the frame.
+                /// </summary>
+                [<Erase>]
+                member val frame: Main.WebFrameMain = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// The imported shared texture.
+                /// </summary>
+                [<Erase>]
+                member val importedSharedTexture: SharedTextureImported = Unchecked.defaultof<_> with get, set
+
+        module ImportSharedTexture =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="textureInfo">The information of the shared texture to import.</param>
+                /// <param name="allReferencesReleased">Called when all references in all processes are released. You should keep the imported texture valid until this callback
+                /// is called.</param>
+                (textureInfo: SharedTextureImportTextureInfo, ?allReferencesReleased: unit -> unit) =
+                class
+                end
+
+                /// <summary>
+                /// The information of the shared texture to import.
+                /// </summary>
+                [<Erase>]
+                member val textureInfo: SharedTextureImportTextureInfo = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Called when all references in all processes are released. You should keep the imported texture valid until this callback is
+                /// called.
+                /// </summary>
+                [<Erase>]
+                member val allReferencesReleased: unit -> unit = Unchecked.defaultof<_> with get, set
+
+        module SetSharedTextureReceiver =
+            module Callback =
+                [<JS.Pojo>]
+                type ReceivedSharedTextureData
+                    /// <param name="importedSharedTexture">The imported shared texture.</param>
+                    (importedSharedTexture: SharedTextureImported) =
+                    class
+                    end
+
+                    /// <summary>
+                    /// The imported shared texture.
+                    /// </summary>
+                    [<Erase>]
+                    member val importedSharedTexture: SharedTextureImported = Unchecked.defaultof<_> with get, set
+
+            /// <param name="receivedSharedTextureData">The data received from the main process.</param>
+            /// <param name="...args">Additional arguments passed from the main process.</param>
+            type Callback =
+                delegate of
+                    receivedSharedTextureData:
+                        Main.SharedTexture.SetSharedTextureReceiver.Callback.ReceivedSharedTextureData *
+                    [<System.ParamArray>] args: obj[] ->
+                        Promise<unit>
+
     module Session =
         /// <summary>
         /// Emitted after <c>USBDevice.forget()</c> has been called.  This event can be used to help maintain persistent storage of permissions when
@@ -21779,14 +22251,14 @@ module Main =
             [<JS.Pojo>]
             type Options
                 /// <param name="allowFileAccess">Whether to allow the extension to read local files over <c>file://</c> protocol and inject content scripts into <c>file://</c> pages.
-                /// This is required e.g. for loading devtools extensions on <c>file://</c> URLs. Defaults to false.</param>
+                /// This is required e.g. for loading DevTools extensions on <c>file://</c> URLs. Defaults to false.</param>
                 (allowFileAccess: bool) =
                 class
                 end
 
                 /// <summary>
                 /// Whether to allow the extension to read local files over <c>file://</c> protocol and inject content scripts into <c>file://</c> pages. This
-                /// is required e.g. for loading devtools extensions on <c>file://</c> URLs. Defaults to false.
+                /// is required e.g. for loading DevTools extensions on <c>file://</c> URLs. Defaults to false.
                 /// </summary>
                 [<Erase>]
                 member val allowFileAccess: bool = Unchecked.defaultof<_> with get, set
@@ -29905,19 +30377,19 @@ module Main =
         member inline _.offPaint(handler: Main.WebContents.IOnPaint -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the devtools window instructs the webContents to reload
+        /// Emitted when the DevTools window instructs the webContents to reload
         /// </summary>
         [<Emit("$0.on('devtools-reload-page', $1)")>]
         member inline _.onDevtoolsReloadPage(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the devtools window instructs the webContents to reload
+        /// Emitted when the DevTools window instructs the webContents to reload
         /// </summary>
         [<Emit("$0.once('devtools-reload-page', $1)")>]
         member inline _.onceDevtoolsReloadPage(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the devtools window instructs the webContents to reload
+        /// Emitted when the DevTools window instructs the webContents to reload
         /// </summary>
         [<Emit("$0.off('devtools-reload-page', $1)")>]
         member inline _.offDevtoolsReloadPage(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -30829,25 +31301,24 @@ module Main =
         member inline _.removeWorkSpace(path: string) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Uses the <c>devToolsWebContents</c> as the target <c>WebContents</c> to show devtools.<br/><br/>The <c>devToolsWebContents</c> must not have done any navigation, and it should
-        /// not be used for other purposes after the call.<br/><br/>By default Electron manages the devtools by creating an internal <c>WebContents</c> with
+        /// Uses the <c>devToolsWebContents</c> as the target <c>WebContents</c> to show DevTools.<br/><br/>The <c>devToolsWebContents</c> must not have done any navigation, and it should
+        /// not be used for other purposes after the call.<br/><br/>By default, Electron manages the DevTools by creating an internal <c>WebContents</c> with
         /// native view, which developers have very limited control of. With the <c>setDevToolsWebContents</c> method, developers can use any <c>WebContents</c> to show
-        /// the devtools in it, including <c>BrowserWindow</c>, <c>BrowserView</c> and <c>&lt;webview&gt;</c> tag.<br/><br/>Note that closing the devtools does not destroy the <c>devToolsWebContents</c>, it
-        /// is caller's responsibility to destroy <c>devToolsWebContents</c>.<br/><br/>An example of showing devtools in a <c>&lt;webview&gt;</c> tag:<br/><br/>An example of showing devtools in a
-        /// <c>BrowserWindow</c>:
+        /// the DevTools in it, such as <c>BrowserWindow</c> or <c>WebContentsView</c>.<br/><br/>Note that closing the DevTools does not destroy the <c>devToolsWebContents</c>, it is
+        /// the caller's responsibility to destroy <c>devToolsWebContents</c> manually.<br/><br/>An example of showing DevTools in a <c>BrowserWindow</c>:
         /// </summary>
         /// <param name="devToolsWebContents"></param>
         [<Erase>]
         member inline _.setDevToolsWebContents(devToolsWebContents: Main.WebContents) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Opens the devtools.<br/><br/>When <c>contents</c> is a <c>&lt;webview&gt;</c> tag, the <c>mode</c> would be <c>detach</c> by default, explicitly passing an empty <c>mode</c>
-        /// can force using last used dock state.<br/><br/>On Windows, if Windows Control Overlay is enabled, Devtools will be opened with <c>mode:
+        /// Opens the DevTools.<br/><br/>When <c>contents</c> is a <c>&lt;webview&gt;</c> tag, the <c>mode</c> would be <c>detach</c> by default, explicitly passing an empty <c>mode</c>
+        /// can force using last used dock state.<br/><br/>On Windows, if Windows Control Overlay is enabled, DevTools will be opened with <c>mode:
         /// 'detach'</c>.
         /// </summary>
-        /// <param name="mode">Opens the devtools with specified dock state, can be <c>left</c>, <c>right</c>, <c>bottom</c>, <c>undocked</c>, <c>detach</c>. Defaults to last used dock
+        /// <param name="mode">Opens the DevTools with specified dock state, can be <c>left</c>, <c>right</c>, <c>bottom</c>, <c>undocked</c>, <c>detach</c>. Defaults to last used dock
         /// state. In <c>undocked</c> mode it's possible to dock back. In <c>detach</c> mode it's not.</param>
-        /// <param name="activate">Whether to bring the opened devtools window to the foreground. The default is <c>true</c>.</param>
+        /// <param name="activate">Whether to bring the opened DevTools window to the foreground. The default is <c>true</c>.</param>
         /// <param name="title">A title for the DevTools window (only in <c>undocked</c> or <c>detach</c> mode).</param>
         [<Erase; ParamObject(0)>]
         member inline _.openDevTools
@@ -30856,19 +31327,19 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Closes the devtools.
+        /// Closes the DevTools view.
         /// </summary>
         [<Erase>]
         member inline _.closeDevTools() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Whether the devtools is opened.
+        /// Whether the DevTools view is opened.
         /// </summary>
         [<Erase>]
         member inline _.isDevToolsOpened() : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Whether the devtools view is focused .
+        /// Whether the DevTools view is focused .
         /// </summary>
         [<Erase>]
         member inline _.isDevToolsFocused() : bool = Unchecked.defaultof<_>
@@ -31261,10 +31732,10 @@ module Main =
         member val navigationHistory: Main.NavigationHistory = Unchecked.defaultof<_> with get
 
         /// <summary>
-        /// A <c>WebContents</c> instance that might own this <c>WebContents</c>.
+        /// A <c>WebContents | null</c> property that represents a <c>WebContents</c> instance that might own this <c>WebContents</c>.
         /// </summary>
         [<Erase>]
-        member val hostWebContents: Main.WebContents = Unchecked.defaultof<_> with get
+        member val hostWebContents: Option<Main.WebContents> = Unchecked.defaultof<_> with get
 
         /// <summary>
         /// A <c>WebContents | null</c> property that represents the of DevTools <c>WebContents</c> associated with a given <c>WebContents</c>.<br/><br/>&gt; [!NOTE] Users should never
@@ -31327,7 +31798,7 @@ module Main =
         interface EventEmitter
 
         /// <summary>
-        /// An array of all <c>WebContents</c> instances. This will contain web contents for all windows, webviews, opened devtools, and devtools extension
+        /// An array of all <c>WebContents</c> instances. This will contain web contents for all windows, webviews, opened DevTools, and DevTools extension
         /// background pages.
         /// </summary>
         [<Erase>]
@@ -33841,7 +34312,9 @@ module Main =
 
         /// <summary>
         /// Resolves when the operation has been completed. Rejects if there was an error while deleting the requested item.<br/><br/>This moves a
-        /// path to the OS-specific trash location (Trash on macOS, Recycle Bin on Windows, and a desktop-environment-specific location on Linux).
+        /// path to the OS-specific trash location (Trash on macOS, Recycle Bin on Windows, and a desktop-environment-specific location on Linux).<br/><br/>The path
+        /// must use the default path separator for the platform (backslash on Windows). Use <c>path.resolve()</c> from the <c>node:path</c> module to ensure
+        /// correct handling on all filesystems.
         /// </summary>
         /// <param name="path">path to the item to be moved to the trash.</param>
         [<Erase>]
@@ -33881,6 +34354,63 @@ module Main =
         static member inline readShortcutLink(shortcutPath: string) : ShortcutDetails = Unchecked.defaultof<_>
         #endif
 
+
+    /// <summary>
+    /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
+    /// &gt; Import shared textures into Electron and converts platform specific handles into <c>VideoFrame</c>. Supports all Web rendering systems, and can
+    /// be transferred across Electron processes. Read here for more information.<br/><br/>Process: Main, Renderer
+    /// </summary>
+    [<Import("sharedTexture", "electron")>]
+    type sharedTexture private () =
+        class
+        end
+
+        /// <summary>
+        /// Imports the shared texture from the given options.<br/><br/>&gt; [!NOTE] This method is only available in the main process.<br/><br/>The imported shared
+        /// texture.
+        /// </summary>
+        /// <param name="textureInfo">The information of the shared texture to import.</param>
+        /// <param name="allReferencesReleased">Called when all references in all processes are released. You should keep the imported texture valid until this callback
+        /// is called.</param>
+        [<Erase; ParamObject(0); Experimental("Experimental according to Electron")>]
+        static member inline importSharedTexture
+            (textureInfo: SharedTextureImportTextureInfo, ?allReferencesReleased: unit -> unit)
+            : SharedTextureImported =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Send the imported shared texture to a renderer process. You must register a receiver at renderer process before calling this
+        /// method. This method has a 1000ms timeout. Ensure the receiver is set and the renderer process is alive before calling
+        /// this method.<br/><br/>&gt; [!NOTE] This method is only available in the main process.<br/><br/>Resolves when the transfer is complete.
+        /// </summary>
+        /// <param name="options">Options for sending shared texture.</param>
+        /// <param name="...args">Additional arguments to pass to the renderer process.</param>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member inline sendSharedTexture
+            (options: Main.SharedTexture.SendSharedTexture.Options, ``...args``: obj[])
+            : Promise<unit> =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Set a callback to receive imported shared textures from the main process.<br/><br/>&gt; [!NOTE] This method is only available in the
+        /// renderer process.
+        /// </summary>
+        /// <param name="callback">The function to receive the imported shared texture.</param>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member inline setSharedTextureReceiver
+            (
+                callback:
+                    Main.SharedTexture.SetSharedTextureReceiver.Callback.ReceivedSharedTextureData
+                        * obj[]
+                        -> Promise<unit>
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// A <c>SharedTextureSubtle</c> property, provides subtle APIs for interacting with shared texture for advanced users.
+        /// </summary>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member val subtle: SharedTextureSubtle = Unchecked.defaultof<_> with get, set
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ✔</para>
@@ -35740,7 +36270,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// A <c>Session</c> object, the default session object of the app.
+        /// A <c>Session</c> object, the default session object of the app, available after <c>app.whenReady</c> is called.
         /// </summary>
         [<Erase>]
         static member val defaultSession: Main.Session = Unchecked.defaultof<_> with get, set
@@ -36767,8 +37297,8 @@ module Main =
         static member val noAsar: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// A <c>boolean</c> that controls whether or not deprecation warnings are printed to <c>stderr</c>. Setting this to <c>true</c> will silence deprecation
-        /// warnings. This property is used instead of the <c>--no-deprecation</c> command line flag.
+        /// A <c>boolean</c> (optional) that controls whether or not deprecation warnings are printed to <c>stderr</c>. Setting this to <c>true</c> will silence
+        /// deprecation warnings. This property is used instead of the <c>--no-deprecation</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val noDeprecation: bool = Unchecked.defaultof<_> with get, set
@@ -38012,11 +38542,11 @@ module Main =
         /// A <c>string</c> property that can be <c>system</c>, <c>light</c> or <c>dark</c>.  It is used to override and supersede the value
         /// that Chromium has chosen to use internally.<br/><br/>Setting this property to <c>system</c> will remove the override and everything will be reset
         /// to the OS default.  By default <c>themeSource</c> is <c>system</c>.<br/><br/>Settings this property to <c>dark</c> will have the following effects:<br/><br/>* <c>nativeTheme.shouldUseDarkColors</c>
-        /// will be <c>true</c> when accessed<br/>* Any UI Electron renders on Linux and Windows including context menus, devtools, etc. will use
+        /// will be <c>true</c> when accessed<br/>* Any UI Electron renders on Linux and Windows including context menus, DevTools, etc. will use
         /// the dark UI.<br/>* Any UI the OS renders on macOS including menus, window frames, etc. will use the dark UI.<br/>*
         /// The <c>prefers-color-scheme</c> CSS query will match <c>dark</c> mode.<br/>* The <c>updated</c> event will be emitted<br/><br/>Settings this property to <c>light</c> will have
         /// the following effects:<br/><br/>* <c>nativeTheme.shouldUseDarkColors</c> will be <c>false</c> when accessed<br/>* Any UI Electron renders on Linux and Windows including context menus,
-        /// devtools, etc. will use the light UI.<br/>* Any UI the OS renders on macOS including menus, window frames, etc. will
+        /// DevTools, etc. will use the light UI.<br/>* Any UI the OS renders on macOS including menus, window frames, etc. will
         /// use the light UI.<br/>* The <c>prefers-color-scheme</c> CSS query will match <c>light</c> mode.<br/>* The <c>updated</c> event will be emitted<br/><br/>The usage of
         /// this property should align with a classic "dark mode" state machine in your application where the user has three options.<br/><br/>*
         /// <c>Follow OS</c> --&gt; <c>themeSource = 'system'</c><br/>* <c>Dark Mode</c> --&gt; <c>themeSource = 'dark'</c><br/>* <c>Light Mode</c> --&gt; <c>themeSource = 'light'</c><br/><br/>Your application should
@@ -40241,42 +40771,42 @@ module Main =
         interface EventEmitter
 
         /// <summary>
-        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or devtools is invoked for the
+        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or DevTools is invoked for the
         /// attached <c>webContents</c>.
         /// </summary>
         [<Emit("$0.on('detach', $1)")>]
         member inline _.onDetach(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or devtools is invoked for the
+        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or DevTools is invoked for the
         /// attached <c>webContents</c>.
         /// </summary>
         [<Emit("$0.on('detach', $1)")>]
         member inline _.onDetach(handler: Main.Debugger.IOnDetach -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or devtools is invoked for the
+        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or DevTools is invoked for the
         /// attached <c>webContents</c>.
         /// </summary>
         [<Emit("$0.once('detach', $1)")>]
         member inline _.onceDetach(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or devtools is invoked for the
+        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or DevTools is invoked for the
         /// attached <c>webContents</c>.
         /// </summary>
         [<Emit("$0.once('detach', $1)")>]
         member inline _.onceDetach(handler: Main.Debugger.IOnDetach -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or devtools is invoked for the
+        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or DevTools is invoked for the
         /// attached <c>webContents</c>.
         /// </summary>
         [<Emit("$0.off('detach', $1)")>]
         member inline _.offDetach(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or devtools is invoked for the
+        /// Emitted when the debugging session is terminated. This happens either when <c>webContents</c> is closed or DevTools is invoked for the
         /// attached <c>webContents</c>.
         /// </summary>
         [<Emit("$0.off('detach', $1)")>]
@@ -40685,10 +41215,10 @@ module Main =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
-    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer (non-sandboxed only)<br/><br/>&gt; [!IMPORTANT] If you want to call
-    /// this API from a renderer process with context isolation enabled, place the API call in your preload script and expose
-    /// it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard. To manipulate it you need to pass <c>selection</c>
-    /// to each method:
+    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipoard</c> API
+    /// from the renderer process is deprecated.<br/><br/>&gt; [!IMPORTANT] If you want to call this API from a renderer process, place the
+    /// API call in your preload script and expose it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard.
+    /// To manipulate it you need to pass <c>selection</c> to each method:
     /// </summary>
     [<Import("clipboard", "electron")>]
     type clipboard =
@@ -41194,9 +41724,7 @@ module Main =
     /// order to minimize power consumption.<br/><br/>### Platform notices<br/><br/>* On macOS modal windows will be displayed as sheets attached to the parent
     /// window.<br/>* On macOS the child windows will keep the relative position to parent window when parent window moves, while on
     /// Windows and Linux child windows will not move.<br/>* On Linux the type of modal windows will be changed to <c>dialog</c>.<br/>*
-    /// On Linux many desktop environments do not support hiding a modal window.<br/>* On Wayland (Linux) it is generally not possible
-    /// to programmatically resize windows after creation, or to position, move, focus, or blur windows without user input. If your app
-    /// needs these capabilities, run it in Xwayland by appending the flag <c>--ozone-platform=x11</c>.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
+    /// On Linux many desktop environments do not support hiding a modal window.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
     /// windows.<br/><br/>Process: Main<br/><br/><c>BrowserWindow</c> is an EventEmitter.<br/><br/>It creates a new <c>BrowserWindow</c> with native properties as set by the <c>options</c>.<br/><br/>&gt; [!WARNING] Electron's built-in
     /// classes cannot be subclassed in user code. For more information, see the FAQ.
     /// </summary>
@@ -42426,14 +42954,13 @@ module Main =
         member inline _.close() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Focuses on the window.<br/><br/>On Wayland (Linux), the desktop environment may show a notification or flash the app icon if the
-        /// window or app is not already focused.
+        /// Focuses on the window.
         /// </summary>
         [<Erase>]
         member inline _.focus() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Removes focus from the window.<br/><br/>Not supported on Wayland (Linux).
+        /// Removes focus from the window.
         /// </summary>
         [<Erase>]
         member inline _.blur() : unit = Unchecked.defaultof<_>
@@ -42457,7 +42984,7 @@ module Main =
         member inline _.show() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Shows the window but doesn't focus on it.<br/><br/>Not supported on Wayland (Linux).
+        /// Shows the window but doesn't focus on it.
         /// </summary>
         [<Erase>]
         member inline _.showInactive() : unit = Unchecked.defaultof<_>
@@ -42618,9 +43145,9 @@ module Main =
 
         /// <summary>
         /// Resizes and moves the window to the supplied bounds. Any properties that are not supplied will default to their current
-        /// values.<br/><br/>On Wayland (Linux), has the same limitations as <c>setSize</c> and <c>setPosition</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller
-        /// than the Tray height. The tray height has changed over time and depends on the operating system, but is between
-        /// 20-40px. Passing a value lower than the tray height will result in a window that is flush to the tray.
+        /// values.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray height. The tray height has changed over
+        /// time and depends on the operating system, but is between 20-40px. Passing a value lower than the tray height will
+        /// result in a window that is flush to the tray.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -42643,8 +43170,7 @@ module Main =
         member inline _.getBackgroundColor() : string = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.<br/><br/>On Wayland (Linux), has the same
-        /// limitations as <c>setContentSize</c> and <c>setPosition</c>.
+        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -42680,7 +43206,7 @@ module Main =
 
         /// <summary>
         /// Resizes the window to <c>width</c> and <c>height</c>. If <c>width</c> or <c>height</c> are below any set minimum size constraints the window
-        /// will snap to its minimum size.<br/><br/>On Wayland (Linux), may not work as some window managers restrict programmatic window resizing.
+        /// will snap to its minimum size.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -42695,8 +43221,7 @@ module Main =
         member inline _.getSize() : int[] = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.<br/><br/>On Wayland (Linux), may not work as some
-        /// window managers restrict programmatic window resizing.
+        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -42912,19 +43437,19 @@ module Main =
         member inline _.moveAbove(mediaSourceId: string) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to top(z-order) regardless of focus.<br/><br/>Not supported on Wayland (Linux).
+        /// Moves window to top(z-order) regardless of focus
         /// </summary>
         [<Erase>]
         member inline _.moveTop() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to the center of the screen.<br/><br/>Not supported on Wayland (Linux).
+        /// Moves window to the center of the screen.
         /// </summary>
         [<Erase>]
         member inline _.center() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to <c>x</c> and <c>y</c>.<br/><br/>Not supported on Wayland (Linux).
+        /// Moves window to <c>x</c> and <c>y</c>.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -48670,9 +49195,8 @@ module Main =
         static member inline whenReady() : Promise<unit> = Unchecked.defaultof<_>
 
         /// <summary>
-        /// On macOS, makes the application the active app. On Windows, focuses on the application's first window. On Linux, either focuses
-        /// on the first visible window (X11) or requests focus but may instead show a notification or flash the app icon
-        /// (Wayland).<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
+        /// On Linux, focuses on the first visible window. On macOS, makes the application the active app. On Windows, focuses on
+        /// the application's first window.<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
         /// </summary>
         /// <param name="steal">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Make the receiver the
         /// active app even if another app is currently active.</param>
