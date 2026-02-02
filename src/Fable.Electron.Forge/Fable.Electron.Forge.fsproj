@@ -22,7 +22,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageVersion>6.1.0</PackageVersion>
         <Version>6.1.0</Version>
-        <GitNetInitialVersion>0.1.0</GitNetInitialVersion>
+        <GitNetInitialVersion>7.0.0</GitNetInitialVersion>
         <PackageIcon>feleico-dark.png</PackageIcon>
 
     </PropertyGroup>
