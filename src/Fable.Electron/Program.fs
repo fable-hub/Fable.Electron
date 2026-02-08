@@ -6633,6 +6633,10 @@ module Enums =
                 /// Half float RGBA, 1 plane.
                 /// </summary>
                 | [<CompiledName("rgbaf16")>] Rgbaf16
+                /// <summary>
+                /// 12bpp with Y plane followed by a 2x2 interleaved UV plane.
+                /// </summary>
+                | [<CompiledName("nv12")>] Nv12
 
         module ResolvedEndpoint =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -12093,8 +12097,8 @@ module Renderer =
         static member val electron: string = Unchecked.defaultof<_> with get
 
         /// <summary>
-        /// A <c>boolean</c>. If the app is running as a Windows Store app (appx), this property is <c>true</c>, for otherwise it
-        /// is <c>undefined</c>.
+        /// A <c>boolean</c>. If the app is running as an MSIX package (including AppX for Windows Store), this property is <c>true</c>,
+        /// otherwise it is <c>undefined</c>.
         /// </summary>
         [<Erase>]
         static member val windowsStore: bool = Unchecked.defaultof<_> with get
@@ -18467,7 +18471,7 @@ module Main =
 
     module AutoUpdater =
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
@@ -18492,10 +18496,13 @@ module Main =
         module SetFeedURL =
             [<JS.Pojo>]
             type Options
-                /// <param name="url"></param>
+                /// <param name="url">The update server URL. For _Windows_ MSIX, this can be either a direct link to an MSIX file (e.g.,
+                /// <c>https://example.com/update.msix</c>) or a JSON endpoint that returns update information (see the Squirrel.Mac README for more information).</param>
                 /// <param name="headers">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || HTTP request headers.</param>
                 /// <param name="serverType">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be <c>json</c> or
                 /// <c>default</c>, see the Squirrel.Mac README for more information.</param>
+                /// <param name="allowAnyVersion">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || If <c>true</c>, allows downgrades
+                /// to older versions for MSIX packages. Defaults to <c>false</c>.</param>
                 (
                     url: string
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
@@ -18506,11 +18513,19 @@ module Main =
                     ,
                     ?serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType
                     #endif
+                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+                    ,
+                    ?allowAnyVersion: bool
+                    #endif
 
                 ) =
                 class
                 end
 
+                /// <summary>
+                /// The update server URL. For _Windows_ MSIX, this can be either a direct link to an MSIX file (e.g., <c>https://example.com/update.msix</c>)
+                /// or a JSON endpoint that returns update information (see the Squirrel.Mac README for more information).
+                /// </summary>
                 [<Erase>]
                 member val url: string = Unchecked.defaultof<_> with get, set
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
@@ -18530,6 +18545,15 @@ module Main =
                 [<Erase>]
                 member val serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType =
                     Unchecked.defaultof<_> with get, set
+                #endif
+
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+                /// <summary>
+                /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+                /// If <c>true</c>, allows downgrades to older versions for MSIX packages. Defaults to <c>false</c>.
+                /// </summary>
+                [<Erase>]
+                member val allowAnyVersion: bool = Unchecked.defaultof<_> with get, set
                 #endif
 
 
@@ -37363,8 +37387,8 @@ module Main =
         static member val electron: string = Unchecked.defaultof<_> with get
 
         /// <summary>
-        /// A <c>boolean</c>. If the app is running as a Windows Store app (appx), this property is <c>true</c>, for otherwise it
-        /// is <c>undefined</c>.
+        /// A <c>boolean</c>. If the app is running as an MSIX package (including AppX for Windows Store), this property is <c>true</c>,
+        /// otherwise it is <c>undefined</c>.
         /// </summary>
         [<Erase>]
         static member val windowsStore: bool = Unchecked.defaultof<_> with get
@@ -43157,7 +43181,8 @@ module Main =
         /// <summary>
         /// The <c>bounds</c> of the window as <c>Object</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value returned will be at minimum the Tray
         /// height. For example, calling <c>win.setBounds({ x: 25, y: 20, width: 800, height: 600 })</c> with a tray height of 38
-        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.
+        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.<br/><br/>&gt; [!NOTE] On Wayland, this method
+        /// will return <c>{ x: 0, y: 0, ... }</c> as introspecting or programmatically changing the global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getBounds() : Rectangle = Unchecked.defaultof<_>
@@ -43458,7 +43483,8 @@ module Main =
         member inline _.setPosition(x: int, y: int, ?animate: bool) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Contains the window's current position.
+        /// Contains the window's current position.<br/><br/>&gt; [!NOTE] On Wayland, this method will return <c>[0, 0]</c> as introspecting or programmatically changing the
+        /// global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getPosition() : int[] = Unchecked.defaultof<_>
@@ -45992,7 +46018,8 @@ module Main =
         /// <summary>
         /// The <c>bounds</c> of the window as <c>Object</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value returned will be at minimum the Tray
         /// height. For example, calling <c>win.setBounds({ x: 25, y: 20, width: 800, height: 600 })</c> with a tray height of 38
-        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.
+        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.<br/><br/>&gt; [!NOTE] On Wayland, this method
+        /// will return <c>{ x: 0, y: 0, ... }</c> as introspecting or programmatically changing the global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getBounds() : Rectangle = Unchecked.defaultof<_>
@@ -46293,7 +46320,8 @@ module Main =
         member inline _.setPosition(x: int, y: int, ?animate: bool) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Contains the window's current position.
+        /// Contains the window's current position.<br/><br/>&gt; [!NOTE] On Wayland, this method will return <c>[0, 0]</c> as introspecting or programmatically changing the
+        /// global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getPosition() : int[] = Unchecked.defaultof<_>
@@ -47290,16 +47318,21 @@ module Main =
     /// to make it work. For server-side requirements, you can read Server Support. Note that App Transport Security (ATS) applies to
     /// all requests made as part of the update process. Apps that need to disable ATS can add the <c>NSAllowsArbitraryLoads</c> key
     /// to their app's plist.<br/><br/>&gt; [!IMPORTANT] Your application must be signed for automatic updates on macOS. This is a requirement of
-    /// <c>Squirrel.Mac</c>.<br/><br/>### Windows<br/><br/>On Windows, you have to install your app into a user's machine before you can use the <c>autoUpdater</c>, so
-    /// it is recommended that you use electron-winstaller or Electron Forge's Squirrel.Windows maker to generate a Windows installer.<br/><br/>Apps built with Squirrel.Windows
-    /// will trigger custom launch events that must be handled by your Electron application to ensure proper setup and teardown.<br/><br/>Squirrel.Windows apps
-    /// will launch with the <c>--squirrel-firstrun</c> argument immediately after installation. During this time, Squirrel.Windows will obtain a file lock on your
-    /// app, and <c>autoUpdater</c> requests will fail until the lock is released. In practice, this means that you won't be able
-    /// to check for updates on first launch for the first few seconds. You can work around this by not checking
-    /// for updates when <c>process.argv</c> contains the <c>--squirrel-firstrun</c> flag or by setting a 10-second timeout on your update checks (see electron/electron#7155
-    /// for more information).<br/><br/>The installer generated with Squirrel.Windows will create a shortcut icon with an Application User Model ID in the
-    /// format of <c>com.squirrel.PACKAGE_ID.YOUR_EXE_WITHOUT_DOT_EXE</c>, examples are <c>com.squirrel.slack.Slack</c> and <c>com.squirrel.code.Code</c>. You have to use the same ID for your app with <c>app.setAppUserModelId</c>
-    /// API, otherwise Windows will not be able to pin your app properly in task bar.
+    /// <c>Squirrel.Mac</c>.<br/><br/>### Windows<br/><br/>On Windows, the <c>autoUpdater</c> module automatically selects the appropriate update mechanism based on how your app is packaged:<br/><br/>* **MSIX
+    /// packages**: If your app is running as an MSIX package (created with electron-windows-msix and detected via <c>process.windowsStore</c>), the module uses
+    /// the MSIX updater, which supports direct MSIX file links and JSON update feeds.<br/>* **Squirrel.Windows**: For apps installed via traditional installers
+    /// (created with electron-winstaller or Electron Forge's Squirrel.Windows maker), the module uses Squirrel.Windows for updates.<br/><br/>You don't need to configure which updater
+    /// to use; Electron automatically detects the packaging format and uses the appropriate one.<br/><br/>### Squirrel.Windows<br/><br/>Apps built with Squirrel.Windows will trigger custom
+    /// launch events that must be handled by your Electron application to ensure proper setup and teardown.<br/><br/>Squirrel.Windows apps will launch with
+    /// the <c>--squirrel-firstrun</c> argument immediately after installation. During this time, Squirrel.Windows will obtain a file lock on your app, and <c>autoUpdater</c>
+    /// requests will fail until the lock is released. In practice, this means that you won't be able to check for
+    /// updates on first launch for the first few seconds. You can work around this by not checking for updates when
+    /// <c>process.argv</c> contains the <c>--squirrel-firstrun</c> flag or by setting a 10-second timeout on your update checks (see electron/electron#7155 for more information).<br/><br/>The
+    /// installer generated with Squirrel.Windows will create a shortcut icon with an Application User Model ID in the format of <c>com.squirrel.PACKAGE_ID.YOUR_EXE_WITHOUT_DOT_EXE</c>,
+    /// examples are <c>com.squirrel.slack.Slack</c> and <c>com.squirrel.code.Code</c>. You have to use the same ID for your app with <c>app.setAppUserModelId</c> API, otherwise Windows
+    /// will not be able to pin your app properly in task bar.<br/><br/>### MSIX Packages<br/><br/>When your app is packaged as an
+    /// MSIX, the <c>autoUpdater</c> module provides additional functionality:<br/><br/>* Use the <c>allowAnyVersion</c> option in <c>setFeedURL()</c> to allow updates to older versions (downgrades)<br/>*
+    /// Support for direct MSIX file links or JSON update feeds (similar to Squirrel.Mac format)
     /// </summary>
     [<Import("autoUpdater", "electron")>]
     type autoUpdater =
@@ -47381,7 +47414,7 @@ module Main =
         static member inline offUpdateNotAvailable(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.on('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47391,7 +47424,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.on('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47399,7 +47432,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.once('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47409,7 +47442,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.once('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47417,7 +47450,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.off('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47427,7 +47460,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.off('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47461,16 +47494,20 @@ module Main =
         /// <summary>
         /// Sets the <c>url</c> and initialize the auto updater.
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">The update server URL. For _Windows_ MSIX, this can be either a direct link to an MSIX file (e.g.,
+        /// <c>https://example.com/update.msix</c>) or a JSON endpoint that returns update information (see the Squirrel.Mac README for more information).</param>
         /// <param name="headers">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || HTTP request headers.</param>
         /// <param name="serverType">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be <c>json</c> or
         /// <c>default</c>, see the Squirrel.Mac README for more information.</param>
+        /// <param name="allowAnyVersion">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || If <c>true</c>, allows downgrades
+        /// to older versions for MSIX packages. Defaults to <c>false</c>.</param>
         [<Erase; ParamObject(0)>]
         static member inline setFeedURL
             (
                 url: string,
                 ?headers: Record<string, string>,
-                ?serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType
+                ?serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType,
+                ?allowAnyVersion: bool
             ) : unit =
             Unchecked.defaultof<_>
 
@@ -49729,7 +49766,8 @@ module Main =
         /// For <c>infoType</c> equal to <c>complete</c>: Promise is fulfilled with <c>Object</c> containing all the GPU Information as in chromium's GPUInfo object.
         /// This includes the version and driver information that's shown on <c>chrome://gpu</c> page.<br/><br/>For <c>infoType</c> equal to <c>basic</c>: Promise is fulfilled with
         /// <c>Object</c> containing fewer attributes than when requested with <c>complete</c>. Here's an example of basic response:<br/><br/>Using <c>basic</c> should be preferred if
-        /// only basic information like <c>vendorId</c> or <c>deviceId</c> is needed.
+        /// only basic information like <c>vendorId</c> or <c>deviceId</c> is needed.<br/><br/>Promise is rejected if the GPU is completely disabled, i.e. no hardware
+        /// and software implementations are available.
         /// </summary>
         /// <param name="infoType">Can be <c>basic</c> or <c>complete</c>.</param>
         [<Erase>]
