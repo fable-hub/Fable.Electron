@@ -904,7 +904,7 @@ module Types =
         /// <param name="zoomFactor">The default zoom factor of the page, <c>3.0</c> represents <c>300%</c>. Default is <c>1.0</c>.</param>
         /// <param name="javascript">Enables JavaScript support. Default is <c>true</c>.</param>
         /// <param name="webSecurity">When <c>false</c>, it will disable the same-origin policy (usually using testing websites by people), and set <c>allowRunningInsecureContent</c> to <c>true</c>
-        /// if this options has not been set by user. Default is <c>true</c>.</param>
+        /// if this option has not been set by user. Default is <c>true</c>.</param>
         /// <param name="allowRunningInsecureContent">Allow an https page to run JavaScript, CSS or plugins from http URLs. Default is <c>false</c>.</param>
         /// <param name="images">Enables image support. Default is <c>true</c>.</param>
         /// <param name="imageAnimationPolicy">Specifies how to run image animations (E.g. GIFs).  Can be <c>animate</c>, <c>animateOnce</c> or <c>noAnimation</c>.  Default is <c>animate</c>.</param>
@@ -1088,7 +1088,7 @@ module Types =
 
         /// <summary>
         /// When <c>false</c>, it will disable the same-origin policy (usually using testing websites by people), and set <c>allowRunningInsecureContent</c> to <c>true</c> if
-        /// this options has not been set by user. Default is <c>true</c>.
+        /// this option has not been set by user. Default is <c>true</c>.
         /// </summary>
         [<Erase>]
         member val webSecurity: bool = Unchecked.defaultof<_> with get, set
@@ -4723,9 +4723,9 @@ module Types =
         /// <param name="depthPerComponent">The number of bits per color component.</param>
         /// <param name="detected"><c>true</c> if the display is detected by the system.</param>
         /// <param name="displayFrequency">The display refresh rate.</param>
-        /// <param name="id">Unique identifier associated with the display. A value of of -1 means the display is invalid or the correct
-        /// <c>id</c> is not yet known, and a value of -10 means the display is a virtual display assigned to a
-        /// unified desktop.</param>
+        /// <param name="id">Unique identifier associated with the display. A value of -1 means the display is invalid or the correct <c>id</c>
+        /// is not yet known, and a value of -10 means the display is a virtual display assigned to a unified
+        /// desktop.</param>
         /// <param name="internal"><c>true</c> for an internal display and <c>false</c> for an external display.</param>
         /// <param name="label">User-friendly label, determined by the platform.</param>
         /// <param name="maximumCursorSize">Maximum cursor size in native pixels.</param>
@@ -4805,9 +4805,8 @@ module Types =
         member val displayFrequency: float = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// Unique identifier associated with the display. A value of of -1 means the display is invalid or the correct <c>id</c>
-        /// is not yet known, and a value of -10 means the display is a virtual display assigned to a unified
-        /// desktop.
+        /// Unique identifier associated with the display. A value of -1 means the display is invalid or the correct <c>id</c> is
+        /// not yet known, and a value of -10 means the display is a virtual display assigned to a unified desktop.
         /// </summary>
         [<Erase>]
         member val id: float = Unchecked.defaultof<_> with get, set
@@ -12064,14 +12063,14 @@ module Renderer =
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not deprecations printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c> will
-        /// print stack traces for deprecations. This property is instead of the <c>--trace-deprecation</c> command line flag.
+        /// print stack traces for deprecations. This property is used instead of the <c>--trace-deprecation</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceDeprecation: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not process warnings printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c>
-        /// will print stack traces for process warnings (including deprecations). This property is instead of the <c>--trace-warnings</c> command line flag.
+        /// will print stack traces for process warnings (including deprecations). This property is used instead of the <c>--trace-warnings</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceProcessWarnings: bool = Unchecked.defaultof<_> with get, set
@@ -12679,7 +12678,7 @@ module Renderer =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
-    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipoard</c> API
+    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipboard</c> API
     /// from the renderer process is deprecated.<br/><br/>&gt; [!IMPORTANT] If you want to call this API from a renderer process, place the
     /// API call in your preload script and expose it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard.
     /// To manipulate it you need to pass <c>selection</c> to each method:
@@ -14558,25 +14557,25 @@ module Utility =
         member inline _.offAborted(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.on('error', $1)")>]
         member inline _.onError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.once('error', $1)")>]
         member inline _.onceError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.off('error', $1)")>]
         member inline _.offError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
@@ -14881,8 +14880,8 @@ module Utility =
 
         /// <summary>
         /// Cancels an ongoing HTTP transaction. If the request has already emitted the <c>close</c> event, the abort operation will have no
-        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object,it will
-        /// emit the <c>aborted</c> event.
+        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object, it
+        /// will emit the <c>aborted</c> event.
         /// </summary>
         [<Erase>]
         member inline _.abort() : unit = Unchecked.defaultof<_>
@@ -15551,6 +15550,11 @@ module Main =
                 /// utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can be codesigned with <c>com.apple.security.cs.disable-library-validation</c>
                 /// and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically need this capability, it
                 /// is best to leave this disabled. Default is <c>false</c>.</param>
+                /// <param name="disclaim">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
+                /// utility process will disclaim responsibility for the child process. This causes the operating system to consider the child process as
+                /// a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility is disclaimed, the parent
+                /// process will not be attributed for any TCC requests initiated by the child process. This is useful when launching processes
+                /// that run third-party or otherwise untrusted code. Default is <c>false</c>.</param>
                 /// <param name="respondToAuthRequestsFromMainProcess">With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to
                 /// them via the <c>app#login</c> event in the main process instead of the default <c>login</c> event on the <c>ClientRequest</c> object. Default
                 /// is <c>false</c>.</param>
@@ -15563,6 +15567,10 @@ module Main =
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
                     ,
                     ?allowLoadingUnsignedLibraries: bool
+                    #endif
+                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                    ,
+                    ?disclaim: bool
                     #endif
                     ,
                     ?respondToAuthRequestsFromMainProcess: bool
@@ -15613,6 +15621,18 @@ module Main =
                 /// </summary>
                 [<Erase>]
                 member val allowLoadingUnsignedLibraries: bool = Unchecked.defaultof<_> with get, set
+                #endif
+
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                /// <summary>
+                /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+                /// With this flag, the utility process will disclaim responsibility for the child process. This causes the operating system to consider
+                /// the child process as a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility
+                /// is disclaimed, the parent process will not be attributed for any TCC requests initiated by the child process. This is
+                /// useful when launching processes that run third-party or otherwise untrusted code. Default is <c>false</c>.
+                /// </summary>
+                [<Erase>]
+                member val disclaim: bool = Unchecked.defaultof<_> with get, set
                 #endif
 
 
@@ -19813,7 +19833,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
@@ -29087,7 +29107,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.on('did-redirect-navigation', $1)")>]
         member inline _.onDidRedirectNavigation
@@ -29097,7 +29117,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.on('did-redirect-navigation', $1)")>]
         member inline _.onDidRedirectNavigation(handler: Main.WebContents.IOnDidRedirectNavigation -> unit) : unit =
@@ -29105,7 +29125,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.once('did-redirect-navigation', $1)")>]
         member inline _.onceDidRedirectNavigation
@@ -29115,7 +29135,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.once('did-redirect-navigation', $1)")>]
         member inline _.onceDidRedirectNavigation(handler: Main.WebContents.IOnDidRedirectNavigation -> unit) : unit =
@@ -29123,7 +29143,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.off('did-redirect-navigation', $1)")>]
         member inline _.offDidRedirectNavigation
@@ -29133,7 +29153,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.off('did-redirect-navigation', $1)")>]
         member inline _.offDidRedirectNavigation(handler: Main.WebContents.IOnDidRedirectNavigation -> unit) : unit =
@@ -31031,10 +31051,10 @@ module Main =
         member inline _.setIgnoreMenuShortcuts(ignore: bool) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Called before creating a window a new window is requested by the renderer, e.g. by <c>window.open()</c>, a link with <c>target="_blank"</c>,
-        /// shift+clicking on a link, or submitting a form with <c>&lt;form target="_blank"&gt;</c>. See <c>window.open()</c> for more details and how to use
-        /// this in conjunction with <c>did-create-window</c>.<br/><br/>An example showing how to customize the process of new <c>BrowserWindow</c> creation to be <c>BrowserView</c> attached
-        /// to main window instead:
+        /// Called before creating a window when a new window is requested by the renderer, e.g. by <c>window.open()</c>, a link with
+        /// <c>target="_blank"</c>, shift+clicking on a link, or submitting a form with <c>&lt;form target="_blank"&gt;</c>. See <c>window.open()</c> for more details and how to
+        /// use this in conjunction with <c>did-create-window</c>.<br/><br/>An example showing how to customize the process of new <c>BrowserWindow</c> creation to be <c>BrowserView</c>
+        /// attached to main window instead:
         /// </summary>
         /// <param name="handler"></param>
         [<Erase>]
@@ -31575,8 +31595,8 @@ module Main =
         member inline _.isPainting() : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// If _offscreen rendering_ is enabled sets the frame rate to the specified number. Only values between 1 and 240 are
-        /// accepted.
+        /// If _offscreen rendering_ is enabled sets the frame rate to the specified number. When <c>webPreferences.offscreen.useSharedTexture</c> is <c>false</c> only values between
+        /// 1 and 240 are accepted.
         /// </summary>
         /// <param name="fps"></param>
         [<Erase>]
@@ -31762,8 +31782,8 @@ module Main =
         member val hostWebContents: Option<Main.WebContents> = Unchecked.defaultof<_> with get
 
         /// <summary>
-        /// A <c>WebContents | null</c> property that represents the of DevTools <c>WebContents</c> associated with a given <c>WebContents</c>.<br/><br/>&gt; [!NOTE] Users should never
-        /// store this object because it may become <c>null</c> when the DevTools has been closed.
+        /// A <c>WebContents | null</c> property that represents the DevTools <c>WebContents</c> associated with a given <c>WebContents</c>.<br/><br/>&gt; [!NOTE] Users should never store
+        /// this object because it may become <c>null</c> when the DevTools has been closed.
         /// </summary>
         [<Erase>]
         member val devToolsWebContents: Option<Main.WebContents> = Unchecked.defaultof<_> with get
@@ -32249,6 +32269,11 @@ module Main =
         /// utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can be codesigned with <c>com.apple.security.cs.disable-library-validation</c>
         /// and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically need this capability, it
         /// is best to leave this disabled. Default is <c>false</c>.</param>
+        /// <param name="disclaim">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
+        /// utility process will disclaim responsibility for the child process. This causes the operating system to consider the child process as
+        /// a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility is disclaimed, the parent
+        /// process will not be attributed for any TCC requests initiated by the child process. This is useful when launching processes
+        /// that run third-party or otherwise untrusted code. Default is <c>false</c>.</param>
         /// <param name="respondToAuthRequestsFromMainProcess">With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to
         /// them via the <c>app#login</c> event in the main process instead of the default <c>login</c> event on the <c>ClientRequest</c> object. Default
         /// is <c>false</c>.</param>
@@ -32263,6 +32288,7 @@ module Main =
                 ?stdio: U2<Main.Enums.UtilityProcess.Fork.Options.Stdio[], string>,
                 ?serviceName: string,
                 ?allowLoadingUnsignedLibraries: bool,
+                ?disclaim: bool,
                 ?respondToAuthRequestsFromMainProcess: bool
             ) : Main.UtilityProcess =
             Unchecked.defaultof<_>
@@ -35868,8 +35894,8 @@ module Main =
         member inline _.allowNTLMCredentialsForDomains(domains: string) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Overrides the <c>userAgent</c> and <c>acceptLanguages</c> for this session.<br/><br/>The <c>acceptLanguages</c> must a comma separated ordered list of language codes, for example
-        /// <c>"en-US,fr,de,ko,zh-CN,ja"</c>.<br/><br/>This doesn't affect existing <c>WebContents</c>, and each <c>WebContents</c> can use <c>webContents.setUserAgent</c> to override the session-wide user agent.
+        /// Overrides the <c>userAgent</c> and <c>acceptLanguages</c> for this session.<br/><br/>The <c>acceptLanguages</c> must be a comma separated ordered list of language codes, for
+        /// example <c>"en-US,fr,de,ko,zh-CN,ja"</c>.<br/><br/>This doesn't affect existing <c>WebContents</c>, and each <c>WebContents</c> can use <c>webContents.setUserAgent</c> to override the session-wide user agent.
         /// </summary>
         /// <param name="userAgent"></param>
         /// <param name="acceptLanguages"></param>
@@ -37354,14 +37380,14 @@ module Main =
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not deprecations printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c> will
-        /// print stack traces for deprecations. This property is instead of the <c>--trace-deprecation</c> command line flag.
+        /// print stack traces for deprecations. This property is used instead of the <c>--trace-deprecation</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceDeprecation: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not process warnings printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c>
-        /// will print stack traces for process warnings (including deprecations). This property is instead of the <c>--trace-warnings</c> command line flag.
+        /// will print stack traces for process warnings (including deprecations). This property is used instead of the <c>--trace-warnings</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceProcessWarnings: bool = Unchecked.defaultof<_> with get, set
@@ -38621,8 +38647,7 @@ module Main =
 
 
         /// <summary>
-        /// A <c>boolean</c> that indicates the whether the user has chosen via system accessibility settings to reduce transparency at the OS
-        /// level.
+        /// A <c>boolean</c> that indicates whether the user has chosen via system accessibility settings to reduce transparency at the OS level.
         /// </summary>
         [<Erase>]
         static member val prefersReducedTransparency: bool = Unchecked.defaultof<_> with get
@@ -39096,7 +39121,7 @@ module Main =
         /// top menu.<br/><br/>Also on Windows and Linux, you can use a <c>&amp;</c> in the top-level item name to indicate which letter
         /// should get a generated accelerator. For example, using <c>&amp;File</c> for the file menu would result in a generated <c>Alt-F</c> accelerator
         /// that opens the associated menu. The indicated character in the button label then gets an underline, and the <c>&amp;</c> character
-        /// is not displayed on the button label.<br/><br/>In order to escape the <c>&amp;</c> character in an item name, add a proceeding
+        /// is not displayed on the button label.<br/><br/>In order to escape the <c>&amp;</c> character in an item name, add a preceding
         /// <c>&amp;</c>. For example, <c>&amp;&amp;File</c> would result in <c>&amp;File</c> displayed on the button label.<br/><br/>Passing <c>null</c> will suppress the default menu. On
         /// Windows and Linux, this has the additional effect of removing the menu bar from the window.<br/><br/>&gt; [!NOTE] The default menu
         /// will be created automatically if the app does not set one. It contains standard items such as <c>File</c>, <c>Edit</c>, <c>View</c>,
@@ -39264,10 +39289,10 @@ module Main =
         member val role: Main.Enums.MenuItem.Role = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// An <c>Accelerator</c> (optional) indicating the item's accelerator, if set.
+        /// An <c>Accelerator | null</c> indicating the item's accelerator, if set.
         /// </summary>
         [<Erase>]
-        member val accelerator: Accelerator = Unchecked.defaultof<_> with get, set
+        member val accelerator: Option<Accelerator> = Unchecked.defaultof<_> with get, set
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
@@ -39584,25 +39609,25 @@ module Main =
         member inline _.offAborted(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.on('error', $1)")>]
         member inline _.onError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.once('error', $1)")>]
         member inline _.onceError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.off('error', $1)")>]
         member inline _.offError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
@@ -40714,8 +40739,8 @@ module Main =
 
         /// <summary>
         /// Displays a modal dialog that shows an error message.<br/><br/>This API can be called safely before the <c>ready</c> event the <c>app</c>
-        /// module emits, it is usually used to report errors in early stage of startup. If called before the app <c>ready</c>event
-        /// on Linux, the message will be emitted to stderr, and no GUI dialog will appear.
+        /// module emits, it is usually used to report errors in early stage of startup. If called before the app <c>ready</c>
+        /// event on Linux, the message will be emitted to stderr, and no GUI dialog will appear.
         /// </summary>
         /// <param name="title">The title to display in the error box.</param>
         /// <param name="content">The text content to display in the error box.</param>
@@ -41239,7 +41264,7 @@ module Main =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
-    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipoard</c> API
+    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipboard</c> API
     /// from the renderer process is deprecated.<br/><br/>&gt; [!IMPORTANT] If you want to call this API from a renderer process, place the
     /// API call in your preload script and expose it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard.
     /// To manipulate it you need to pass <c>selection</c> to each method:
@@ -41685,8 +41710,8 @@ module Main =
 
         /// <summary>
         /// Cancels an ongoing HTTP transaction. If the request has already emitted the <c>close</c> event, the abort operation will have no
-        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object,it will
-        /// emit the <c>aborted</c> event.
+        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object, it
+        /// will emit the <c>aborted</c> event.
         /// </summary>
         [<Erase>]
         member inline _.abort() : unit = Unchecked.defaultof<_>
@@ -43555,8 +43580,8 @@ module Main =
         /// </para>
         /// Whether the window is in Windows 10 tablet mode.<br/><br/>Since Windows 10 users can use their PC as tablet, under this
         /// mode apps can choose to optimize their UI for tablets, such as enlarging the titlebar and hiding titlebar buttons.<br/><br/>This API
-        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be be used to listen to changes
-        /// to tablet mode.
+        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be used to listen to changes to
+        /// tablet mode.
         /// </summary>
         [<Erase>]
         member inline _.isTabletMode() : bool = Unchecked.defaultof<_>
@@ -46392,8 +46417,8 @@ module Main =
         /// </para>
         /// Whether the window is in Windows 10 tablet mode.<br/><br/>Since Windows 10 users can use their PC as tablet, under this
         /// mode apps can choose to optimize their UI for tablets, such as enlarging the titlebar and hiding titlebar buttons.<br/><br/>This API
-        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be be used to listen to changes
-        /// to tablet mode.
+        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be used to listen to changes to
+        /// tablet mode.
         /// </summary>
         [<Erase>]
         member inline _.isTabletMode() : bool = Unchecked.defaultof<_>
@@ -49290,7 +49315,7 @@ module Main =
 
         /// <summary>
         /// A path to a special directory or file associated with <c>name</c>. On failure, an <c>Error</c> is thrown.<br/><br/>If <c>app.getPath('logs')</c> is called
-        /// without called <c>app.setAppLogsPath()</c> being called first, a default log directory will be created equivalent to calling <c>app.setAppLogsPath()</c> without a <c>path</c>
+        /// without calling <c>app.setAppLogsPath()</c> being called first, a default log directory will be created equivalent to calling <c>app.setAppLogsPath()</c> without a <c>path</c>
         /// parameter.
         /// </summary>
         /// <param name="name">You can request the following paths by the name:</param>
@@ -49298,7 +49323,7 @@ module Main =
         static member inline getPath(name: Main.Enums.App.GetPath.Name) : string = Unchecked.defaultof<_>
 
         /// <summary>
-        /// fulfilled with the app's icon, which is a NativeImage.<br/><br/>Fetches a path's associated icon.<br/><br/>On _Windows_, there a 2 kinds of icons:<br/><br/>*
+        /// fulfilled with the app's icon, which is a NativeImage.<br/><br/>Fetches a path's associated icon.<br/><br/>On _Windows_, there are 2 kinds of icons:<br/><br/>*
         /// Icons associated with certain file extensions, like <c>.mp3</c>, <c>.png</c>, etc.<br/>* Icons inside the file itself, like <c>.exe</c>, <c>.dll</c>, <c>.ico</c>.<br/><br/>On _Linux_
         /// and _macOS_, icons depend on the application associated with file mime type.
         /// </summary>
@@ -49386,8 +49411,8 @@ module Main =
         /// possible return values differ between the two operating systems.<br/><br/>As can be seen with the example above, on Windows, it is
         /// possible that a preferred system language has no country code, and that one of the preferred system languages corresponds with
         /// the language used for the regional format. On macOS, the region serves more as a default country code: the user
-        /// doesn't need to have Finnish as a preferred language to use Finland as the region,and the country code <c>FI</c> is
-        /// used as the country code for preferred system languages that do not have associated countries in the language name.
+        /// doesn't need to have Finnish as a preferred language to use Finland as the region, and the country code <c>FI</c>
+        /// is used as the country code for preferred system languages that do not have associated countries in the language name.
         /// </summary>
         [<Erase>]
         static member inline getPreferredSystemLanguages() : string[] = Unchecked.defaultof<_>
@@ -49744,7 +49769,7 @@ module Main =
         static member inline isHardwareAccelerationEnabled() : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain basis if the GPU processes crashes
+        /// By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain basis if the GPU process crashes
         /// too frequently. This function disables that behavior.<br/><br/>This method can only be called before app is ready.
         /// </summary>
         [<Erase>]
