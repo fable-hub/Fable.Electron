@@ -19,8 +19,8 @@
         <PackageTags>Fable;F#;FSharp;Electron;Bindings;Native;JavaScript;JS;Remoting;fable-javascript</PackageTags>
         <Authors>Shayan Habibi and Contributors</Authors>
         <Copyright>Copyright (c) 2025 Shayan Habibi and Fable-Hub contributors</Copyright>
-        <PackageVersion>7.0.0</PackageVersion>
-        <Version>7.0.0</Version>
+        <PackageVersion>7.1.0</PackageVersion>
+        <Version>7.1.0</Version>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <GitNetInitialVersion>0.1.0</GitNetInitialVersion>
         <PackageIcon>feleico-dark.png</PackageIcon>

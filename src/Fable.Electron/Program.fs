@@ -961,6 +961,7 @@ module Types =
         /// colors are derived from the color scheme of its root element. When transparency is enabled, the text color will still
         /// change accordingly but the background will remain transparent.</param>
         /// <param name="enableDeprecatedPaste">Whether to enable the <c>paste</c> execCommand. Default is <c>false</c>.</param>
+        /// <param name="focusOnNavigation">Whether to focus the WebContents when navigating. Default is <c>true</c>.</param>
         (
             ?devTools: bool,
             ?nodeIntegration: bool,
@@ -1009,7 +1010,8 @@ module Types =
             ?v8CacheOptions: Enums.Types.WebPreferences.V8CacheOptions,
             ?enablePreferredSizeMode: bool,
             ?transparent: bool,
-            ?enableDeprecatedPaste: bool
+            ?enableDeprecatedPaste: bool,
+            ?focusOnNavigation: bool
         ) =
         class
         end
@@ -1315,6 +1317,12 @@ module Types =
         /// </summary>
         [<Erase; System.Obsolete>]
         member val enableDeprecatedPaste: bool = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Whether to focus the WebContents when navigating. Default is <c>true</c>.
+        /// </summary>
+        [<Erase>]
+        member val focusOnNavigation: bool = Unchecked.defaultof<_> with get, set
 
     /// <summary>
     /// This type is a helper alias, no object will ever exist of this type.
@@ -3573,14 +3581,24 @@ module Types =
 
     [<JS.Pojo>]
     type NotificationAction
-        /// <param name="type">The type of action, can be <c>button</c>.</param>
+        /// <param name="type">The type of action, can be <c>button</c> or <c>selection</c>. <c>selection</c> is only supported on Windows.</param>
         /// <param name="text">The label for the given action.</param>
-        (``type``: Enums.Types.NotificationAction.Type, ?text: string) =
+        /// <param name="items">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || The list of items
+        /// for the <c>selection</c> action <c>type</c>.</param>
+        (
+            ``type``: Enums.Types.NotificationAction.Type,
+            ?text: string
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+            ,
+            ?items: string[]
+            #endif
+
+        ) =
         class
         end
 
         /// <summary>
-        /// The type of action, can be <c>button</c>.
+        /// The type of action, can be <c>button</c> or <c>selection</c>. <c>selection</c> is only supported on Windows.
         /// </summary>
         [<Erase>]
         member val ``type``: Enums.Types.NotificationAction.Type = Unchecked.defaultof<_> with get, set
@@ -3590,6 +3608,15 @@ module Types =
         /// </summary>
         [<Erase>]
         member val text: string = Unchecked.defaultof<_> with get, set
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+        /// The list of items for the <c>selection</c> action <c>type</c>.
+        /// </summary>
+        [<Erase>]
+        member val items: string[] = Unchecked.defaultof<_> with get, set
+        #endif
+
 
     [<JS.Pojo>]
     type NavigationEntry
@@ -6800,7 +6827,9 @@ module Enums =
 
         module NotificationAction =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type Type = | [<CompiledName("button")>] Button
+            type Type =
+                | [<CompiledName("button")>] Button
+                | [<CompiledName("selection")>] Selection
 
         module MouseWheelInputEvent =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -16608,27 +16637,27 @@ module Main =
             abstract member error: string with get, set
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
           Interface>]
         type IOnAction =
             [<Emit("$0[0]")>]
-            abstract member event: Event with get, set
+            abstract member details: Main.Details with get, set
 
-            /// <summary>
-            /// The index of the action that was activated.
-            /// </summary>
             [<Emit("$0[1]")>]
-            abstract member index: float with get, set
+            abstract member actionIndex: float with get, set
+
+            [<Emit("$0[2]")>]
+            abstract member selectionIndex: float with get, set
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
@@ -16636,11 +16665,8 @@ module Main =
           Interface>]
         type IOnReply =
             [<Emit("$0[0]")>]
-            abstract member event: Event with get, set
+            abstract member details: Main.Details with get, set
 
-            /// <summary>
-            /// The string the user entered into the inline reply field.
-            /// </summary>
             [<Emit("$0[1]")>]
             abstract member reply: string with get, set
         #endif
@@ -28151,18 +28177,6 @@ module Main =
         /// </summary>
         abstract member audible: bool with get, set
 
-    [<AllowNullLiteral; Interface>]
-    type Details =
-        inherit Event
-        /// <summary>
-        /// ID of the updated service worker version
-        /// </summary>
-        abstract member versionId: float with get, set
-        /// <summary>
-        /// Running status. Possible values include <c>starting</c>, <c>running</c>, <c>stopping</c>, or <c>stopped</c>.
-        /// </summary>
-        abstract member runningStatus: Main.Enums.Details.RunningStatus with get, set
-
     module PowerMonitor =
         [<AllowNullLiteral; Interface>]
         type Details =
@@ -28171,6 +28185,14 @@ module Main =
             /// The system's new thermal state. Can be <c>unknown</c>, <c>nominal</c>, <c>fair</c>, <c>serious</c>, <c>critical</c>.
             /// </summary>
             abstract member state: Main.Enums.PowerMonitor.Details.State with get, set
+
+    [<AllowNullLiteral; Interface>]
+    type Details =
+        inherit Event
+        /// <summary>
+        /// The string the user entered into the inline reply field.
+        /// </summary>
+        abstract member reply: string with get, set
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ❌</para>
@@ -38025,21 +38047,21 @@ module Main =
         /// </summary>
         [<Emit("$0.off('close', $1)")>]
         member inline _.offClose(handler: Event -> unit) : unit = Unchecked.defaultof<_>
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<Emit("$0.on('reply', $1)")>]
-        member inline _.onReply(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onReply(handler: Main.Details -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
@@ -38047,21 +38069,21 @@ module Main =
         member inline _.onReply(handler: Main.Notification.IOnReply -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<Emit("$0.once('reply', $1)")>]
-        member inline _.onceReply(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onceReply(handler: Main.Details -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
@@ -38069,21 +38091,21 @@ module Main =
         member inline _.onceReply(handler: Main.Notification.IOnReply -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<Emit("$0.off('reply', $1)")>]
-        member inline _.offReply(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.offReply(handler: Main.Details -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
@@ -38091,60 +38113,60 @@ module Main =
         member inline _.offReply(handler: Main.Notification.IOnReply -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('action', $1)")>]
-        member inline _.onAction(handler: Event -> float -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onAction(handler: Main.Details -> float -> float -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('action', $1)")>]
         member inline _.onAction(handler: Main.Notification.IOnAction -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('action', $1)")>]
-        member inline _.onceAction(handler: Event -> float -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onceAction(handler: Main.Details -> float -> float -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('action', $1)")>]
         member inline _.onceAction(handler: Main.Notification.IOnAction -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('action', $1)")>]
-        member inline _.offAction(handler: Event -> float -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.offAction(handler: Main.Details -> float -> float -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('action', $1)")>]
@@ -40792,7 +40814,8 @@ module Main =
 
         /// <summary>
         /// Resolves with an array of <c>DesktopCapturerSource</c> objects, each <c>DesktopCapturerSource</c> represents a screen or an individual window that can be captured.<br/><br/>&gt;
-        /// [!NOTE] Capturing the screen contents requires user consent on macOS 10.15 Catalina or higher, which can detected by <c>systemPreferences.getMediaAccessStatus</c>.
+        /// [!NOTE]<br/><br/>&gt; * Capturing audio requires <c>NSAudioCaptureUsageDescription</c> Info.plist key on macOS 14.2 Sonoma and higher - read more.<br/>* Capturing the screen
+        /// contents requires user consent on macOS 10.15 Catalina or higher, which can detected by <c>systemPreferences.getMediaAccessStatus</c>.
         /// </summary>
         /// <param name="types">An array of strings that lists the types of desktop sources to be captured, available types can be <c>screen</c>
         /// and <c>window</c>.</param>
@@ -42872,7 +42895,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.on('new-window-for-tab', $1)")>]
         member inline _.onNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -42883,7 +42908,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.once('new-window-for-tab', $1)")>]
         member inline _.onceNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -42894,7 +42921,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.off('new-window-for-tab', $1)")>]
         member inline _.offNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -45697,7 +45726,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.on('new-window-for-tab', $1)")>]
         member inline _.onNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -45708,7 +45739,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.once('new-window-for-tab', $1)")>]
         member inline _.onceNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -45719,7 +45752,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.off('new-window-for-tab', $1)")>]
         member inline _.offNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -48523,7 +48558,8 @@ module Main =
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
-        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.on('new-window-for-tab', $1)"); Import("app", "electron")>]
         static member inline onNewWindowForTab(handler: Event -> unit) : unit = Unchecked.defaultof<_>
@@ -48535,7 +48571,8 @@ module Main =
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
-        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.once('new-window-for-tab', $1)"); Import("app", "electron")>]
         static member inline onceNewWindowForTab(handler: Event -> unit) : unit = Unchecked.defaultof<_>
@@ -48547,7 +48584,8 @@ module Main =
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
-        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.off('new-window-for-tab', $1)"); Import("app", "electron")>]
         static member inline offNewWindowForTab(handler: Event -> unit) : unit = Unchecked.defaultof<_>
@@ -49688,6 +49726,23 @@ module Main =
         static member inline setAppUserModelId(id: string) : unit = Unchecked.defaultof<_>
         #endif
 
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Changes the Toast Activator CLSID to <c>id</c>. If one is not set via this method, it will be randomly generated
+        /// for the app.<br/><br/>* The value must be a valid GUID/CLSID in one of the following forms:<br/>  * Canonical brace-wrapped:
+        /// <c>{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}</c> (preferred)<br/>  * Canonical without braces: <c>XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX</c> (braces will be added automatically)<br/>* Hex digits are case-insensitive.<br/><br/>This method should be
+        /// called early (before showing notifications) so the value is baked into the registration/shortcut. Supplying an empty string or an unparsable
+        /// value throws and leaves the existing (or generated) CLSID unchanged. If this method is never called, a random CLSID is
+        /// generated once per run and exposed via <c>app.toastActivatorCLSID</c>.
+        /// </summary>
+        /// <param name="id"></param>
+        [<Erase>]
+        static member inline setToastActivatorCLSID(id: string) : unit = Unchecked.defaultof<_>
+        #endif
+
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>
@@ -50200,6 +50255,15 @@ module Main =
         /// </summary>
         [<Erase>]
         static member val isPackaged: bool = Unchecked.defaultof<_> with get
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+        /// A <c>string</c> property that returns the app's Toast Activator CLSID.
+        /// </summary>
+        [<Erase>]
+        static member val toastActivatorCLSID: string = Unchecked.defaultof<_> with get
+        #endif
+
 
         /// <summary>
         /// A <c>string</c> property that indicates the current application's name, which is the name in the application's <c>package.json</c> file.<br/><br/>Usually the <c>name</c>
