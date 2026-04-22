@@ -29,7 +29,7 @@ boilerplate event handling/sending.
 
 > This also means we do not have to follow the same architecture of separating
 > our API types into a separate Shared project.
-> 
+>
 > The decision to do so is a matter of style/developer preference.
 
 ## Main - Preload - Renderer
@@ -85,19 +85,19 @@ These methods are attached to a type named `Remoting`
         <CodeBlock language={'fsharp'}>{GetRegion(RawMain, 'INLINE_ENTRY')}</CodeBlock>
     </TabItem>
     <TabItem value={'impl'} label={'Implementation'}>
-        
+
         :::tip
         The implementation methods hide these methods from compatible IDEs using
         the `System.Component.EditorBrowsable` attribute.
-        
+
         The methods __CANNOT__ be private/internal since they are being referenced
         by publicly available inline methods.
-        
+
         > However, we CAN refer to private bindings within the implementation methods.
         :::
-        
+
         <CodeBlock language={'fsharp'} title={'Example of an implementation'}>{GetRegion(RawMain, 'IMPL')}</CodeBlock>
-        
+
     </TabItem>
 </Tabs>
 
@@ -184,18 +184,13 @@ The type signature of the handler, is not the same as the client signature, in t
 `electron-js` implementation. The handler also receives the renderer process that
 the message was sent from - of type `IpcMainEvent`.
 
-To mitigate this, we use a lambda as a middle man. We either emit a lambda
-that passes all the arguments to the record field function, or only the slice
-of arguments from index 1.
+The Main API now provides explicit entry points for this:
 
-The `Main` handler checks the type of the first parameter.
-If it __IS__ of type `IpcMainEvent`, then we can safely just pass all the
-arguments. If it is not, then we pass the slice from index 1.
+* `Remoting.fromValue`: use a direct implementation value and pass only payload args.
+* `Remoting.fromIpcMainEvent`: use an `IpcMainEvent -> 'Api` factory so the event context is injected on each call.
 
-The `Main` handler no longer has to manually send the renderer process the
-message back (as this is abstracted away by electrons `handle`) so there is
-no longer a necessity to handle the `IpcMainEvent` (ie don't feel bad about 
-disposing of the poor thing).
+This removes implicit reflection-based first-argument detection and keeps shared
+API signatures focused on renderer-callable payloads.
 
 ## Renderer & Preload
 

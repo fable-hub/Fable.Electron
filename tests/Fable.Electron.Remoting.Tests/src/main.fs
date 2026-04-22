@@ -50,8 +50,8 @@ let mutable counter =
 
 let setCounter value = counter <- value
 
-let windowLoggerApi = {
-    Log = fun event msg ->
+let windowLoggerApi (event: IpcMainEvent) = {
+    Log = fun msg ->
         promise {
             printfn $"Logging from window {event.sender.id}: {msg}"
             let windowId = event.sender.id
@@ -68,7 +68,7 @@ app
         createWindow ()
 
         let broker =
-            Remoting.init
+            Remoting.createHandler()
             |> Remoting.setWindows (windows.ToArray())
             |> Remoting.buildClient<TextHandler>
 
@@ -162,8 +162,8 @@ app
               Value = fun () -> promise { return counter.Value }
               ClickCount = fun () -> promise { return counter.ClickCount } }
 
-        Remoting.init |> Remoting.buildHandler handler
-        Remoting.init |> Remoting.buildHandler windowLoggerApi
+        Remoting.createHandler() |> Remoting.fromValue handler
+        Remoting.createHandler() |> Remoting.fromIpcMainEvent windowLoggerApi
 
         app.onActivate (fun _ ->
             if BrowserWindow.getAllWindows().Length = 0 then

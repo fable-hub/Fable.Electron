@@ -76,7 +76,7 @@ let createWindow() =
     mainWindow.webContents.openDevTools(Enums.WebContents.OpenDevTools.Options.Mode.Right)
     // highlight-start
     let sendMsg =
-        Remoting.init
+        Remoting.createHandler()
         |> Remoting.withWindow mainWindow
         |> Remoting.buildClient<Shared.ExampleMainToRenderer>
     mainWindow.onMove(fun _ ->
@@ -104,7 +104,7 @@ app.onWindowAllClosed(fun () ->
 ```fsharp showLineNumbers
 open Fable.Electron.Playground.Shared
 open Fable.Electron.Remoting.Preload
-    
+
 // highlight-start
 Remoting.init
 |> Remoting.buildBridge<ExampleMainToRenderer>
@@ -120,7 +120,7 @@ open Browser.Dom
 importSideEffects "./index.css"
 
 console.log "This message is being logged by 'renderer.js', included via VITE"
-    
+
 // highlight-start
 let handler = { Shared.LogMove = fun t i -> console.log t }
 Remoting.init

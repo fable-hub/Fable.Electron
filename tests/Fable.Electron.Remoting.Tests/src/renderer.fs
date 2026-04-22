@@ -122,9 +122,9 @@ windowLoggerButton.addEventListener(
     fun e ->
         console.log("Calling window logger API from renderer...")
         (windowLoggerApi
-          .Log Fable.Core.JS.undefined "Hello from Renderer!")
+          .Log "Hello from Renderer!")
           .``then`` (
-                fun (result: string) -> 
+                fun (result: string) ->
                     windowLoggerOutput.innerText <- result
             )
         |> ignore

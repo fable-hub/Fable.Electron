@@ -33,7 +33,7 @@ A full example is provided below:
 <TabItem value={"shared"} label={"Shared.fs"}>
 ```fsharp showLineNumbers
 open Fable.Core.JS // Promise type
-    
+
 // highlight-start
 type ExampleRouting = {
     SayHelloWorld: string -> Promise<Result<string, unit>>
@@ -55,7 +55,7 @@ open Fable.Electron.Remoting.Main
 
 if SquirrelStartup.started then
     app.quit()
-    
+
 let createWindow() =
     let mainWindowOptions =
         BrowserWindowConstructorOptions(
@@ -66,14 +66,14 @@ let createWindow() =
                 )
             )
     let mainWindow = BrowserWindow(mainWindowOptions)
-    
+
     if isNullOrUndefined MAIN_WINDOW_VITE_DEV_SERVER_URL
     then mainWindow.loadFile(path.join(__dirname, $"../renderer/{MAIN_WINDOW_VITE_NAME}/index.html"))
     else mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
     |> ignore
-    
+
     mainWindow.webContents.openDevTools(Enums.WebContents.OpenDevTools.Options.Mode.Right)
-    
+
 app.whenReady().``then``(fun () ->
     // highlight-start
     let api: Shared.ExampleRouting = {
@@ -84,11 +84,11 @@ app.whenReady().``then``(fun () ->
                 return Error()
         }
     }
-    Remoting.init
-    |> Remoting.buildHandler(api)
+    Remoting.createHandler()
+    |> Remoting.fromValue api
     // highlight-end
     createWindow()
-    
+
     app.onActivate(fun _ ->
         if BrowserWindow.getAllWindows().Length = 0 then
             createWindow()
@@ -127,7 +127,7 @@ console.log "This message is being logged by 'renderer.js', included via VITE"
 let api =
     Remoting.init
     |> Remoting.buildClient<Shared.ExampleRouting>
-    
+
 (api.SayHelloWorld "hello").``then``(function
     | Ok v -> console.log v
     | Error _ -> console.log "Didn't say hello back :(")
@@ -144,53 +144,44 @@ according to user preference at the beginning.
 
 ## `IpcMainEvent`
 
-If you are familiar with Electron, or have checked the documentation, you'll notice
-that there is no inherent inclusion of the IpcMainEvent argument which is
-usually received as the first parameter for the Main process.
-
-This is intentional, naturally, as including it destroys the type safety of our function
-signatures in F#, and renders us unable to use one API type as the source of truth.
-
-Under the hood, we use an intermediary lambda which discards the first argument on the Receiver (Main process).
+The shared contract should remain focused on renderer-callable arguments.
+If you need `IpcMainEvent` inside Main handlers, provide a factory function
+and use `Remoting.fromIpcMainEvent`.
 
 :::important
-If you want to keep and use the `IpcMainEvent`, just include it as the __FIRST__ parameter
-of your function signature. Pass `null` for this value (or `Unchecked.defaultof<_>`, or `undefined`) on the renderer side.
- 
+Do not add `IpcMainEvent` to the shared record function signatures.
+Use explicit context injection on the Main side instead.
+
 ```fsharp title="Shared.fs"
 type ExampleRouting = {
-        SayHelloWorld: IpcMainEvent -> string -> Promise<Result<string, unit>>
-    }
+    SayHelloWorld: string -> Promise<Result<string, unit>>
+}
 ```
 
 ```fsharp title="Renderer.fs"
 let api =
-Remoting.init
-|> Remoting.buildClient<Shared.ExampleRouting>
+    Remoting.init
+    |> Remoting.buildClient<Shared.ExampleRouting>
 
-//highlight-start
-(api.SayHelloWorld JS.undefined "hello").``then``(function
-//highlight-end
+(api.SayHelloWorld "hello").``then``(function
 | Ok v -> console.log v
-| Error _ -> console.log "Didn't say hello back :(")
+| Error _ -> console.log "Didn't say hello back :("
 |> ignore
 ```
 
-The preload script will ignore the first argument it receives from the Renderer 
-if it is of the type `IpcMainEvent`, and you will have the correct types on
-the receivers (Main) end.
-
 ```fsharp title="Main.fs"
-
-let api: Shared.ExampleRouting = {
-    //highlight-start
-    SayHelloWorld = fun (event: IpcMainEvent) (text: string) -> promise {
-    //highlight-end
-    if text = "hello" then
-        return Ok <| text + " world!"
-    else
-        return Error()
+let api (event: IpcMainEvent) : Shared.ExampleRouting = {
+    SayHelloWorld = fun (text: string) -> promise {
+        if text = "hello" then
+            return Ok <| $"Window {event.sender.id} said: {text} world!"
+        else
+            return Error()
     }
 }
+
+Remoting.createHandler()
+|> Remoting.fromIpcMainEvent api
 ```
+
+If you do not need event context, keep using `Remoting.fromValue`.
 :::
