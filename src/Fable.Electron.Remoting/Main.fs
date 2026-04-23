@@ -72,6 +72,13 @@ module internal Proxy =
         else
             typ
 
+module internal MainHelper =
+    let inline spreadArgs (fn: obj -> 'T) (args: obj) : 'T =
+        emitJsExpr (fn, args) "$0(...$1)"
+
+    let inline spreadArgsPromise (fn: obj -> JS.Promise<'T>) (args: obj) : JS.Promise<'T> =
+        emitJsExpr (fn, args) "$0(...$1)"
+
 [<Erase>]
 type Remoting =
     //%TWO_WAY%START%
@@ -109,15 +116,19 @@ type Remoting =
                     ipcMain.handle (
                         channelName,
                         fun (_: IpcMainInvokeEvent) (args) ->
-                            emitJsExpr (impl.Item(field.FieldName), args) "(async (...args) => { return await $0(...args) })($1)"
+                            MainHelper.spreadArgsPromise (impl.Item(field.FieldName) |> unbox) args
                             |> U2.Case1
+                            // emitJsExpr (impl.Item(field.FieldName), args) "(async (...args) => { return await $0(...args) })($1)"
+                            // |> U2.Case1
                     )
                 | false ->
                     ipcMain.handle (
                         channelName,
                         fun (_: IpcMainInvokeEvent) (args) ->
-                            emitJsExpr (impl.Item(field.FieldName), args) "(async (...args) => { return $0(...args) })($1)"
-                            |> U2.Case1
+                            MainHelper.spreadArgs (impl.Item(field.FieldName) |> unbox) args
+                            |> U2.Case2
+                            // emitJsExpr (impl.Item(field.FieldName), args) "(async (...args) => { return $0(...args) })($1)"
+                            // |> U2.Case1
                     )
         | _ ->
             failwithf
@@ -133,7 +144,6 @@ type Remoting =
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
             let makeChannelName = config.ChannelNameMap
-            console.log(fields)
             for field in fields do
                 let returnType =
                     Proxy.getReturnType field.PropertyInfo.PropertyType |> createTypeInfo
@@ -163,12 +173,14 @@ type Remoting =
                             // get the function to call from the record
                             let fn = impl.Item(field.FieldName)
                             // use emitJsExpr to wire args as spread argument into the function call, and await the result if it's a promise/async
-                            emitJsExpr
-                                (fn, args)
-                                "(async (args) => {
-                                    return await $0(...args)
-                                })($1)"
+                            MainHelper.spreadArgsPromise (unbox fn) args
                             |> U2.Case1
+                        //     // emitJsExpr
+                        //     //     (fn, args)
+                        //     //     "(async (args) => {
+                        //     //         return await $0(...args)
+                        //     //     })($1)"
+                        //     // |> U2.Case1
                     )
                 | false ->
                     ipcMain.handle (
@@ -179,12 +191,14 @@ type Remoting =
                             // get the function to call from the record
                             let fn = impl.Item(field.FieldName)
                             // use emitJsExpr to wire args as spread argument into the function call, and await the result if it's a promise/async
-                            emitJsExpr
-                                (fn, args)
-                                "(async (args) => {
-                                    return $0(...args)
-                                })($1)"
-                            |> U2.Case1
+                            MainHelper.spreadArgs (unbox fn) args
+                            |> U2.Case2
+                            // emitJsExpr
+                            //     (fn, args)
+                            //     "(async (args) => {
+                            //         return $0(...args)
+                            //     })($1)"
+                            // |> U2.Case1
                     )
         | _ ->
             failwithf
