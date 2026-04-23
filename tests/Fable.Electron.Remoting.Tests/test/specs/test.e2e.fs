@@ -26,10 +26,10 @@ let inline getWindowLoggerOutput () =
     browser.``$`` "#window-logger-output"
 
 let inline getWindowLoggerMultipleArgsButton () =
-    browser.``$`` "#window-logger-multiple-args-button"
+    browser.``$`` "#window-logger-button-multiple-args"
 
 let inline getWindowLoggerMultipleArgsOutput () =
-    browser.``$`` "#window-logger-multiple-args-output"
+    browser.``$`` "#window-logger-output-multiple-args"
 
 let inline getInt (ele: JS.Promise<IWdioElement>) =
     promise {
@@ -203,9 +203,10 @@ describe "Combination TWO Way and ONE Way IPC works"
             let! winLogBtn = getWindowLoggerMultipleArgsButton ()
             do! winLogBtn.click ()
             let! text = out.getText ()
+            Browser.Dom.console.log($"Received text from Window Logger Multiple Args Output: {text}")
             /// Should match something like: "[Window 1-639017411811680000]:Hello from Renderer with multiple args: 42, true!"
             /// numbers will vary.
-            let regex = System.Text.RegularExpressions.Regex(@"^\[Window \d+-\d+\]:Hello from Renderer with multiple args: 42, true!$")
+            let regex = System.Text.RegularExpressions.Regex(@"^\[Window \d+-\d+\]:Hello from Renderer!, 42, true$")
             let rm = regex.IsMatch(text)
             Expect.isTrue rm "Window Logger should log correct message with multiple args"
         }

@@ -108,12 +108,16 @@ type Remoting =
                 | true ->
                     ipcMain.handle (
                         channelName,
-                        emitJsExpr (impl.Item(field.FieldName)) "async (...args) => { return await $0(...(args[1])) }"
+                        fun (_: IpcMainInvokeEvent) (args) ->
+                            emitJsExpr (impl.Item(field.FieldName), args) "(async (...args) => { return await $0(...args) })($1)"
+                            |> U2.Case1
                     )
                 | false ->
                     ipcMain.handle (
                         channelName,
-                        emitJsExpr (impl.Item(field.FieldName)) "async (...args) => { return $0(...(args[1])) }"
+                        fun (_: IpcMainInvokeEvent) (args) ->
+                            emitJsExpr (impl.Item(field.FieldName), args) "(async (...args) => { return $0(...args) })($1)"
+                            |> U2.Case1
                     )
         | _ ->
             failwithf

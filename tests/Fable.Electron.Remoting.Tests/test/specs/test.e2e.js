@@ -7,9 +7,10 @@ import { parse } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Int32
 import { int32ToString, structuralHash, assertEqual } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Util.js";
 import { ofArray, contains } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/List.js";
 import { equals, class_type, decimal_type, string_type, float64_type, bool_type, int32_type } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Reflection.js";
-import { printf, toText } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/String.js";
+import { concat, printf, toText } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/String.js";
 import { Expect_notEqual, Expect_isTrue, Expect_isFalse } from "../../fable_modules/Fable.Mocha.2.17.0/Mocha.fs.js";
 import { isMatch } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/RegExp.js";
+import { some } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Option.js";
 
 describe("App loads correctly", () => {
     it("Switch window if required", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-decrement").then((_arg_2) => {
@@ -170,6 +171,12 @@ describe("Combination TWO Way and ONE Way IPC works", () => {
     })))))))))));
     it("Window Logger logs actions correctly (this tests two-way with IpcMainEvent)", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-output").then((_arg_41) => (browser.$("#window-logger-button").then((_arg_42) => (_arg_42.click().then(() => (_arg_41.getText().then((_arg_44) => {
         Expect_isTrue(isMatch(/^\[Window \d+-\d+\]:Hello from Renderer!$/gu, _arg_44))("Window Logger should log correct message");
+        return Promise.resolve();
+    })))))))))));
+    it("Window Logger logs multiple args correctly", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-output-multiple-args").then((_arg_46) => (browser.$("#window-logger-button-multiple-args").then((_arg_47) => (_arg_47.click().then(() => (_arg_46.getText().then((_arg_49) => {
+        const text_1 = _arg_49;
+        console.log(some(concat("Received text from Window Logger Multiple Args Output: ", ...text_1)));
+        Expect_isTrue(isMatch(/^\[Window \d+-\d+\]:Hello from Renderer!, 42, true$/gu, text_1))("Window Logger should log correct message with multiple args");
         return Promise.resolve();
     })))))))))));
 });
