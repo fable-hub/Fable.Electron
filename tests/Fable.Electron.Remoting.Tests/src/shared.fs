@@ -28,3 +28,7 @@ type WindowLogger = {
     Log: string -> Promise<string>
     LogMultipleArgs: string -> int -> bool -> Promise<string>
 }
+
+type WindowLoggerFromValue = {
+    LogMultipleArgs: string -> int -> bool -> Promise<string>
+}

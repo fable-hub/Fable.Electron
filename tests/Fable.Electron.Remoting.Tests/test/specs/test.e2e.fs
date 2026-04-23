@@ -31,6 +31,12 @@ let inline getWindowLoggerMultipleArgsButton () =
 let inline getWindowLoggerMultipleArgsOutput () =
     browser.``$`` "#window-logger-output-multiple-args"
 
+let inline getWindowLoggerFromValueMultipleArgsButton () =
+    browser.``$`` "#window-logger-from-value-button-multiple-args"
+
+let inline getWindowLoggerFromValueMultipleArgsOutput () =
+    browser.``$`` "#window-logger-from-value-output-multiple-args"
+
 let inline getInt (ele: JS.Promise<IWdioElement>) =
     promise {
         let! value = ele
@@ -81,6 +87,10 @@ describe "App loads correctly"
             do! expect(winLogBtn).toBeExisting ()
             let! winLogOut = getWindowLoggerOutput ()
             do! expect(winLogOut).toBeExisting ()
+            let! winLogFromValueBtn = getWindowLoggerFromValueMultipleArgsButton ()
+            do! expect(winLogFromValueBtn).toBeExisting ()
+            let! winLogFromValueOut = getWindowLoggerFromValueMultipleArgsOutput ()
+            do! expect(winLogFromValueOut).toBeExisting ()
         }
 
     describe "Initial state is correct"
@@ -114,6 +124,14 @@ describe "App loads correctly"
                 let! out = getWindowLoggerOutput ()
                 let! text = out.getText ()
                 Expect.equal text "Placeholder" "Window Logger output should be Placeholder"
+            }
+
+        it "Window Logger fromValue output is empty"
+        <| fun _ ->
+            promise {
+                let! out = getWindowLoggerFromValueMultipleArgsOutput ()
+                let! text = out.getText ()
+                Expect.equal text "Placeholder" "Window Logger fromValue output should be Placeholder"
             }
 
 describe "Combination TWO Way and ONE Way IPC works"
@@ -209,4 +227,17 @@ describe "Combination TWO Way and ONE Way IPC works"
             let regex = System.Text.RegularExpressions.Regex(@"^\[Window \d+-\d+\]:Hello from Renderer!, 42, true$")
             let rm = regex.IsMatch(text)
             Expect.isTrue rm "Window Logger should log correct message with multiple args"
+        }
+
+    it "Window Logger fromValue logs multiple args correctly"
+    <| fun _ ->
+        promise {
+            let! out = getWindowLoggerFromValueMultipleArgsOutput ()
+            let! winLogBtn = getWindowLoggerFromValueMultipleArgsButton ()
+            do! winLogBtn.click ()
+            let! text = out.getText ()
+            Browser.Dom.console.log($"Received text from Window Logger fromValue Multiple Args Output: {text}")
+            let regex = System.Text.RegularExpressions.Regex(@"^\[Direct-\d+\]:Hello from Renderer!, 42, true$")
+            let rm = regex.IsMatch(text)
+            Expect.isTrue rm "Window Logger fromValue should log correct message with multiple args"
         }

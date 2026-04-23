@@ -72,6 +72,16 @@ let windowLoggerApi (event: IpcMainInvokeEvent) = {
     }
 }
 
+let windowLoggerFromValueApi = {
+    LogMultipleArgs =
+        fun (msg: string) (num: int) (flag: bool) -> promise {
+            let now = System.DateTime.Now.Ticks
+            let logMessage = $"[Direct-{now}]:{msg}, {num}, {flag}"
+            Browser.Dom.console.log logMessage
+            return logMessage
+        }
+}
+
 app
     .whenReady()
     .``then`` (fun () ->
@@ -173,6 +183,7 @@ app
 
 
         Remoting.createHandler () |> Remoting.fromValue handler
+        Remoting.createHandler () |> Remoting.fromValue windowLoggerFromValueApi
         Remoting.createHandler () |> Remoting.fromIpcMainEvent windowLoggerApi
 
         app.onActivate (fun _ ->

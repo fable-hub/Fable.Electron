@@ -13,31 +13,31 @@ open Fable.SimpleJson
 /// <summary>
 /// Config for a proxy IPC router.
 /// </summary>
-type RemotingConfig =
-    {
-        /// <summary>
-        /// An argument to the <c>ApiNameMap</c> that creates the name of the property on the
-        /// <c>window</c> object that the proxy/api/IPC is exposed through.
-        /// </summary>
-        ApiNameBase: string
-        /// <summary>
-        /// <c>ApiNameMap</c> takes the <c>ApiNameBase</c> and <c>Type</c> name of the
-        /// implementation to create the name of the property on the
-        /// <c>window</c> object that the proxy/api/IPC is exposed through.
-        /// </summary>
-        ApiNameMap: string -> string -> string
-        /// <summary>
-        /// No effect on Renderer process.
-        /// </summary>
-        ChannelNameMap: string -> string -> string
-    }
+type RemotingConfig = {
+    /// <summary>
+    /// An argument to the <c>ApiNameMap</c> that creates the name of the property on the
+    /// <c>window</c> object that the proxy/api/IPC is exposed through.
+    /// </summary>
+    ApiNameBase: string
+    /// <summary>
+    /// <c>ApiNameMap</c> takes the <c>ApiNameBase</c> and <c>Type</c> name of the
+    /// implementation to create the name of the property on the
+    /// <c>window</c> object that the proxy/api/IPC is exposed through.
+    /// </summary>
+    ApiNameMap: string -> string -> string
+    /// <summary>
+    /// No effect on Renderer process.
+    /// </summary>
+    ChannelNameMap: string -> string -> string
+}
 //%REMOTING_TYPE%END%
 [<Erase>]
 module Remoting =
-    let init =
-        { ApiNameBase = "FABLE_REMOTING"
-          ApiNameMap = fun baseName typeName -> sprintf $"%s{baseName}_{typeName}"
-          ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}" }
+    let init = {
+        ApiNameBase = "FABLE_REMOTING"
+        ApiNameMap = fun baseName typeName -> sprintf $"%s{baseName}_{typeName}"
+        ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"
+    }
 
     let withApiNameBase apiName config = { config with ApiNameBase = apiName }
     let withApiNameMap func config = { config with ApiNameMap = func }
@@ -52,11 +52,21 @@ type Remoting =
         match schemaType with
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
+
             let bridgeName = config.ApiNameMap config.ApiNameBase resolvedType.Name
 
-            let recordFields =
-                [| for field in fields do
-                       box (window.Item(bridgeName).Item(field.FieldName)) |]
+            let recordFields = [|
+                for field in fields do
+                    match window.Item(bridgeName) with
+                    | null ->
+                        failwith $"No API found on window for bridge name {bridgeName}. This might be because a related bridge in preload is missing."
+                    | bridge ->
+                        match bridge.Item(field.FieldName) with
+                        | null ->
+                            failwith $"No API found on bridge {bridgeName} for field {field.FieldName}"
+                        | apiFn ->
+                            apiFn
+            |]
 
             let proxy = FSharpValue.MakeRecord(recordType, recordFields)
             unbox proxy

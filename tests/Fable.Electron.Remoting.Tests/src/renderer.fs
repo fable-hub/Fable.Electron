@@ -16,6 +16,9 @@ let api = Remoting.init |> Remoting.buildClient<CounterHandler>
 
 let windowLoggerApi = Remoting.init |> Remoting.buildClient<WindowLogger>
 
+let windowLoggerFromValueApi =
+    Remoting.init |> Remoting.buildClient<WindowLoggerFromValue>
+
 let incButton =
     document.getElementById ("counter-button-increment") :?> HTMLButtonElement
 
@@ -44,6 +47,12 @@ let windowLoggerButtonMultipleArgs =
 
 let windowLoggerOutputMultipleArgs =
     document.getElementById ("window-logger-output-multiple-args") :?> HTMLDivElement
+
+let windowLoggerFromValueButtonMultipleArgs =
+    document.getElementById ("window-logger-from-value-button-multiple-args") :?> HTMLButtonElement
+
+let windowLoggerFromValueOutputMultipleArgs =
+    document.getElementById ("window-logger-from-value-output-multiple-args") :?> HTMLDivElement
 
 incButton.addEventListener (
     "click",
@@ -144,6 +153,19 @@ windowLoggerButtonMultipleArgs.addEventListener(
           .``then`` (
                 fun (result: string) ->
                     windowLoggerOutputMultipleArgs.innerText <- result
+            )
+        |> ignore
+)
+
+windowLoggerFromValueButtonMultipleArgs.addEventListener(
+    "click",
+    fun e ->
+        console.log("Calling window logger fromValue API with multiple args from renderer...")
+        (windowLoggerFromValueApi
+          .LogMultipleArgs "Hello from Renderer!" 42 true)
+          .``then`` (
+                fun (result: string) ->
+                    windowLoggerFromValueOutputMultipleArgs.innerText <- result
             )
         |> ignore
 )
