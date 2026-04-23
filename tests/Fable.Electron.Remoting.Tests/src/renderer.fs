@@ -54,6 +54,21 @@ let windowLoggerFromValueButtonMultipleArgs =
 let windowLoggerFromValueOutputMultipleArgs =
     document.getElementById ("window-logger-from-value-output-multiple-args") :?> HTMLDivElement
 
+let mainSignalStatus =
+    document.getElementById ("main-signal-status") :?> HTMLDivElement
+
+let mainSignalCount =
+    document.getElementById ("main-signal-count") :?> HTMLDivElement
+
+let mainSignalLast =
+    document.getElementById ("main-signal-last") :?> HTMLDivElement
+
+let mainSignalUnmountButton =
+    document.getElementById ("main-signal-unmount") :?> HTMLButtonElement
+
+let mutable mainSignalUpdateCount = 0
+let mutable disposeMainSignalHandler: unit -> unit = fun () -> ()
+
 incButton.addEventListener (
     "click",
     fun e ->
@@ -182,6 +197,24 @@ let handler =
             enableButton.setAttribute ("disabled", "disabled")
 
     }
+
+let mainSignalHandler =
+    { Tick =
+        fun value ->
+            mainSignalUpdateCount <- mainSignalUpdateCount + 1
+            mainSignalCount.innerText <- string mainSignalUpdateCount
+            mainSignalLast.innerText <- string value }
+
+disposeMainSignalHandler <-
+    Remoting.init
+    |> Remoting.buildHandlerDisposable mainSignalHandler
+
+mainSignalUnmountButton.addEventListener(
+    "click",
+    fun _ ->
+        mainSignalStatus.innerText <- "unmounted"
+        disposeMainSignalHandler ()
+)
 
 Remoting.init |> Remoting.buildHandler handler
 

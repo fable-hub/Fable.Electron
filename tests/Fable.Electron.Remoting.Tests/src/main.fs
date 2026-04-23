@@ -15,6 +15,9 @@ if SquirrelStartup.started then
 
 let windows = ResizeArray<BrowserWindow>()
 
+[<Emit("setInterval($0, $1)")>]
+let private setInterval (callback: unit -> unit) (milliseconds: int) : obj = jsNative
+
 let createWindow () =
     let mainWindowOptions =
         BrowserWindowConstructorOptions(
@@ -92,6 +95,20 @@ app
             Remoting.createHandler ()
             |> Remoting.setWindows (windows.ToArray())
             |> Remoting.buildClient<TextHandler>
+
+        let mainSignalBroker =
+            Remoting.createHandler ()
+            |> Remoting.setWindows (windows.ToArray())
+            |> Remoting.buildClient<MainSignalHandler>
+
+        let mutable mainSignalValue = 0
+
+        setInterval
+            (fun () ->
+                mainSignalValue <- mainSignalValue + 1
+                mainSignalBroker.Tick mainSignalValue)
+            200
+        |> ignore
 
         let handler = {
             Increment =

@@ -76,22 +76,32 @@ type Remoting =
                 a valid protocol definition which is a record of functions"
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    static member buildProxyReceiver(impl, config: RemotingConfig, resolvedType: Type) =
+    static member buildProxyReceiver(impl, config: RemotingConfig, resolvedType: Type) : unit -> unit =
         let schemaType = createTypeInfo resolvedType
         let bridgeName = config.ApiNameMap config.ApiNameBase resolvedType.Name
 
         match schemaType with
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
+            let disposers = ResizeArray<unit -> unit>()
 
             for field in fields do
                 let callSite = window.Item(bridgeName).Item(field.FieldName)
                 let fieldTarget = impl.Item(field.FieldName)
 
-                let func =
+                let disposer: unit -> unit =
                     emitJsExpr (callSite, fieldTarget, impl) "$0((...args) => { return $1(...args) })"
 
-                func
+                disposers.Add disposer
+
+            let mutable disposed = false
+
+            fun () ->
+                if not disposed then
+                    disposed <- true
+
+                    for dispose in disposers do
+                        dispose ()
         | _ ->
             failwithf
                 $"Cannot build proxy. Expected type %s{resolvedType.FullName} to be \
@@ -109,5 +119,13 @@ type Remoting =
     /// </summary>
     /// <param name="impl">The implemented record of functions that respond to messages.</param>
     /// <param name="config"></param>
-    static member inline buildHandler<'T> (impl: 'T) (config: RemotingConfig) =
+    static member inline buildHandlerDisposable<'T> (impl: 'T) (config: RemotingConfig) : unit -> unit =
         Remoting.buildProxyReceiver (impl, config, typeof<'T>)
+
+    /// <summary>
+    /// Builds the receiver for the <c>Main -> Renderer</c> IPC communication.
+    /// </summary>
+    /// <param name="impl">The implemented record of functions that respond to messages.</param>
+    /// <param name="config"></param>
+    static member inline buildHandler<'T> (impl: 'T) (config: RemotingConfig) =
+        Remoting.buildProxyReceiver (impl, config, typeof<'T>) |> ignore

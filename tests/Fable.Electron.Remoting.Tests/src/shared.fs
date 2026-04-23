@@ -24,6 +24,10 @@ type TextHandler = {
     SetDisabled: bool -> unit
 }
 
+type MainSignalHandler = {
+    Tick: int -> unit
+}
+
 type WindowLogger = {
     Log: string -> Promise<string>
     LogMultipleArgs: string -> int -> bool -> Promise<string>

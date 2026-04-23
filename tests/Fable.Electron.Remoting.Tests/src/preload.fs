@@ -11,3 +11,4 @@ Remoting.init |> Remoting.buildTwoWayBridge<CounterHandler>
 Remoting.init |> Remoting.buildTwoWayBridge<WindowLogger>
 Remoting.init |> Remoting.buildTwoWayBridge<WindowLoggerFromValue>
 Remoting.init |> Remoting.buildBridge<TextHandler>
+Remoting.init |> Remoting.buildBridge<MainSignalHandler>

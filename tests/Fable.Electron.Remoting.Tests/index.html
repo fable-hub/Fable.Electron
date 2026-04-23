@@ -26,6 +26,13 @@
       <button id="window-logger-from-value-button-multiple-args">Log fromValue + String + Number + Boolean</button>
       <div id="window-logger-from-value-output-multiple-args">Placeholder</div>
     </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; margin: 10px 0px; border: 1px solid gray; padding: 10px; max-width: 540px;">
+      <div>Main -> Renderer deterministic signal probe</div>
+      <div>Status: <span id="main-signal-status">mounted</span></div>
+      <div>Update Count: <span id="main-signal-count">0</span></div>
+      <div>Last Value: <span id="main-signal-last">0</span></div>
+      <button id="main-signal-unmount">Unmount main signal handler</button>
+    </div>
     <script type="module" src="/src/renderer.js"></script>
   </body>
 </html>
