@@ -12,12 +12,12 @@ importSideEffects "./index.css"
 
 console.log "This message is being logged by 'renderer.js', included via VITE"
 
-let api = Remoting.init |> Remoting.buildClient<CounterHandler>
+let api = Remoting.createIpc () |> Remoting.buildProxySender<CounterHandler>
 
-let windowLoggerApi = Remoting.init |> Remoting.buildClient<WindowLogger>
+let windowLoggerApi = Remoting.createIpc () |> Remoting.buildProxySender<WindowLogger>
 
 let windowLoggerFromValueApi =
-    Remoting.init |> Remoting.buildClient<WindowLoggerFromValue>
+    Remoting.createIpc () |> Remoting.buildProxySender<WindowLoggerFromValue>
 
 let incButton =
     document.getElementById ("counter-button-increment") :?> HTMLButtonElement
@@ -206,8 +206,8 @@ let mainSignalHandler =
             mainSignalLast.innerText <- string value }
 
 disposeMainSignalHandler <-
-    Remoting.init
-    |> Remoting.buildHandlerDisposable mainSignalHandler
+    Remoting.createIpc ()
+    |> Remoting.buildProxyReceiverDisposable mainSignalHandler
 
 mainSignalUnmountButton.addEventListener(
     "click",
@@ -216,7 +216,7 @@ mainSignalUnmountButton.addEventListener(
         disposeMainSignalHandler ()
 )
 
-Remoting.init |> Remoting.buildHandler handler
+Remoting.createIpc () |> Remoting.buildProxyReceiver handler
 
 
 Browser.Dom.console.log (Browser.Dom.window)

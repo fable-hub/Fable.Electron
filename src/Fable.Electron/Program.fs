@@ -39474,7 +39474,7 @@ module Main =
         /// <param name="listener"></param>
         [<Erase>]
         static member inline handle
-            (channel: string, listener: IpcMainInvokeEvent -> obj[] -> U2<Promise<obj>, obj>)
+            (channel: string, listener: IpcMainInvokeEvent * obj[] -> U2<Promise<obj>, obj>)
             : unit =
             Unchecked.defaultof<_>
 

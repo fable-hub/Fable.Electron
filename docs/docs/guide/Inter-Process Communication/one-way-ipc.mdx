@@ -35,7 +35,7 @@ Unlike the Two-Way IPC, the signatures for One-Way are treated synchronously.
 :::
 
 :::note Disposable Handlers
-For UI lifecycles (for example React unmount), prefer `Remoting.buildHandlerDisposable` on the renderer.
+For UI lifecycles (for example React unmount), prefer `Remoting.buildProxyReceiverDisposable` on the renderer.
 It returns a disposer with signature `unit -> unit` that unsubscribes all registered listeners for that handler registration.
 
 The returned disposer is idempotent, so calling it more than once is safe.
@@ -83,9 +83,9 @@ let createWindow() =
     mainWindow.webContents.openDevTools(Enums.WebContents.OpenDevTools.Options.Mode.Right)
     // highlight-start
     let sendMsg =
-        Remoting.createHandler()
+        Remoting.createIpc ()
         |> Remoting.withWindow mainWindow
-        |> Remoting.buildClient<Shared.ExampleMainToRenderer>
+        |> Remoting.buildProxySender<Shared.ExampleMainToRenderer>
     mainWindow.onMove(fun _ ->
         sendMsg.LogMove "Moved!" 0
     )
@@ -113,7 +113,7 @@ open Fable.Electron.Playground.Shared
 open Fable.Electron.Remoting.Preload
 
 // highlight-start
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.buildBridge<ExampleMainToRenderer>
 // highlight-end
 ```
@@ -131,8 +131,8 @@ console.log "This message is being logged by 'renderer.js', included via VITE"
 // highlight-start
 let handler = { Shared.LogMove = fun t i -> console.log t }
 let disposeHandler =
-    Remoting.init
-    |> Remoting.buildHandlerDisposable handler
+    Remoting.createIpc ()
+    |> Remoting.buildProxyReceiverDisposable handler
 
 // Later, when unmounting / tearing down subscriptions:
 disposeHandler ()
@@ -142,13 +142,13 @@ disposeHandler () // safe: second call is a no-op
 </TabItem>
 </Tabs>
 
-For backward compatibility, `Remoting.buildHandler` is still available and behaves the same as before.
-It registers the handler and discards the disposer.
+If you do not need a disposer, use `Remoting.buildProxyReceiver`.
+It registers the handler and discards the returned disposal function.
 
 ```fsharp
 let handler = { Shared.LogMove = fun t i -> console.log t }
-Remoting.init
-|> Remoting.buildHandler handler
+Remoting.createIpc ()
+|> Remoting.buildProxyReceiver handler
 ```
 
 :::warning

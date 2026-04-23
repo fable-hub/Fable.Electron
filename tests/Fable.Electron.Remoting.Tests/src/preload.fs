@@ -7,8 +7,8 @@ open Fable.Electron
 open Fable.Electron.Remoting.Preload
 open Shared
 
-Remoting.init |> Remoting.buildTwoWayBridge<CounterHandler>
-Remoting.init |> Remoting.buildTwoWayBridge<WindowLogger>
-Remoting.init |> Remoting.buildTwoWayBridge<WindowLoggerFromValue>
-Remoting.init |> Remoting.buildBridge<TextHandler>
-Remoting.init |> Remoting.buildBridge<MainSignalHandler>
+Remoting.createIpc () |> Remoting.buildTwoWayBridge<CounterHandler>
+Remoting.createIpc () |> Remoting.buildTwoWayBridge<WindowLogger>
+Remoting.createIpc () |> Remoting.buildTwoWayBridge<WindowLoggerFromValue>
+Remoting.createIpc () |> Remoting.buildBridge<TextHandler>
+Remoting.createIpc () |> Remoting.buildBridge<MainSignalHandler>

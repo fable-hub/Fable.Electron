@@ -41,7 +41,7 @@ type RemotingConfig = {
 //%REMOTING_TYPE%END%
 [<Erase>]
 module Remoting =
-    let init = {
+    let createIpc () = {
         ApiNameBase = "FABLE_REMOTING"
         ApiNameMap = fun baseName typeName -> sprintf $"%s{baseName}_{typeName}"
         ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"

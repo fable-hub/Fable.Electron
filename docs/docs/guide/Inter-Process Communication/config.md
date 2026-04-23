@@ -10,8 +10,7 @@ proxy builds.
 You should also be aware that the `Fable.Electron.Remoting.Main` module has
 an extra config compared to the others.
 
-On the `Main` module, start from `Remoting.createHandler()`.
-On the `Preload` and `Renderer` modules, continue to use `Remoting.init`.
+On all process modules (`Main`, `Preload`, and `Renderer`), start from `Remoting.createIpc()`.
 
 ---
 
@@ -40,11 +39,11 @@ type CounterHandler = { ... }
 ```fsharp title="Preload Process"
 let apiNameMap = fun baseName typName ->
     $"{baseName}_{typName}"
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.withApiNameBase "FABLE_REMOTING"
 |> Remoting.withApiNameMap apiNameMap
 |> Remoting.buildTwoWayBridge<CounterHandler>
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.withApiNameBase "FABLE_REMOTING"
 |> Remoting.withApiNameMap apiNameMap
 |> Remoting.buildBridge<TextHandler>
@@ -80,10 +79,10 @@ type CounterHandler = {
 ```fsharp title="Preload Process"
 let channelNameMap = fun typName fieldName ->
     $"{typName}_{fieldName}"
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.withChannelNameMap channelNameMap
 |> Remoting.buildTwoWayBridge<CounterHandler>
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.withChannelNameMap channelNameMap
 |> Remoting.buildBridge<TextHandler>
 ```
@@ -94,34 +93,32 @@ Would use the channels `CounterHandler_Increment`, `CounterHandler_Decrement`, `
 
 ## Common
 
-For `Main`, use `Remoting.createHandler()` in place of `Remoting.init` in the examples below.
-
 ```fsharp title="Api Name Base"
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.withApiNameBase "FABLE_REMOTING"
 ```
 
 ```fsharp title="Api Name Mapping"
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.withApiNameMap (fun baseName typeName -> $"{baseName}_{typeName}")
 ```
 
 ```fsharp title="Channel Name Mapping"
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.withChannelNameMap (fun typeName fieldName -> $"{typeName}:{fieldName}")
 ```
 
 ## `Main` Specific
 
-When using `Remoting.buildClient` on the `Main` process, you will be required to
+When using `Remoting.buildProxySender` on the `Main` process, you will be required to
 pass all the windows that you wish to send the messages to.
 
 ```fsharp
-Remoting.createHandler()
+Remoting.createIpc ()
 |> Remoting.withWindow mainWindow // repeat this as many times as required
 
 // alternatively, create your array of windows and feed it in
 let windows = [| ... |]
-Remoting.createHandler()
+Remoting.createIpc ()
 |> Remoting.setWindows windows
 ```

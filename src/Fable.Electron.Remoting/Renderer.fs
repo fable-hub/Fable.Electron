@@ -33,7 +33,7 @@ type RemotingConfig = {
 //%REMOTING_TYPE%END%
 [<Erase>]
 module Remoting =
-    let init = {
+    let createIpc () = {
         ApiNameBase = "FABLE_REMOTING"
         ApiNameMap = fun baseName typeName -> sprintf $"%s{baseName}_{typeName}"
         ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"
@@ -46,7 +46,7 @@ module Remoting =
 [<Erase>]
 type Remoting =
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    static member buildProxySender(config: RemotingConfig, resolvedType: Type) =
+    static member buildProxySenderInternal(config: RemotingConfig, resolvedType: Type) =
         let schemaType = createTypeInfo resolvedType
 
         match schemaType with
@@ -59,13 +59,12 @@ type Remoting =
                 for field in fields do
                     match window.Item(bridgeName) with
                     | null ->
-                        failwith $"No API found on window for bridge name {bridgeName}. This might be because a related bridge in preload is missing."
+                        failwith
+                            $"No API found on window for bridge name {bridgeName}. This might be because a related bridge in preload is missing."
                     | bridge ->
                         match bridge.Item(field.FieldName) with
-                        | null ->
-                            failwith $"No API found on bridge {bridgeName} for field {field.FieldName}"
-                        | apiFn ->
-                            apiFn
+                        | null -> failwith $"No API found on bridge {bridgeName} for field {field.FieldName}"
+                        | apiFn -> apiFn
             |]
 
             let proxy = FSharpValue.MakeRecord(recordType, recordFields)
@@ -76,7 +75,7 @@ type Remoting =
                 a valid protocol definition which is a record of functions"
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    static member buildProxyReceiver(impl, config: RemotingConfig, resolvedType: Type) : unit -> unit =
+    static member buildProxyReceiverInternal(impl, config: RemotingConfig, resolvedType: Type) : unit -> unit =
         let schemaType = createTypeInfo resolvedType
         let bridgeName = config.ApiNameMap config.ApiNameBase resolvedType.Name
 
@@ -111,21 +110,21 @@ type Remoting =
     /// Builds the client for the <c>Main &lt;-> Renderer</c> two way IPC communication.
     /// </summary>
     /// <param name="config"></param>
-    static member inline buildClient<'t>(config: RemotingConfig) : 't =
-        Remoting.buildProxySender (config, typeof<'t>)
+    static member inline buildProxySender<'t>(config: RemotingConfig) : 't =
+        Remoting.buildProxySenderInternal (config, typeof<'t>)
 
     /// <summary>
     /// Builds the receiver for the <c>Main -> Renderer</c> IPC communication.
     /// </summary>
     /// <param name="impl">The implemented record of functions that respond to messages.</param>
     /// <param name="config"></param>
-    static member inline buildHandlerDisposable<'T> (impl: 'T) (config: RemotingConfig) : unit -> unit =
-        Remoting.buildProxyReceiver (impl, config, typeof<'T>)
+    static member inline buildProxyReceiverDisposable<'T> (impl: 'T) (config: RemotingConfig) : unit -> unit =
+        Remoting.buildProxyReceiverInternal (impl, config, typeof<'T>)
 
     /// <summary>
     /// Builds the receiver for the <c>Main -> Renderer</c> IPC communication.
     /// </summary>
     /// <param name="impl">The implemented record of functions that respond to messages.</param>
     /// <param name="config"></param>
-    static member inline buildHandler<'T> (impl: 'T) (config: RemotingConfig) =
-        Remoting.buildProxyReceiver (impl, config, typeof<'T>) |> ignore
+    static member inline buildProxyReceiver<'T> (impl: 'T) (config: RemotingConfig) =
+        Remoting.buildProxyReceiverInternal (impl, config, typeof<'T>) |> ignore

@@ -41,7 +41,7 @@ type RemotingConfig =
 //%REMOTING_MODULE%START%
 [<Erase>]
 module Remoting =
-    let createHandler () =
+    let createIpc () =
         { ApiNameBase = "FABLE_REMOTING"
           ApiNameMap = fun baseName typeName -> sprintf $"%s{baseName}_{typeName}"
           ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"
@@ -78,6 +78,14 @@ module internal MainHelper =
 
     let inline spreadArgsPromise (fn: obj -> JS.Promise<'T>) (args: obj) : JS.Promise<'T> =
         emitJsExpr (fn, args) "$0(...$1)"
+
+    type ipcMain with
+        [<Import("ipcMain.handle", "electron")>]
+        static member inline handle
+            (channel: string, listener: IpcMainInvokeEvent -> obj[] -> U2<JS.Promise<obj>, obj>)
+            : unit = jsNative
+
+open MainHelper
 
 [<Erase>]
 type Remoting =
@@ -175,12 +183,6 @@ type Remoting =
                             // use emitJsExpr to wire args as spread argument into the function call, and await the result if it's a promise/async
                             MainHelper.spreadArgsPromise (unbox fn) args
                             |> U2.Case1
-                        //     // emitJsExpr
-                        //     //     (fn, args)
-                        //     //     "(async (args) => {
-                        //     //         return await $0(...args)
-                        //     //     })($1)"
-                        //     // |> U2.Case1
                     )
                 | false ->
                     ipcMain.handle (
@@ -193,12 +195,6 @@ type Remoting =
                             // use emitJsExpr to wire args as spread argument into the function call, and await the result if it's a promise/async
                             MainHelper.spreadArgs (unbox fn) args
                             |> U2.Case2
-                            // emitJsExpr
-                            //     (fn, args)
-                            //     "(async (args) => {
-                            //         return $0(...args)
-                            //     })($1)"
-                            // |> U2.Case1
                     )
         | _ ->
             failwithf
@@ -208,7 +204,7 @@ type Remoting =
     //%IMPL%START%
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     //%CLIENT_START%START%
-    static member buildSenderProxy(config: RemotingConfig, resolvedType: Type) =
+    static member buildProxySenderInternal(config: RemotingConfig, resolvedType: Type) =
         let schemaType = createTypeInfo resolvedType
         //%CLIENT_START%END%
         //%CLIENT_TWO%START%
@@ -278,12 +274,12 @@ type Remoting =
     /// Builds a client for <c>Main -> Renderer</c> IPC proxy router.
     /// </summary>
     /// <param name="config"></param>
-    static member inline buildClient<'T>(config: RemotingConfig) : 'T =
+    static member inline buildProxySender<'T>(config: RemotingConfig) : 'T =
         if config.Windows.Length = 0 then
             console.error
                 "Building a Main -> Renderer remoting client \
                         with no browser windows will do nothing or cause errors. \
                         Please add windows to the config before building the proxy."
 
-        Remoting.buildSenderProxy (config, typeof<'T>)
+        Remoting.buildProxySenderInternal(config, typeof<'T>)
 //%INLINE_ENTRY%END%

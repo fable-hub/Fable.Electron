@@ -92,14 +92,14 @@ app
 
 
         let broker =
-            Remoting.createHandler ()
+            Remoting.createIpc ()
             |> Remoting.setWindows (windows.ToArray())
-            |> Remoting.buildClient<TextHandler>
+            |> Remoting.buildProxySender<TextHandler>
 
         let mainSignalBroker =
-            Remoting.createHandler ()
+            Remoting.createIpc ()
             |> Remoting.setWindows (windows.ToArray())
-            |> Remoting.buildClient<MainSignalHandler>
+            |> Remoting.buildProxySender<MainSignalHandler>
 
         let mutable mainSignalValue = 0
 
@@ -199,9 +199,9 @@ app
         }
 
 
-        Remoting.createHandler () |> Remoting.fromValue handler
-        Remoting.createHandler () |> Remoting.fromValue windowLoggerFromValueApi
-        Remoting.createHandler () |> Remoting.fromIpcMainEvent windowLoggerApi
+        Remoting.createIpc () |> Remoting.fromValue handler
+        Remoting.createIpc () |> Remoting.fromValue windowLoggerFromValueApi
+        Remoting.createIpc () |> Remoting.fromIpcMainEvent windowLoggerApi
 
         app.onActivate (fun _ ->
             if BrowserWindow.getAllWindows().Length = 0 then

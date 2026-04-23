@@ -84,7 +84,7 @@ app.whenReady().``then``(fun () ->
                 return Error()
         }
     }
-    Remoting.createHandler()
+    Remoting.createIpc ()
     |> Remoting.fromValue api
     // highlight-end
     createWindow()
@@ -108,7 +108,7 @@ open Fable.Electron.Playground.Shared
 open Fable.Electron.Remoting.Preload
 
 // highlight-start
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.buildTwoWayBridge<ExampleRouting>
 // highlight-end
 ```
@@ -125,8 +125,8 @@ console.log "This message is being logged by 'renderer.js', included via VITE"
 
 // highlight-start
 let api =
-    Remoting.init
-    |> Remoting.buildClient<Shared.ExampleRouting>
+    Remoting.createIpc ()
+    |> Remoting.buildProxySender<Shared.ExampleRouting>
 
 (api.SayHelloWorld "hello").``then``(function
     | Ok v -> console.log v
@@ -160,8 +160,8 @@ type ExampleRouting = {
 
 ```fsharp title="Renderer.fs"
 let api =
-    Remoting.init
-    |> Remoting.buildClient<Shared.ExampleRouting>
+    Remoting.createIpc ()
+    |> Remoting.buildProxySender<Shared.ExampleRouting>
 
 (api.SayHelloWorld "hello").``then``(function
 | Ok v -> console.log v
@@ -179,7 +179,7 @@ let api (event: IpcMainEvent) : Shared.ExampleRouting = {
     }
 }
 
-Remoting.createHandler()
+Remoting.createIpc ()
 |> Remoting.fromIpcMainEvent api
 ```
 
