@@ -122,13 +122,14 @@ type Remoting =
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     static member buildReceiverProxyFromIpcMainEvent(config: RemotingConfig, createImpl, resolvedType: Type) =
+
         let schemaType = createTypeInfo resolvedType
 
         match schemaType with
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
             let makeChannelName = config.ChannelNameMap
-
+            console.log(fields)
             for field in fields do
                 let returnType =
                     Proxy.getReturnType field.PropertyInfo.PropertyType |> createTypeInfo
@@ -152,16 +153,34 @@ type Remoting =
                 | true ->
                     ipcMain.handle (
                         channelName,
-                        emitJsExpr
-                            (createImpl, field.FieldName)
-                            "async (...args) => { return await $0(args[0])[$1](...(args[1])) }"
+                        fun (e: IpcMainInvokeEvent) (args) ->
+                            // init record type with event
+                            let impl = createImpl e |> box
+                            // get the function to call from the record
+                            let fn = impl.Item(field.FieldName)
+                            // use emitJsExpr to wire args as spread argument into the function call, and await the result if it's a promise/async
+                            emitJsExpr
+                                (fn, args)
+                                "(async (args) => {
+                                    return await $0(...args)
+                                })($1)"
+                            |> U2.Case1
                     )
                 | false ->
                     ipcMain.handle (
                         channelName,
-                        emitJsExpr
-                            (createImpl, field.FieldName)
-                            "async (...args) => { return $0(args[0])[$1](...(args[1])) }"
+                        fun (e: IpcMainInvokeEvent) (args) ->
+                            // init record type with event
+                            let impl = createImpl e |> box
+                            // get the function to call from the record
+                            let fn = impl.Item(field.FieldName)
+                            // use emitJsExpr to wire args as spread argument into the function call, and await the result if it's a promise/async
+                            emitJsExpr
+                                (fn, args)
+                                "(async (args) => {
+                                    return $0(...args)
+                                })($1)"
+                            |> U2.Case1
                     )
         | _ ->
             failwithf
@@ -232,9 +251,9 @@ type Remoting =
     /// Builds the receiver for the two way <c>Main &lt;-> Renderer</c> IPC proxy router
     /// from an <c>IpcMainEvent</c> factory.
     /// </summary>
-    /// <param name="createImplementation">A function that receives <c>IpcMainEvent</c> and creates the implementation record.</param>
+    /// <param name="createImplementation">A function that receives <c>IpcMainInvokeEvent</c> and creates the implementation record.</param>
     /// <param name="config"></param>
-    static member inline fromIpcMainEvent<'t> (createImplementation: IpcMainEvent -> 't) (config: RemotingConfig) : unit =
+    static member inline fromIpcMainEvent<'t> (createImplementation: IpcMainInvokeEvent -> 't) (config: RemotingConfig) : unit =
         Remoting.buildReceiverProxyFromIpcMainEvent (config, createImplementation, typeof<'t>)
 
     /// <summary>

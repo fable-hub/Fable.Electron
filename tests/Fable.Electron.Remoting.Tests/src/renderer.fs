@@ -39,6 +39,11 @@ let windowLoggerButton =
 let windowLoggerOutput =
     document.getElementById ("window-logger-output") :?> HTMLDivElement
 
+let windowLoggerButtonMultipleArgs =
+    document.getElementById ("window-logger-button-multiple-args") :?> HTMLButtonElement
+
+let windowLoggerOutputMultipleArgs =
+    document.getElementById ("window-logger-output-multiple-args") :?> HTMLDivElement
 
 incButton.addEventListener (
     "click",
@@ -126,6 +131,19 @@ windowLoggerButton.addEventListener(
           .``then`` (
                 fun (result: string) ->
                     windowLoggerOutput.innerText <- result
+            )
+        |> ignore
+)
+
+windowLoggerButtonMultipleArgs.addEventListener(
+    "click",
+    fun e ->
+        console.log("Calling window logger API with multiple args from renderer...")
+        (windowLoggerApi
+          .LogMultipleArgs "Hello from Renderer!" 42 true)
+          .``then`` (
+                fun (result: string) ->
+                    windowLoggerOutputMultipleArgs.innerText <- result
             )
         |> ignore
 )

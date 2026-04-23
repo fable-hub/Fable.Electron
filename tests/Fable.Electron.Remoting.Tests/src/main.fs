@@ -43,16 +43,18 @@ let createWindow () =
     windows.Add mainWindow
 
 
-let mutable counter =
-    { Counter.ClickCount = 0
-      Value = 0
-      Disabled = false }
+let mutable counter = {
+    Counter.ClickCount = 0
+    Value = 0
+    Disabled = false
+}
 
 let setCounter value = counter <- value
 
-let windowLoggerApi (event: IpcMainEvent) = {
-    Log = fun msg ->
-        promise {
+
+let windowLoggerApi (event: IpcMainInvokeEvent) = {
+    Log =
+        fun msg -> promise {
             printfn $"Logging from window {event.sender.id}: {msg}"
             let windowId = event.sender.id
             let now = System.DateTime.Now.Ticks
@@ -60,6 +62,14 @@ let windowLoggerApi (event: IpcMainEvent) = {
             Browser.Dom.console.log logMessage
             return logMessage
         }
+    LogMultipleArgs =
+        fun (msg: string) (num: int) (flag: bool) -> promise {
+            let windowId = event.sender.id
+            let now = System.DateTime.Now.Ticks
+            let logMessage = $"[Window {windowId}-{now}]:{msg}, {num}, {flag}"
+            Browser.Dom.console.log logMessage
+            return logMessage
+    }
 }
 
 app
@@ -67,62 +77,17 @@ app
     .``then`` (fun () ->
         createWindow ()
 
+
         let broker =
-            Remoting.createHandler()
+            Remoting.createHandler ()
             |> Remoting.setWindows (windows.ToArray())
             |> Remoting.buildClient<TextHandler>
 
-        let handler =
-            { Increment =
-                fun () ->
-                    promise {
-                        setCounter
-                            { counter with
-                                ClickCount =
-                                    if counter.Disabled then
-                                        counter.ClickCount
-                                    else
-                                        counter.ClickCount + 1
-                                Value =
-                                    if counter.Disabled then
-                                        counter.Value
-                                    else
-                                        counter.Value + 1 }
-
-                        broker.SetValue counter.Value
-
-                        if counter.Disabled then
-                            return Error()
-                        else
-                            return Ok counter.Value
-                    }
-              SetValue =
-                fun (value: int) ->
-                    promise {
-                        setCounter
-                            { counter with
-                                ClickCount =
-                                    if counter.Disabled then
-                                        counter.ClickCount
-                                    else
-                                        counter.ClickCount + 1
-                                Value =
-                                    if counter.Disabled then
-                                        counter.Value
-                                    else
-                                        value }
-
-                        broker.SetValue counter.Value
-
-                        if counter.Disabled then
-                            return Error()
-                        else
-                            return Ok counter.Value
-                    }
-              Decrement =
+        let handler = {
+            Increment =
                 fun () -> promise {
-                    setCounter
-                        { counter with
+                    setCounter {
+                        counter with
                             ClickCount =
                                 if counter.Disabled then
                                     counter.ClickCount
@@ -132,7 +97,8 @@ app
                                 if counter.Disabled then
                                     counter.Value
                                 else
-                                    counter.Value - 1 }
+                                    counter.Value + 1
+                    }
 
                     broker.SetValue counter.Value
 
@@ -141,7 +107,49 @@ app
                     else
                         return Ok counter.Value
                 }
-              Disable =
+            SetValue =
+                fun (value: int) -> promise {
+                    setCounter {
+                        counter with
+                            ClickCount =
+                                if counter.Disabled then
+                                    counter.ClickCount
+                                else
+                                    counter.ClickCount + 1
+                            Value = if counter.Disabled then counter.Value else value
+                    }
+
+                    broker.SetValue counter.Value
+
+                    if counter.Disabled then
+                        return Error()
+                    else
+                        return Ok counter.Value
+                }
+            Decrement =
+                fun () -> promise {
+                    setCounter {
+                        counter with
+                            ClickCount =
+                                if counter.Disabled then
+                                    counter.ClickCount
+                                else
+                                    counter.ClickCount + 1
+                            Value =
+                                if counter.Disabled then
+                                    counter.Value
+                                else
+                                    counter.Value - 1
+                    }
+
+                    broker.SetValue counter.Value
+
+                    if counter.Disabled then
+                        return Error()
+                    else
+                        return Ok counter.Value
+                }
+            Disable =
                 fun () -> promise {
                     if counter.Disabled then
                         return Error()
@@ -150,7 +158,7 @@ app
                         broker.SetDisabled true
                         return Ok()
                 }
-              Enable =
+            Enable =
                 fun () -> promise {
                     if counter.Disabled then
                         setCounter { counter with Disabled = false }
@@ -159,11 +167,13 @@ app
                     else
                         return Error()
                 }
-              Value = fun () -> promise { return counter.Value }
-              ClickCount = fun () -> promise { return counter.ClickCount } }
+            Value = fun () -> promise { return counter.Value }
+            ClickCount = fun () -> promise { return counter.ClickCount }
+        }
 
-        Remoting.createHandler() |> Remoting.fromValue handler
-        Remoting.createHandler() |> Remoting.fromIpcMainEvent windowLoggerApi
+
+        Remoting.createHandler () |> Remoting.fromValue handler
+        Remoting.createHandler () |> Remoting.fromIpcMainEvent windowLoggerApi
 
         app.onActivate (fun _ ->
             if BrowserWindow.getAllWindows().Length = 0 then

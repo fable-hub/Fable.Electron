@@ -87,7 +87,6 @@ module private Proxy =
                            box arg7 |]
                 else
                     [||]
-
             unbox<FSharpFunc<_, _>> <| ipcRenderer.invoke (channelName, inputArguments)
 
 [<Erase>]
