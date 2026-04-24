@@ -39,6 +39,9 @@ module Remoting =
         ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"
     }
 
+    [<System.Obsolete("This method will be replaced by `createIpc()`. Please use that instead.")>]
+    let init = createIpc ()
+
     let withApiNameBase apiName config = { config with ApiNameBase = apiName }
     let withApiNameMap func config = { config with ApiNameMap = func }
     let withChannelNameMap func config = { config with ChannelNameMap = func }
@@ -128,3 +131,12 @@ type Remoting =
     /// <param name="config"></param>
     static member inline buildProxyReceiver<'T> (impl: 'T) (config: RemotingConfig) =
         Remoting.buildProxyReceiverInternal (impl, config, typeof<'T>) |> ignore
+
+    [<System.Obsolete("This method will be replaced by `buildProxySender` in a future version. Please use those instead.")>]
+    static member inline buildClient<'T>(config: RemotingConfig) : 'T =
+        Remoting.buildProxySenderInternal (config, typeof<'T>)
+
+    [<System.Obsolete("This method will be replaced by `buildProxyReceiver` and `buildProxyReceiverDisposable` in a future version. Please use those instead.")>]
+    static member inline buildHandler<'T>(impl: 'T) (config: RemotingConfig) : unit =
+        Remoting.buildProxyReceiverInternal (impl, config, typeof<'T>) |> ignore
+

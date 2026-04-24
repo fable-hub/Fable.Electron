@@ -47,6 +47,9 @@ module Remoting =
           ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"
           Windows = [||] }
 
+    [<System.Obsolete("This method will be replaced by `createIpc()`. Please use that instead.")>]
+    let init = createIpc ()
+
     let withApiNameBase apiName config = { config with ApiNameBase = apiName }
     let withApiNameMap func config = { config with ApiNameMap = func }
     let withChannelNameMap func config = { config with ChannelNameMap = func }
@@ -283,3 +286,16 @@ type Remoting =
 
         Remoting.buildProxySenderInternal(config, typeof<'T>)
 //%INLINE_ENTRY%END%
+    [<System.Obsolete("This method will be replaced by `Remoting.fromValue` and `Remoting.fromIpcMainEvent` in a future version. Please use those instead.")>]
+    static member inline buildHandler<'t> (implementation: 't) (config: RemotingConfig) : unit =
+        Remoting.buildReceiverProxyFromValue (config, implementation, typeof<'t>)
+
+    [<System.Obsolete("This method will be replaced by `buildProxySender` in a future version. Please use those instead.")>]
+    static member inline buildClient<'T>(config: RemotingConfig) : 'T =
+        if config.Windows.Length = 0 then
+            console.error
+                "Building a Main -> Renderer remoting client \
+                        with no browser windows will do nothing or cause errors. \
+                        Please add windows to the config before building the proxy."
+
+        Remoting.buildProxySenderInternal(config, typeof<'T>)

@@ -47,6 +47,9 @@ module Remoting =
         ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"
     }
 
+    [<System.Obsolete("This method will be replaced by `createIpc()`. Please use that instead.")>]
+    let init = createIpc ()
+
     let withApiNameBase apiName config = { config with ApiNameBase = apiName }
     let withApiNameMap func config = { config with ApiNameMap = func }
     let withChannelNameMap func config = { config with ChannelNameMap = func }
