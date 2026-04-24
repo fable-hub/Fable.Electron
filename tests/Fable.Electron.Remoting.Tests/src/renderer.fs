@@ -12,9 +12,12 @@ importSideEffects "./index.css"
 
 console.log "This message is being logged by 'renderer.js', included via VITE"
 
-let api = Remoting.init |> Remoting.buildClient<CounterHandler>
+let api = Remoting.createIpc () |> Remoting.buildProxySender<CounterHandler>
 
-let windowLoggerApi = Remoting.init |> Remoting.buildClient<WindowLogger>
+let windowLoggerApi = Remoting.createIpc () |> Remoting.buildProxySender<WindowLogger>
+
+let windowLoggerFromValueApi =
+    Remoting.createIpc () |> Remoting.buildProxySender<WindowLoggerFromValue>
 
 let incButton =
     document.getElementById ("counter-button-increment") :?> HTMLButtonElement
@@ -39,6 +42,32 @@ let windowLoggerButton =
 let windowLoggerOutput =
     document.getElementById ("window-logger-output") :?> HTMLDivElement
 
+let windowLoggerButtonMultipleArgs =
+    document.getElementById ("window-logger-button-multiple-args") :?> HTMLButtonElement
+
+let windowLoggerOutputMultipleArgs =
+    document.getElementById ("window-logger-output-multiple-args") :?> HTMLDivElement
+
+let windowLoggerFromValueButtonMultipleArgs =
+    document.getElementById ("window-logger-from-value-button-multiple-args") :?> HTMLButtonElement
+
+let windowLoggerFromValueOutputMultipleArgs =
+    document.getElementById ("window-logger-from-value-output-multiple-args") :?> HTMLDivElement
+
+let mainSignalStatus =
+    document.getElementById ("main-signal-status") :?> HTMLDivElement
+
+let mainSignalCount =
+    document.getElementById ("main-signal-count") :?> HTMLDivElement
+
+let mainSignalLast =
+    document.getElementById ("main-signal-last") :?> HTMLDivElement
+
+let mainSignalUnmountButton =
+    document.getElementById ("main-signal-unmount") :?> HTMLButtonElement
+
+let mutable mainSignalUpdateCount = 0
+let mutable disposeMainSignalHandler: unit -> unit = fun () -> ()
 
 incButton.addEventListener (
     "click",
@@ -122,10 +151,36 @@ windowLoggerButton.addEventListener(
     fun e ->
         console.log("Calling window logger API from renderer...")
         (windowLoggerApi
-          .Log Fable.Core.JS.undefined "Hello from Renderer!")
+          .Log "Hello from Renderer!")
           .``then`` (
-                fun (result: string) -> 
+                fun (result: string) ->
                     windowLoggerOutput.innerText <- result
+            )
+        |> ignore
+)
+
+windowLoggerButtonMultipleArgs.addEventListener(
+    "click",
+    fun e ->
+        console.log("Calling window logger API with multiple args from renderer...")
+        (windowLoggerApi
+          .LogMultipleArgs "Hello from Renderer!" 42 true)
+          .``then`` (
+                fun (result: string) ->
+                    windowLoggerOutputMultipleArgs.innerText <- result
+            )
+        |> ignore
+)
+
+windowLoggerFromValueButtonMultipleArgs.addEventListener(
+    "click",
+    fun e ->
+        console.log("Calling window logger fromValue API with multiple args from renderer...")
+        (windowLoggerFromValueApi
+          .LogMultipleArgs "Hello from Renderer!" 42 true)
+          .``then`` (
+                fun (result: string) ->
+                    windowLoggerFromValueOutputMultipleArgs.innerText <- result
             )
         |> ignore
 )
@@ -143,7 +198,25 @@ let handler =
 
     }
 
-Remoting.init |> Remoting.buildHandler handler
+let mainSignalHandler =
+    { Tick =
+        fun value ->
+            mainSignalUpdateCount <- mainSignalUpdateCount + 1
+            mainSignalCount.innerText <- string mainSignalUpdateCount
+            mainSignalLast.innerText <- string value }
+
+disposeMainSignalHandler <-
+    Remoting.createIpc ()
+    |> Remoting.buildProxyReceiverDisposable mainSignalHandler
+
+mainSignalUnmountButton.addEventListener(
+    "click",
+    fun _ ->
+        mainSignalStatus.innerText <- "unmounted"
+        disposeMainSignalHandler ()
+)
+
+Remoting.createIpc () |> Remoting.buildProxyReceiver handler
 
 
 Browser.Dom.console.log (Browser.Dom.window)

@@ -904,7 +904,7 @@ module Types =
         /// <param name="zoomFactor">The default zoom factor of the page, <c>3.0</c> represents <c>300%</c>. Default is <c>1.0</c>.</param>
         /// <param name="javascript">Enables JavaScript support. Default is <c>true</c>.</param>
         /// <param name="webSecurity">When <c>false</c>, it will disable the same-origin policy (usually using testing websites by people), and set <c>allowRunningInsecureContent</c> to <c>true</c>
-        /// if this options has not been set by user. Default is <c>true</c>.</param>
+        /// if this option has not been set by user. Default is <c>true</c>.</param>
         /// <param name="allowRunningInsecureContent">Allow an https page to run JavaScript, CSS or plugins from http URLs. Default is <c>false</c>.</param>
         /// <param name="images">Enables image support. Default is <c>true</c>.</param>
         /// <param name="imageAnimationPolicy">Specifies how to run image animations (E.g. GIFs).  Can be <c>animate</c>, <c>animateOnce</c> or <c>noAnimation</c>.  Default is <c>animate</c>.</param>
@@ -961,6 +961,7 @@ module Types =
         /// colors are derived from the color scheme of its root element. When transparency is enabled, the text color will still
         /// change accordingly but the background will remain transparent.</param>
         /// <param name="enableDeprecatedPaste">Whether to enable the <c>paste</c> execCommand. Default is <c>false</c>.</param>
+        /// <param name="focusOnNavigation">Whether to focus the WebContents when navigating. Default is <c>true</c>.</param>
         (
             ?devTools: bool,
             ?nodeIntegration: bool,
@@ -1009,7 +1010,8 @@ module Types =
             ?v8CacheOptions: Enums.Types.WebPreferences.V8CacheOptions,
             ?enablePreferredSizeMode: bool,
             ?transparent: bool,
-            ?enableDeprecatedPaste: bool
+            ?enableDeprecatedPaste: bool,
+            ?focusOnNavigation: bool
         ) =
         class
         end
@@ -1088,7 +1090,7 @@ module Types =
 
         /// <summary>
         /// When <c>false</c>, it will disable the same-origin policy (usually using testing websites by people), and set <c>allowRunningInsecureContent</c> to <c>true</c> if
-        /// this options has not been set by user. Default is <c>true</c>.
+        /// this option has not been set by user. Default is <c>true</c>.
         /// </summary>
         [<Erase>]
         member val webSecurity: bool = Unchecked.defaultof<_> with get, set
@@ -1315,6 +1317,12 @@ module Types =
         /// </summary>
         [<Erase; System.Obsolete>]
         member val enableDeprecatedPaste: bool = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Whether to focus the WebContents when navigating. Default is <c>true</c>.
+        /// </summary>
+        [<Erase>]
+        member val focusOnNavigation: bool = Unchecked.defaultof<_> with get, set
 
     /// <summary>
     /// This type is a helper alias, no object will ever exist of this type.
@@ -3573,14 +3581,24 @@ module Types =
 
     [<JS.Pojo>]
     type NotificationAction
-        /// <param name="type">The type of action, can be <c>button</c>.</param>
+        /// <param name="type">The type of action, can be <c>button</c> or <c>selection</c>. <c>selection</c> is only supported on Windows.</param>
         /// <param name="text">The label for the given action.</param>
-        (``type``: Enums.Types.NotificationAction.Type, ?text: string) =
+        /// <param name="items">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || The list of items
+        /// for the <c>selection</c> action <c>type</c>.</param>
+        (
+            ``type``: Enums.Types.NotificationAction.Type,
+            ?text: string
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+            ,
+            ?items: string[]
+            #endif
+
+        ) =
         class
         end
 
         /// <summary>
-        /// The type of action, can be <c>button</c>.
+        /// The type of action, can be <c>button</c> or <c>selection</c>. <c>selection</c> is only supported on Windows.
         /// </summary>
         [<Erase>]
         member val ``type``: Enums.Types.NotificationAction.Type = Unchecked.defaultof<_> with get, set
@@ -3590,6 +3608,15 @@ module Types =
         /// </summary>
         [<Erase>]
         member val text: string = Unchecked.defaultof<_> with get, set
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+        /// The list of items for the <c>selection</c> action <c>type</c>.
+        /// </summary>
+        [<Erase>]
+        member val items: string[] = Unchecked.defaultof<_> with get, set
+        #endif
+
 
     [<JS.Pojo>]
     type NavigationEntry
@@ -4723,9 +4750,9 @@ module Types =
         /// <param name="depthPerComponent">The number of bits per color component.</param>
         /// <param name="detected"><c>true</c> if the display is detected by the system.</param>
         /// <param name="displayFrequency">The display refresh rate.</param>
-        /// <param name="id">Unique identifier associated with the display. A value of of -1 means the display is invalid or the correct
-        /// <c>id</c> is not yet known, and a value of -10 means the display is a virtual display assigned to a
-        /// unified desktop.</param>
+        /// <param name="id">Unique identifier associated with the display. A value of -1 means the display is invalid or the correct <c>id</c>
+        /// is not yet known, and a value of -10 means the display is a virtual display assigned to a unified
+        /// desktop.</param>
         /// <param name="internal"><c>true</c> for an internal display and <c>false</c> for an external display.</param>
         /// <param name="label">User-friendly label, determined by the platform.</param>
         /// <param name="maximumCursorSize">Maximum cursor size in native pixels.</param>
@@ -4805,9 +4832,8 @@ module Types =
         member val displayFrequency: float = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// Unique identifier associated with the display. A value of of -1 means the display is invalid or the correct <c>id</c>
-        /// is not yet known, and a value of -10 means the display is a virtual display assigned to a unified
-        /// desktop.
+        /// Unique identifier associated with the display. A value of -1 means the display is invalid or the correct <c>id</c> is
+        /// not yet known, and a value of -10 means the display is a virtual display assigned to a unified desktop.
         /// </summary>
         [<Erase>]
         member val id: float = Unchecked.defaultof<_> with get, set
@@ -6633,6 +6659,10 @@ module Enums =
                 /// Half float RGBA, 1 plane.
                 /// </summary>
                 | [<CompiledName("rgbaf16")>] Rgbaf16
+                /// <summary>
+                /// 12bpp with Y plane followed by a 2x2 interleaved UV plane.
+                /// </summary>
+                | [<CompiledName("nv12")>] Nv12
 
         module ResolvedEndpoint =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -6797,7 +6827,9 @@ module Enums =
 
         module NotificationAction =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type Type = | [<CompiledName("button")>] Button
+            type Type =
+                | [<CompiledName("button")>] Button
+                | [<CompiledName("selection")>] Selection
 
         module MouseWheelInputEvent =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -12060,14 +12092,14 @@ module Renderer =
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not deprecations printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c> will
-        /// print stack traces for deprecations. This property is instead of the <c>--trace-deprecation</c> command line flag.
+        /// print stack traces for deprecations. This property is used instead of the <c>--trace-deprecation</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceDeprecation: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not process warnings printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c>
-        /// will print stack traces for process warnings (including deprecations). This property is instead of the <c>--trace-warnings</c> command line flag.
+        /// will print stack traces for process warnings (including deprecations). This property is used instead of the <c>--trace-warnings</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceProcessWarnings: bool = Unchecked.defaultof<_> with get, set
@@ -12093,8 +12125,8 @@ module Renderer =
         static member val electron: string = Unchecked.defaultof<_> with get
 
         /// <summary>
-        /// A <c>boolean</c>. If the app is running as a Windows Store app (appx), this property is <c>true</c>, for otherwise it
-        /// is <c>undefined</c>.
+        /// A <c>boolean</c>. If the app is running as an MSIX package (including AppX for Windows Store), this property is <c>true</c>,
+        /// otherwise it is <c>undefined</c>.
         /// </summary>
         [<Erase>]
         static member val windowsStore: bool = Unchecked.defaultof<_> with get
@@ -12675,7 +12707,7 @@ module Renderer =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
-    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipoard</c> API
+    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipboard</c> API
     /// from the renderer process is deprecated.<br/><br/>&gt; [!IMPORTANT] If you want to call this API from a renderer process, place the
     /// API call in your preload script and expose it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard.
     /// To manipulate it you need to pass <c>selection</c> to each method:
@@ -14554,25 +14586,25 @@ module Utility =
         member inline _.offAborted(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.on('error', $1)")>]
         member inline _.onError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.once('error', $1)")>]
         member inline _.onceError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.off('error', $1)")>]
         member inline _.offError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
@@ -14877,8 +14909,8 @@ module Utility =
 
         /// <summary>
         /// Cancels an ongoing HTTP transaction. If the request has already emitted the <c>close</c> event, the abort operation will have no
-        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object,it will
-        /// emit the <c>aborted</c> event.
+        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object, it
+        /// will emit the <c>aborted</c> event.
         /// </summary>
         [<Erase>]
         member inline _.abort() : unit = Unchecked.defaultof<_>
@@ -15547,6 +15579,11 @@ module Main =
                 /// utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can be codesigned with <c>com.apple.security.cs.disable-library-validation</c>
                 /// and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically need this capability, it
                 /// is best to leave this disabled. Default is <c>false</c>.</param>
+                /// <param name="disclaim">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
+                /// utility process will disclaim responsibility for the child process. This causes the operating system to consider the child process as
+                /// a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility is disclaimed, the parent
+                /// process will not be attributed for any TCC requests initiated by the child process. This is useful when launching processes
+                /// that run third-party or otherwise untrusted code. Default is <c>false</c>.</param>
                 /// <param name="respondToAuthRequestsFromMainProcess">With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to
                 /// them via the <c>app#login</c> event in the main process instead of the default <c>login</c> event on the <c>ClientRequest</c> object. Default
                 /// is <c>false</c>.</param>
@@ -15559,6 +15596,10 @@ module Main =
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
                     ,
                     ?allowLoadingUnsignedLibraries: bool
+                    #endif
+                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                    ,
+                    ?disclaim: bool
                     #endif
                     ,
                     ?respondToAuthRequestsFromMainProcess: bool
@@ -15609,6 +15650,18 @@ module Main =
                 /// </summary>
                 [<Erase>]
                 member val allowLoadingUnsignedLibraries: bool = Unchecked.defaultof<_> with get, set
+                #endif
+
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                /// <summary>
+                /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+                /// With this flag, the utility process will disclaim responsibility for the child process. This causes the operating system to consider
+                /// the child process as a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility
+                /// is disclaimed, the parent process will not be attributed for any TCC requests initiated by the child process. This is
+                /// useful when launching processes that run third-party or otherwise untrusted code. Default is <c>false</c>.
+                /// </summary>
+                [<Erase>]
+                member val disclaim: bool = Unchecked.defaultof<_> with get, set
                 #endif
 
 
@@ -16584,27 +16637,27 @@ module Main =
             abstract member error: string with get, set
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
           Interface>]
         type IOnAction =
             [<Emit("$0[0]")>]
-            abstract member event: Event with get, set
+            abstract member details: Main.Details with get, set
 
-            /// <summary>
-            /// The index of the action that was activated.
-            /// </summary>
             [<Emit("$0[1]")>]
-            abstract member index: float with get, set
+            abstract member actionIndex: float with get, set
+
+            [<Emit("$0[2]")>]
+            abstract member selectionIndex: float with get, set
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
@@ -16612,11 +16665,8 @@ module Main =
           Interface>]
         type IOnReply =
             [<Emit("$0[0]")>]
-            abstract member event: Event with get, set
+            abstract member details: Main.Details with get, set
 
-            /// <summary>
-            /// The string the user entered into the inline reply field.
-            /// </summary>
             [<Emit("$0[1]")>]
             abstract member reply: string with get, set
         #endif
@@ -18467,7 +18517,7 @@ module Main =
 
     module AutoUpdater =
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
@@ -18492,10 +18542,13 @@ module Main =
         module SetFeedURL =
             [<JS.Pojo>]
             type Options
-                /// <param name="url"></param>
+                /// <param name="url">The update server URL. For _Windows_ MSIX, this can be either a direct link to an MSIX file (e.g.,
+                /// <c>https://example.com/update.msix</c>) or a JSON endpoint that returns update information (see the Squirrel.Mac README for more information).</param>
                 /// <param name="headers">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || HTTP request headers.</param>
                 /// <param name="serverType">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be <c>json</c> or
                 /// <c>default</c>, see the Squirrel.Mac README for more information.</param>
+                /// <param name="allowAnyVersion">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || If <c>true</c>, allows downgrades
+                /// to older versions for MSIX packages. Defaults to <c>false</c>.</param>
                 (
                     url: string
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
@@ -18506,11 +18559,19 @@ module Main =
                     ,
                     ?serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType
                     #endif
+                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+                    ,
+                    ?allowAnyVersion: bool
+                    #endif
 
                 ) =
                 class
                 end
 
+                /// <summary>
+                /// The update server URL. For _Windows_ MSIX, this can be either a direct link to an MSIX file (e.g., <c>https://example.com/update.msix</c>)
+                /// or a JSON endpoint that returns update information (see the Squirrel.Mac README for more information).
+                /// </summary>
                 [<Erase>]
                 member val url: string = Unchecked.defaultof<_> with get, set
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
@@ -18530,6 +18591,15 @@ module Main =
                 [<Erase>]
                 member val serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType =
                     Unchecked.defaultof<_> with get, set
+                #endif
+
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+                /// <summary>
+                /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+                /// If <c>true</c>, allows downgrades to older versions for MSIX packages. Defaults to <c>false</c>.
+                /// </summary>
+                [<Erase>]
+                member val allowAnyVersion: bool = Unchecked.defaultof<_> with get, set
                 #endif
 
 
@@ -19789,7 +19859,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
           AllowNullLiteral;
@@ -28107,18 +28177,6 @@ module Main =
         /// </summary>
         abstract member audible: bool with get, set
 
-    [<AllowNullLiteral; Interface>]
-    type Details =
-        inherit Event
-        /// <summary>
-        /// ID of the updated service worker version
-        /// </summary>
-        abstract member versionId: float with get, set
-        /// <summary>
-        /// Running status. Possible values include <c>starting</c>, <c>running</c>, <c>stopping</c>, or <c>stopped</c>.
-        /// </summary>
-        abstract member runningStatus: Main.Enums.Details.RunningStatus with get, set
-
     module PowerMonitor =
         [<AllowNullLiteral; Interface>]
         type Details =
@@ -28127,6 +28185,14 @@ module Main =
             /// The system's new thermal state. Can be <c>unknown</c>, <c>nominal</c>, <c>fair</c>, <c>serious</c>, <c>critical</c>.
             /// </summary>
             abstract member state: Main.Enums.PowerMonitor.Details.State with get, set
+
+    [<AllowNullLiteral; Interface>]
+    type Details =
+        inherit Event
+        /// <summary>
+        /// The string the user entered into the inline reply field.
+        /// </summary>
+        abstract member reply: string with get, set
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ❌</para>
@@ -29063,7 +29129,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.on('did-redirect-navigation', $1)")>]
         member inline _.onDidRedirectNavigation
@@ -29073,7 +29139,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.on('did-redirect-navigation', $1)")>]
         member inline _.onDidRedirectNavigation(handler: Main.WebContents.IOnDidRedirectNavigation -> unit) : unit =
@@ -29081,7 +29147,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.once('did-redirect-navigation', $1)")>]
         member inline _.onceDidRedirectNavigation
@@ -29091,7 +29157,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.once('did-redirect-navigation', $1)")>]
         member inline _.onceDidRedirectNavigation(handler: Main.WebContents.IOnDidRedirectNavigation -> unit) : unit =
@@ -29099,7 +29165,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.off('did-redirect-navigation', $1)")>]
         member inline _.offDidRedirectNavigation
@@ -29109,7 +29175,7 @@ module Main =
 
         /// <summary>
         /// Emitted after a server side redirect occurs during navigation.  For example a 302 redirect.<br/><br/>This event cannot be prevented, if
-        /// you want to prevent redirects you should checkout out the <c>will-redirect</c> event above.
+        /// you want to prevent redirects you should check out the <c>will-redirect</c> event above.
         /// </summary>
         [<Emit("$0.off('did-redirect-navigation', $1)")>]
         member inline _.offDidRedirectNavigation(handler: Main.WebContents.IOnDidRedirectNavigation -> unit) : unit =
@@ -31007,10 +31073,10 @@ module Main =
         member inline _.setIgnoreMenuShortcuts(ignore: bool) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Called before creating a window a new window is requested by the renderer, e.g. by <c>window.open()</c>, a link with <c>target="_blank"</c>,
-        /// shift+clicking on a link, or submitting a form with <c>&lt;form target="_blank"&gt;</c>. See <c>window.open()</c> for more details and how to use
-        /// this in conjunction with <c>did-create-window</c>.<br/><br/>An example showing how to customize the process of new <c>BrowserWindow</c> creation to be <c>BrowserView</c> attached
-        /// to main window instead:
+        /// Called before creating a window when a new window is requested by the renderer, e.g. by <c>window.open()</c>, a link with
+        /// <c>target="_blank"</c>, shift+clicking on a link, or submitting a form with <c>&lt;form target="_blank"&gt;</c>. See <c>window.open()</c> for more details and how to
+        /// use this in conjunction with <c>did-create-window</c>.<br/><br/>An example showing how to customize the process of new <c>BrowserWindow</c> creation to be <c>BrowserView</c>
+        /// attached to main window instead:
         /// </summary>
         /// <param name="handler"></param>
         [<Erase>]
@@ -31551,8 +31617,8 @@ module Main =
         member inline _.isPainting() : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// If _offscreen rendering_ is enabled sets the frame rate to the specified number. Only values between 1 and 240 are
-        /// accepted.
+        /// If _offscreen rendering_ is enabled sets the frame rate to the specified number. When <c>webPreferences.offscreen.useSharedTexture</c> is <c>false</c> only values between
+        /// 1 and 240 are accepted.
         /// </summary>
         /// <param name="fps"></param>
         [<Erase>]
@@ -31738,8 +31804,8 @@ module Main =
         member val hostWebContents: Option<Main.WebContents> = Unchecked.defaultof<_> with get
 
         /// <summary>
-        /// A <c>WebContents | null</c> property that represents the of DevTools <c>WebContents</c> associated with a given <c>WebContents</c>.<br/><br/>&gt; [!NOTE] Users should never
-        /// store this object because it may become <c>null</c> when the DevTools has been closed.
+        /// A <c>WebContents | null</c> property that represents the DevTools <c>WebContents</c> associated with a given <c>WebContents</c>.<br/><br/>&gt; [!NOTE] Users should never store
+        /// this object because it may become <c>null</c> when the DevTools has been closed.
         /// </summary>
         [<Erase>]
         member val devToolsWebContents: Option<Main.WebContents> = Unchecked.defaultof<_> with get
@@ -32225,6 +32291,11 @@ module Main =
         /// utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can be codesigned with <c>com.apple.security.cs.disable-library-validation</c>
         /// and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically need this capability, it
         /// is best to leave this disabled. Default is <c>false</c>.</param>
+        /// <param name="disclaim">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
+        /// utility process will disclaim responsibility for the child process. This causes the operating system to consider the child process as
+        /// a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility is disclaimed, the parent
+        /// process will not be attributed for any TCC requests initiated by the child process. This is useful when launching processes
+        /// that run third-party or otherwise untrusted code. Default is <c>false</c>.</param>
         /// <param name="respondToAuthRequestsFromMainProcess">With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to
         /// them via the <c>app#login</c> event in the main process instead of the default <c>login</c> event on the <c>ClientRequest</c> object. Default
         /// is <c>false</c>.</param>
@@ -32239,6 +32310,7 @@ module Main =
                 ?stdio: U2<Main.Enums.UtilityProcess.Fork.Options.Stdio[], string>,
                 ?serviceName: string,
                 ?allowLoadingUnsignedLibraries: bool,
+                ?disclaim: bool,
                 ?respondToAuthRequestsFromMainProcess: bool
             ) : Main.UtilityProcess =
             Unchecked.defaultof<_>
@@ -35844,8 +35916,8 @@ module Main =
         member inline _.allowNTLMCredentialsForDomains(domains: string) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Overrides the <c>userAgent</c> and <c>acceptLanguages</c> for this session.<br/><br/>The <c>acceptLanguages</c> must a comma separated ordered list of language codes, for example
-        /// <c>"en-US,fr,de,ko,zh-CN,ja"</c>.<br/><br/>This doesn't affect existing <c>WebContents</c>, and each <c>WebContents</c> can use <c>webContents.setUserAgent</c> to override the session-wide user agent.
+        /// Overrides the <c>userAgent</c> and <c>acceptLanguages</c> for this session.<br/><br/>The <c>acceptLanguages</c> must be a comma separated ordered list of language codes, for
+        /// example <c>"en-US,fr,de,ko,zh-CN,ja"</c>.<br/><br/>This doesn't affect existing <c>WebContents</c>, and each <c>WebContents</c> can use <c>webContents.setUserAgent</c> to override the session-wide user agent.
         /// </summary>
         /// <param name="userAgent"></param>
         /// <param name="acceptLanguages"></param>
@@ -37330,14 +37402,14 @@ module Main =
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not deprecations printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c> will
-        /// print stack traces for deprecations. This property is instead of the <c>--trace-deprecation</c> command line flag.
+        /// print stack traces for deprecations. This property is used instead of the <c>--trace-deprecation</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceDeprecation: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
         /// A <c>boolean</c> that controls whether or not process warnings printed to <c>stderr</c> include their stack trace. Setting this to <c>true</c>
-        /// will print stack traces for process warnings (including deprecations). This property is instead of the <c>--trace-warnings</c> command line flag.
+        /// will print stack traces for process warnings (including deprecations). This property is used instead of the <c>--trace-warnings</c> command line flag.
         /// </summary>
         [<Erase>]
         static member val traceProcessWarnings: bool = Unchecked.defaultof<_> with get, set
@@ -37363,8 +37435,8 @@ module Main =
         static member val electron: string = Unchecked.defaultof<_> with get
 
         /// <summary>
-        /// A <c>boolean</c>. If the app is running as a Windows Store app (appx), this property is <c>true</c>, for otherwise it
-        /// is <c>undefined</c>.
+        /// A <c>boolean</c>. If the app is running as an MSIX package (including AppX for Windows Store), this property is <c>true</c>,
+        /// otherwise it is <c>undefined</c>.
         /// </summary>
         [<Erase>]
         static member val windowsStore: bool = Unchecked.defaultof<_> with get
@@ -37975,21 +38047,21 @@ module Main =
         /// </summary>
         [<Emit("$0.off('close', $1)")>]
         member inline _.offClose(handler: Event -> unit) : unit = Unchecked.defaultof<_>
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<Emit("$0.on('reply', $1)")>]
-        member inline _.onReply(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onReply(handler: Main.Details -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
@@ -37997,21 +38069,21 @@ module Main =
         member inline _.onReply(handler: Main.Notification.IOnReply -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<Emit("$0.once('reply', $1)")>]
-        member inline _.onceReply(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onceReply(handler: Main.Details -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
@@ -38019,21 +38091,21 @@ module Main =
         member inline _.onceReply(handler: Main.Notification.IOnReply -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
         [<Emit("$0.off('reply', $1)")>]
-        member inline _.offReply(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.offReply(handler: Main.Details -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the "Reply" button on a notification with <c>hasReply: true</c>.
         /// </summary>
@@ -38041,60 +38113,60 @@ module Main =
         member inline _.offReply(handler: Main.Notification.IOnReply -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('action', $1)")>]
-        member inline _.onAction(handler: Event -> float -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onAction(handler: Main.Details -> float -> float -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.on('action', $1)")>]
         member inline _.onAction(handler: Main.Notification.IOnAction -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('action', $1)")>]
-        member inline _.onceAction(handler: Event -> float -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onceAction(handler: Main.Details -> float -> float -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.once('action', $1)")>]
         member inline _.onceAction(handler: Main.Notification.IOnAction -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('action', $1)")>]
-        member inline _.offAction(handler: Event -> float -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.offAction(handler: Main.Details -> float -> float -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// </summary>
         [<Emit("$0.off('action', $1)")>]
@@ -38597,8 +38669,7 @@ module Main =
 
 
         /// <summary>
-        /// A <c>boolean</c> that indicates the whether the user has chosen via system accessibility settings to reduce transparency at the OS
-        /// level.
+        /// A <c>boolean</c> that indicates whether the user has chosen via system accessibility settings to reduce transparency at the OS level.
         /// </summary>
         [<Erase>]
         static member val prefersReducedTransparency: bool = Unchecked.defaultof<_> with get
@@ -39072,7 +39143,7 @@ module Main =
         /// top menu.<br/><br/>Also on Windows and Linux, you can use a <c>&amp;</c> in the top-level item name to indicate which letter
         /// should get a generated accelerator. For example, using <c>&amp;File</c> for the file menu would result in a generated <c>Alt-F</c> accelerator
         /// that opens the associated menu. The indicated character in the button label then gets an underline, and the <c>&amp;</c> character
-        /// is not displayed on the button label.<br/><br/>In order to escape the <c>&amp;</c> character in an item name, add a proceeding
+        /// is not displayed on the button label.<br/><br/>In order to escape the <c>&amp;</c> character in an item name, add a preceding
         /// <c>&amp;</c>. For example, <c>&amp;&amp;File</c> would result in <c>&amp;File</c> displayed on the button label.<br/><br/>Passing <c>null</c> will suppress the default menu. On
         /// Windows and Linux, this has the additional effect of removing the menu bar from the window.<br/><br/>&gt; [!NOTE] The default menu
         /// will be created automatically if the app does not set one. It contains standard items such as <c>File</c>, <c>Edit</c>, <c>View</c>,
@@ -39240,10 +39311,10 @@ module Main =
         member val role: Main.Enums.MenuItem.Role = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// An <c>Accelerator</c> (optional) indicating the item's accelerator, if set.
+        /// An <c>Accelerator | null</c> indicating the item's accelerator, if set.
         /// </summary>
         [<Erase>]
-        member val accelerator: Accelerator = Unchecked.defaultof<_> with get, set
+        member val accelerator: Option<Accelerator> = Unchecked.defaultof<_> with get, set
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
@@ -39560,25 +39631,25 @@ module Main =
         member inline _.offAborted(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.on('error', $1)")>]
         member inline _.onError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.once('error', $1)")>]
         member inline _.onceError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying while
-        /// the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event will
-        /// subsequently follow on the request object.
+        /// Emitted when an error was encountered while streaming response data events. For instance, if the server closes the underlying connection
+        /// while the response is still streaming, an <c>error</c> event will be emitted on the response object and a <c>close</c> event
+        /// will subsequently follow on the request object.
         /// </summary>
         [<Emit("$0.off('error', $1)")>]
         member inline _.offError(handler: Error -> unit) : unit = Unchecked.defaultof<_>
@@ -40690,8 +40761,8 @@ module Main =
 
         /// <summary>
         /// Displays a modal dialog that shows an error message.<br/><br/>This API can be called safely before the <c>ready</c> event the <c>app</c>
-        /// module emits, it is usually used to report errors in early stage of startup. If called before the app <c>ready</c>event
-        /// on Linux, the message will be emitted to stderr, and no GUI dialog will appear.
+        /// module emits, it is usually used to report errors in early stage of startup. If called before the app <c>ready</c>
+        /// event on Linux, the message will be emitted to stderr, and no GUI dialog will appear.
         /// </summary>
         /// <param name="title">The title to display in the error box.</param>
         /// <param name="content">The text content to display in the error box.</param>
@@ -40743,7 +40814,8 @@ module Main =
 
         /// <summary>
         /// Resolves with an array of <c>DesktopCapturerSource</c> objects, each <c>DesktopCapturerSource</c> represents a screen or an individual window that can be captured.<br/><br/>&gt;
-        /// [!NOTE] Capturing the screen contents requires user consent on macOS 10.15 Catalina or higher, which can detected by <c>systemPreferences.getMediaAccessStatus</c>.
+        /// [!NOTE]<br/><br/>&gt; * Capturing audio requires <c>NSAudioCaptureUsageDescription</c> Info.plist key on macOS 14.2 Sonoma and higher - read more.<br/>* Capturing the screen
+        /// contents requires user consent on macOS 10.15 Catalina or higher, which can detected by <c>systemPreferences.getMediaAccessStatus</c>.
         /// </summary>
         /// <param name="types">An array of strings that lists the types of desktop sources to be captured, available types can be <c>screen</c>
         /// and <c>window</c>.</param>
@@ -41215,7 +41287,7 @@ module Main =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ✔</para>
-    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipoard</c> API
+    /// &gt; Perform copy and paste operations on the system clipboard.<br/><br/>Process: Main, Renderer _Deprecated_ (non-sandboxed only)<br/><br/>&gt; [!NOTE] Using the <c>clipboard</c> API
     /// from the renderer process is deprecated.<br/><br/>&gt; [!IMPORTANT] If you want to call this API from a renderer process, place the
     /// API call in your preload script and expose it using the <c>contextBridge</c> API.<br/><br/>On Linux, there is also a <c>selection</c> clipboard.
     /// To manipulate it you need to pass <c>selection</c> to each method:
@@ -41661,8 +41733,8 @@ module Main =
 
         /// <summary>
         /// Cancels an ongoing HTTP transaction. If the request has already emitted the <c>close</c> event, the abort operation will have no
-        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object,it will
-        /// emit the <c>aborted</c> event.
+        /// effect. Otherwise an ongoing event will emit <c>abort</c> and <c>close</c> events. Additionally, if there is an ongoing response object, it
+        /// will emit the <c>aborted</c> event.
         /// </summary>
         [<Erase>]
         member inline _.abort() : unit = Unchecked.defaultof<_>
@@ -42823,7 +42895,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.on('new-window-for-tab', $1)")>]
         member inline _.onNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -42834,7 +42908,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.once('new-window-for-tab', $1)")>]
         member inline _.onceNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -42845,7 +42921,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.off('new-window-for-tab', $1)")>]
         member inline _.offNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -43157,7 +43235,8 @@ module Main =
         /// <summary>
         /// The <c>bounds</c> of the window as <c>Object</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value returned will be at minimum the Tray
         /// height. For example, calling <c>win.setBounds({ x: 25, y: 20, width: 800, height: 600 })</c> with a tray height of 38
-        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.
+        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.<br/><br/>&gt; [!NOTE] On Wayland, this method
+        /// will return <c>{ x: 0, y: 0, ... }</c> as introspecting or programmatically changing the global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getBounds() : Rectangle = Unchecked.defaultof<_>
@@ -43458,7 +43537,8 @@ module Main =
         member inline _.setPosition(x: int, y: int, ?animate: bool) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Contains the window's current position.
+        /// Contains the window's current position.<br/><br/>&gt; [!NOTE] On Wayland, this method will return <c>[0, 0]</c> as introspecting or programmatically changing the
+        /// global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getPosition() : int[] = Unchecked.defaultof<_>
@@ -43529,8 +43609,8 @@ module Main =
         /// </para>
         /// Whether the window is in Windows 10 tablet mode.<br/><br/>Since Windows 10 users can use their PC as tablet, under this
         /// mode apps can choose to optimize their UI for tablets, such as enlarging the titlebar and hiding titlebar buttons.<br/><br/>This API
-        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be be used to listen to changes
-        /// to tablet mode.
+        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be used to listen to changes to
+        /// tablet mode.
         /// </summary>
         [<Erase>]
         member inline _.isTabletMode() : bool = Unchecked.defaultof<_>
@@ -45646,7 +45726,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.on('new-window-for-tab', $1)")>]
         member inline _.onNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -45657,7 +45739,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.once('new-window-for-tab', $1)")>]
         member inline _.onceNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -45668,7 +45752,9 @@ module Main =
         /// <para>
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
-        /// Emitted when the native new tab button is clicked.
+        /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.off('new-window-for-tab', $1)")>]
         member inline _.offNewWindowForTab(handler: unit -> unit) : unit = Unchecked.defaultof<_>
@@ -45992,7 +46078,8 @@ module Main =
         /// <summary>
         /// The <c>bounds</c> of the window as <c>Object</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value returned will be at minimum the Tray
         /// height. For example, calling <c>win.setBounds({ x: 25, y: 20, width: 800, height: 600 })</c> with a tray height of 38
-        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.
+        /// means that <c>win.getBounds()</c> will return <c>{ x: 25, y: 38, width: 800, height: 600 }</c>.<br/><br/>&gt; [!NOTE] On Wayland, this method
+        /// will return <c>{ x: 0, y: 0, ... }</c> as introspecting or programmatically changing the global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getBounds() : Rectangle = Unchecked.defaultof<_>
@@ -46293,7 +46380,8 @@ module Main =
         member inline _.setPosition(x: int, y: int, ?animate: bool) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Contains the window's current position.
+        /// Contains the window's current position.<br/><br/>&gt; [!NOTE] On Wayland, this method will return <c>[0, 0]</c> as introspecting or programmatically changing the
+        /// global window coordinates is prohibited.
         /// </summary>
         [<Erase>]
         member inline _.getPosition() : int[] = Unchecked.defaultof<_>
@@ -46364,8 +46452,8 @@ module Main =
         /// </para>
         /// Whether the window is in Windows 10 tablet mode.<br/><br/>Since Windows 10 users can use their PC as tablet, under this
         /// mode apps can choose to optimize their UI for tablets, such as enlarging the titlebar and hiding titlebar buttons.<br/><br/>This API
-        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be be used to listen to changes
-        /// to tablet mode.
+        /// returns whether the window is in tablet mode, and the <c>resize</c> event can be used to listen to changes to
+        /// tablet mode.
         /// </summary>
         [<Erase>]
         member inline _.isTabletMode() : bool = Unchecked.defaultof<_>
@@ -47290,16 +47378,21 @@ module Main =
     /// to make it work. For server-side requirements, you can read Server Support. Note that App Transport Security (ATS) applies to
     /// all requests made as part of the update process. Apps that need to disable ATS can add the <c>NSAllowsArbitraryLoads</c> key
     /// to their app's plist.<br/><br/>&gt; [!IMPORTANT] Your application must be signed for automatic updates on macOS. This is a requirement of
-    /// <c>Squirrel.Mac</c>.<br/><br/>### Windows<br/><br/>On Windows, you have to install your app into a user's machine before you can use the <c>autoUpdater</c>, so
-    /// it is recommended that you use electron-winstaller or Electron Forge's Squirrel.Windows maker to generate a Windows installer.<br/><br/>Apps built with Squirrel.Windows
-    /// will trigger custom launch events that must be handled by your Electron application to ensure proper setup and teardown.<br/><br/>Squirrel.Windows apps
-    /// will launch with the <c>--squirrel-firstrun</c> argument immediately after installation. During this time, Squirrel.Windows will obtain a file lock on your
-    /// app, and <c>autoUpdater</c> requests will fail until the lock is released. In practice, this means that you won't be able
-    /// to check for updates on first launch for the first few seconds. You can work around this by not checking
-    /// for updates when <c>process.argv</c> contains the <c>--squirrel-firstrun</c> flag or by setting a 10-second timeout on your update checks (see electron/electron#7155
-    /// for more information).<br/><br/>The installer generated with Squirrel.Windows will create a shortcut icon with an Application User Model ID in the
-    /// format of <c>com.squirrel.PACKAGE_ID.YOUR_EXE_WITHOUT_DOT_EXE</c>, examples are <c>com.squirrel.slack.Slack</c> and <c>com.squirrel.code.Code</c>. You have to use the same ID for your app with <c>app.setAppUserModelId</c>
-    /// API, otherwise Windows will not be able to pin your app properly in task bar.
+    /// <c>Squirrel.Mac</c>.<br/><br/>### Windows<br/><br/>On Windows, the <c>autoUpdater</c> module automatically selects the appropriate update mechanism based on how your app is packaged:<br/><br/>* **MSIX
+    /// packages**: If your app is running as an MSIX package (created with electron-windows-msix and detected via <c>process.windowsStore</c>), the module uses
+    /// the MSIX updater, which supports direct MSIX file links and JSON update feeds.<br/>* **Squirrel.Windows**: For apps installed via traditional installers
+    /// (created with electron-winstaller or Electron Forge's Squirrel.Windows maker), the module uses Squirrel.Windows for updates.<br/><br/>You don't need to configure which updater
+    /// to use; Electron automatically detects the packaging format and uses the appropriate one.<br/><br/>### Squirrel.Windows<br/><br/>Apps built with Squirrel.Windows will trigger custom
+    /// launch events that must be handled by your Electron application to ensure proper setup and teardown.<br/><br/>Squirrel.Windows apps will launch with
+    /// the <c>--squirrel-firstrun</c> argument immediately after installation. During this time, Squirrel.Windows will obtain a file lock on your app, and <c>autoUpdater</c>
+    /// requests will fail until the lock is released. In practice, this means that you won't be able to check for
+    /// updates on first launch for the first few seconds. You can work around this by not checking for updates when
+    /// <c>process.argv</c> contains the <c>--squirrel-firstrun</c> flag or by setting a 10-second timeout on your update checks (see electron/electron#7155 for more information).<br/><br/>The
+    /// installer generated with Squirrel.Windows will create a shortcut icon with an Application User Model ID in the format of <c>com.squirrel.PACKAGE_ID.YOUR_EXE_WITHOUT_DOT_EXE</c>,
+    /// examples are <c>com.squirrel.slack.Slack</c> and <c>com.squirrel.code.Code</c>. You have to use the same ID for your app with <c>app.setAppUserModelId</c> API, otherwise Windows
+    /// will not be able to pin your app properly in task bar.<br/><br/>### MSIX Packages<br/><br/>When your app is packaged as an
+    /// MSIX, the <c>autoUpdater</c> module provides additional functionality:<br/><br/>* Use the <c>allowAnyVersion</c> option in <c>setFeedURL()</c> to allow updates to older versions (downgrades)<br/>*
+    /// Support for direct MSIX file links or JSON update feeds (similar to Squirrel.Mac format)
     /// </summary>
     [<Import("autoUpdater", "electron")>]
     type autoUpdater =
@@ -47381,7 +47474,7 @@ module Main =
         static member inline offUpdateNotAvailable(handler: unit -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.on('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47391,7 +47484,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.on('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47399,7 +47492,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.once('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47409,7 +47502,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.once('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47417,7 +47510,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.off('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47427,7 +47520,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// Emitted when an update has been downloaded.<br/><br/>On Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
+        /// Emitted when an update has been downloaded.<br/><br/>With Squirrel.Windows only <c>releaseName</c> is available.<br/><br/>&gt; [!NOTE] It is not strictly necessary to handle
         /// this event. A successfully downloaded update will still be applied the next time the application starts.
         /// </summary>
         [<Emit("$0.off('update-downloaded', $1)"); Import("autoUpdater", "electron")>]
@@ -47461,16 +47554,20 @@ module Main =
         /// <summary>
         /// Sets the <c>url</c> and initialize the auto updater.
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">The update server URL. For _Windows_ MSIX, this can be either a direct link to an MSIX file (e.g.,
+        /// <c>https://example.com/update.msix</c>) or a JSON endpoint that returns update information (see the Squirrel.Mac README for more information).</param>
         /// <param name="headers">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || HTTP request headers.</param>
         /// <param name="serverType">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be <c>json</c> or
         /// <c>default</c>, see the Squirrel.Mac README for more information.</param>
+        /// <param name="allowAnyVersion">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || If <c>true</c>, allows downgrades
+        /// to older versions for MSIX packages. Defaults to <c>false</c>.</param>
         [<Erase; ParamObject(0)>]
         static member inline setFeedURL
             (
                 url: string,
                 ?headers: Record<string, string>,
-                ?serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType
+                ?serverType: Main.Enums.AutoUpdater.SetFeedURL.Options.ServerType,
+                ?allowAnyVersion: bool
             ) : unit =
             Unchecked.defaultof<_>
 
@@ -48461,7 +48558,8 @@ module Main =
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
-        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.on('new-window-for-tab', $1)"); Import("app", "electron")>]
         static member inline onNewWindowForTab(handler: Event -> unit) : unit = Unchecked.defaultof<_>
@@ -48473,7 +48571,8 @@ module Main =
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
-        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.once('new-window-for-tab', $1)"); Import("app", "electron")>]
         static member inline onceNewWindowForTab(handler: Event -> unit) : unit = Unchecked.defaultof<_>
@@ -48485,7 +48584,8 @@ module Main =
         /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when the user clicks the native macOS new tab button. The new tab button is only visible if the
-        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>
+        /// current <c>BrowserWindow</c> has a <c>tabbingIdentifier</c>.<br/><br/>You must create a window in this handler in order for macOS tabbing to work as
+        /// expected.
         /// </summary>
         [<Emit("$0.off('new-window-for-tab', $1)"); Import("app", "electron")>]
         static member inline offNewWindowForTab(handler: Event -> unit) : unit = Unchecked.defaultof<_>
@@ -49253,7 +49353,7 @@ module Main =
 
         /// <summary>
         /// A path to a special directory or file associated with <c>name</c>. On failure, an <c>Error</c> is thrown.<br/><br/>If <c>app.getPath('logs')</c> is called
-        /// without called <c>app.setAppLogsPath()</c> being called first, a default log directory will be created equivalent to calling <c>app.setAppLogsPath()</c> without a <c>path</c>
+        /// without calling <c>app.setAppLogsPath()</c> being called first, a default log directory will be created equivalent to calling <c>app.setAppLogsPath()</c> without a <c>path</c>
         /// parameter.
         /// </summary>
         /// <param name="name">You can request the following paths by the name:</param>
@@ -49261,7 +49361,7 @@ module Main =
         static member inline getPath(name: Main.Enums.App.GetPath.Name) : string = Unchecked.defaultof<_>
 
         /// <summary>
-        /// fulfilled with the app's icon, which is a NativeImage.<br/><br/>Fetches a path's associated icon.<br/><br/>On _Windows_, there a 2 kinds of icons:<br/><br/>*
+        /// fulfilled with the app's icon, which is a NativeImage.<br/><br/>Fetches a path's associated icon.<br/><br/>On _Windows_, there are 2 kinds of icons:<br/><br/>*
         /// Icons associated with certain file extensions, like <c>.mp3</c>, <c>.png</c>, etc.<br/>* Icons inside the file itself, like <c>.exe</c>, <c>.dll</c>, <c>.ico</c>.<br/><br/>On _Linux_
         /// and _macOS_, icons depend on the application associated with file mime type.
         /// </summary>
@@ -49349,8 +49449,8 @@ module Main =
         /// possible return values differ between the two operating systems.<br/><br/>As can be seen with the example above, on Windows, it is
         /// possible that a preferred system language has no country code, and that one of the preferred system languages corresponds with
         /// the language used for the regional format. On macOS, the region serves more as a default country code: the user
-        /// doesn't need to have Finnish as a preferred language to use Finland as the region,and the country code <c>FI</c> is
-        /// used as the country code for preferred system languages that do not have associated countries in the language name.
+        /// doesn't need to have Finnish as a preferred language to use Finland as the region, and the country code <c>FI</c>
+        /// is used as the country code for preferred system languages that do not have associated countries in the language name.
         /// </summary>
         [<Erase>]
         static member inline getPreferredSystemLanguages() : string[] = Unchecked.defaultof<_>
@@ -49626,6 +49726,23 @@ module Main =
         static member inline setAppUserModelId(id: string) : unit = Unchecked.defaultof<_>
         #endif
 
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Changes the Toast Activator CLSID to <c>id</c>. If one is not set via this method, it will be randomly generated
+        /// for the app.<br/><br/>* The value must be a valid GUID/CLSID in one of the following forms:<br/>  * Canonical brace-wrapped:
+        /// <c>{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}</c> (preferred)<br/>  * Canonical without braces: <c>XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX</c> (braces will be added automatically)<br/>* Hex digits are case-insensitive.<br/><br/>This method should be
+        /// called early (before showing notifications) so the value is baked into the registration/shortcut. Supplying an empty string or an unparsable
+        /// value throws and leaves the existing (or generated) CLSID unchanged. If this method is never called, a random CLSID is
+        /// generated once per run and exposed via <c>app.toastActivatorCLSID</c>.
+        /// </summary>
+        /// <param name="id"></param>
+        [<Erase>]
+        static member inline setToastActivatorCLSID(id: string) : unit = Unchecked.defaultof<_>
+        #endif
+
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>
@@ -49707,7 +49824,7 @@ module Main =
         static member inline isHardwareAccelerationEnabled() : bool = Unchecked.defaultof<_>
 
         /// <summary>
-        /// By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain basis if the GPU processes crashes
+        /// By default, Chromium disables 3D APIs (e.g. WebGL) until restart on a per domain basis if the GPU process crashes
         /// too frequently. This function disables that behavior.<br/><br/>This method can only be called before app is ready.
         /// </summary>
         [<Erase>]
@@ -49729,7 +49846,8 @@ module Main =
         /// For <c>infoType</c> equal to <c>complete</c>: Promise is fulfilled with <c>Object</c> containing all the GPU Information as in chromium's GPUInfo object.
         /// This includes the version and driver information that's shown on <c>chrome://gpu</c> page.<br/><br/>For <c>infoType</c> equal to <c>basic</c>: Promise is fulfilled with
         /// <c>Object</c> containing fewer attributes than when requested with <c>complete</c>. Here's an example of basic response:<br/><br/>Using <c>basic</c> should be preferred if
-        /// only basic information like <c>vendorId</c> or <c>deviceId</c> is needed.
+        /// only basic information like <c>vendorId</c> or <c>deviceId</c> is needed.<br/><br/>Promise is rejected if the GPU is completely disabled, i.e. no hardware
+        /// and software implementations are available.
         /// </summary>
         /// <param name="infoType">Can be <c>basic</c> or <c>complete</c>.</param>
         [<Erase>]
@@ -50137,6 +50255,15 @@ module Main =
         /// </summary>
         [<Erase>]
         static member val isPackaged: bool = Unchecked.defaultof<_> with get
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+        /// A <c>string</c> property that returns the app's Toast Activator CLSID.
+        /// </summary>
+        [<Erase>]
+        static member val toastActivatorCLSID: string = Unchecked.defaultof<_> with get
+        #endif
+
 
         /// <summary>
         /// A <c>string</c> property that indicates the current application's name, which is the name in the application's <c>package.json</c> file.<br/><br/>Usually the <c>name</c>

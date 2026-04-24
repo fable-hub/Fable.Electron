@@ -7,7 +7,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IsPackable>true</IsPackable>
-        
+
         <PackageId>Fable.Electron.Forge</PackageId>
         <Title>Fable.Electron.Forge</Title>
         <RootNamespace>Fable.Electron</RootNamespace>
@@ -20,9 +20,9 @@
         <Authors>Shayan Habibi and Contributors</Authors>
         <Copyright>Copyright (c) 2025 Shayan Habibi and Fable-Hub contributors</Copyright>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>6.1.0</PackageVersion>
-        <Version>6.1.0</Version>
-        <GitNetInitialVersion>0.1.0</GitNetInitialVersion>
+        <PackageVersion>8.1.0</PackageVersion>
+        <Version>8.1.0</Version>
+        <GitNetInitialVersion>7.0.0</GitNetInitialVersion>
         <PackageIcon>feleico-dark.png</PackageIcon>
 
     </PropertyGroup>
