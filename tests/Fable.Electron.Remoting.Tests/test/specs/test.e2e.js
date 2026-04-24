@@ -7,9 +7,10 @@ import { parse } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Int32
 import { int32ToString, structuralHash, assertEqual } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Util.js";
 import { ofArray, contains } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/List.js";
 import { equals, class_type, decimal_type, string_type, float64_type, bool_type, int32_type } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Reflection.js";
-import { printf, toText } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/String.js";
+import { concat, printf, toText } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/String.js";
 import { Expect_notEqual, Expect_isTrue, Expect_isFalse } from "../../fable_modules/Fable.Mocha.2.17.0/Mocha.fs.js";
 import { isMatch } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/RegExp.js";
+import { some } from "../../fable_modules/fable-library-js.5.0.0-alpha.14/Option.js";
 
 describe("App loads correctly", () => {
     it("Switch window if required", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-decrement").then((_arg_2) => {
@@ -19,13 +20,13 @@ describe("App loads correctly", () => {
             return ((arg = head(_arg_3.filter((y) => (_arg_4 !== y))), browser.switchToWindow(arg))).then(() => (browser.$("#counter-button-decrement").then((_arg_6) => (expect(_arg_6).toBeExisting().then(() => (Promise.resolve(undefined)))))));
         })))) : (expect(dec_1).toBeExisting().then(() => (Promise.resolve(undefined))));
     })))));
-    it("Buttons and label exist", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-decrement").then((_arg_10) => (expect(_arg_10).toBeExisting().then(() => (browser.$("#counter-button-increment").then((_arg_12) => (expect(_arg_12).toBeExisting().then(() => (browser.$("#counter-button-disable").then((_arg_14) => (expect(_arg_14).toBeExisting().then(() => (browser.$("#counter-set-42").then((_arg_16) => (expect(_arg_16).toBeExisting().then(() => (browser.$("#counter-button-enable").then((_arg_18) => (expect(_arg_18).toBeExisting().then(() => (browser.$("#counter-text").then((_arg_20) => (expect(_arg_20).toBeExisting().then(() => (browser.$("#window-logger-button").then((_arg_22) => (expect(_arg_22).toBeExisting().then(() => (browser.$("#window-logger-output").then((_arg_24) => (expect(_arg_24).toBeExisting().then(() => (Promise.resolve(undefined)))))))))))))))))))))))))))))))))))));
+    it("Buttons and label exist", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-decrement").then((_arg_10) => (expect(_arg_10).toBeExisting().then(() => (browser.$("#counter-button-increment").then((_arg_12) => (expect(_arg_12).toBeExisting().then(() => (browser.$("#counter-button-disable").then((_arg_14) => (expect(_arg_14).toBeExisting().then(() => (browser.$("#counter-set-42").then((_arg_16) => (expect(_arg_16).toBeExisting().then(() => (browser.$("#counter-button-enable").then((_arg_18) => (expect(_arg_18).toBeExisting().then(() => (browser.$("#counter-text").then((_arg_20) => (expect(_arg_20).toBeExisting().then(() => (browser.$("#window-logger-button").then((_arg_22) => (expect(_arg_22).toBeExisting().then(() => (browser.$("#window-logger-output").then((_arg_24) => (expect(_arg_24).toBeExisting().then(() => (browser.$("#window-logger-from-value-button-multiple-args").then((_arg_26) => (expect(_arg_26).toBeExisting().then(() => (browser.$("#window-logger-from-value-output-multiple-args").then((_arg_28) => (expect(_arg_28).toBeExisting().then(() => (Promise.resolve(undefined)))))))))))))))))))))))))))))))))))))))))))));
     describe("Initial state is correct", () => {
         it("Label is zero", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => {
             let ele;
-            return ((ele = browser.$("#counter-text"), PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (ele.then((_arg_28) => (_arg_28.getText().then((_arg_1_1) => (Promise.resolve(parse(_arg_1_1, 511, false, 32))))))))))).then((_arg_29) => {
+            return ((ele = browser.$("#counter-text"), PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (ele.then((_arg_32) => (_arg_32.getText().then((_arg_1_1) => (Promise.resolve(parse(_arg_1_1, 511, false, 32))))))))))).then((_arg_33) => {
                 let copyOfStruct, arg_1, arg_1_1;
-                const actual = _arg_29 | 0;
+                const actual = _arg_33 | 0;
                 if ((actual === 0) ? true : !(new Function("try {return this===window;}catch(e){ return false;}"))()) {
                     assertEqual(actual, 0, "Label should be 0");
                 }
@@ -38,17 +39,17 @@ describe("App loads correctly", () => {
                 return Promise.resolve();
             });
         })));
-        it("Enable is disabled", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-enable").then((_arg_31) => (_arg_31.isEnabled().then((_arg_32) => {
-            Expect_isFalse(_arg_32)("Enable should be disabled");
+        it("Enable is disabled", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-enable").then((_arg_35) => (_arg_35.isEnabled().then((_arg_36) => {
+            Expect_isFalse(_arg_36)("Enable should be disabled");
             return Promise.resolve();
         })))))));
-        it("Disable is enabled", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-disable").then((_arg_34) => (_arg_34.isEnabled().then((_arg_35) => {
-            Expect_isTrue(_arg_35)("Disable should be enabled");
+        it("Disable is enabled", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#counter-button-disable").then((_arg_38) => (_arg_38.isEnabled().then((_arg_39) => {
+            Expect_isTrue(_arg_39)("Disable should be enabled");
             return Promise.resolve();
         })))))));
-        it("Window Logger output is empty", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-output").then((_arg_37) => (_arg_37.getText().then((_arg_38) => {
+        it("Window Logger output is empty", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-output").then((_arg_41) => (_arg_41.getText().then((_arg_42) => {
             let copyOfStruct_1;
-            const actual_3 = _arg_38;
+            const actual_3 = _arg_42;
             if ((actual_3 === "Placeholder") ? true : !(new Function("try {return this===window;}catch(e){ return false;}"))()) {
                 assertEqual(actual_3, "Placeholder", "Window Logger output should be Placeholder");
             }
@@ -57,6 +58,20 @@ describe("App loads correctly", () => {
                     Equals: equals,
                     GetHashCode: (x_1) => (structuralHash(x_1) | 0),
                 }) ? toText(printf("<span style=\'color:black\'>Expected:</span> <br /><div style=\'margin-left:20px; color:crimson\'>%s</div><br /><span style=\'color:black\'>Actual:</span> </br ><div style=\'margin-left:20px;color:crimson\'>%s</div><br /><span style=\'color:black\'>Message:</span> </br ><div style=\'margin-left:20px; color:crimson\'>%s</div>"))("Placeholder")(actual_3)("Window Logger output should be Placeholder") : toText(printf("<span style=\'color:black\'>Expected:</span> <br /><div style=\'margin-left:20px; color:crimson\'>%A</div><br /><span style=\'color:black\'>Actual:</span> </br ><div style=\'margin-left:20px;color:crimson\'>%A</div><br /><span style=\'color:black\'>Message:</span> </br ><div style=\'margin-left:20px; color:crimson\'>%s</div>"))("Placeholder")(actual_3)("Window Logger output should be Placeholder"));
+            }
+            return Promise.resolve();
+        })))))));
+        it("Window Logger fromValue output is empty", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-from-value-output-multiple-args").then((_arg_44) => (_arg_44.getText().then((_arg_45) => {
+            let copyOfStruct_2;
+            const actual_4 = _arg_45;
+            if ((actual_4 === "Placeholder") ? true : !(new Function("try {return this===window;}catch(e){ return false;}"))()) {
+                assertEqual(actual_4, "Placeholder", "Window Logger fromValue output should be Placeholder");
+            }
+            else {
+                throw new Error(contains((copyOfStruct_2 = actual_4, string_type), ofArray([int32_type, bool_type, float64_type, string_type, decimal_type, class_type("System.Guid")]), {
+                    Equals: equals,
+                    GetHashCode: (x_2) => (structuralHash(x_2) | 0),
+                }) ? toText(printf("<span style=\'color:black\'>Expected:</span> <br /><div style=\'margin-left:20px; color:crimson\'>%s</div><br /><span style=\'color:black\'>Actual:</span> </br ><div style=\'margin-left:20px;color:crimson\'>%s</div><br /><span style=\'color:black\'>Message:</span> </br ><div style=\'margin-left:20px; color:crimson\'>%s</div>"))("Placeholder")(actual_4)("Window Logger fromValue output should be Placeholder") : toText(printf("<span style=\'color:black\'>Expected:</span> <br /><div style=\'margin-left:20px; color:crimson\'>%A</div><br /><span style=\'color:black\'>Actual:</span> </br ><div style=\'margin-left:20px;color:crimson\'>%A</div><br /><span style=\'color:black\'>Message:</span> </br ><div style=\'margin-left:20px; color:crimson\'>%s</div>"))("Placeholder")(actual_4)("Window Logger fromValue output should be Placeholder"));
             }
             return Promise.resolve();
         })))))));
@@ -170,6 +185,18 @@ describe("Combination TWO Way and ONE Way IPC works", () => {
     })))))))))));
     it("Window Logger logs actions correctly (this tests two-way with IpcMainEvent)", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-output").then((_arg_41) => (browser.$("#window-logger-button").then((_arg_42) => (_arg_42.click().then(() => (_arg_41.getText().then((_arg_44) => {
         Expect_isTrue(isMatch(/^\[Window \d+-\d+\]:Hello from Renderer!$/gu, _arg_44))("Window Logger should log correct message");
+        return Promise.resolve();
+    })))))))))));
+    it("Window Logger logs multiple args correctly", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-output-multiple-args").then((_arg_46) => (browser.$("#window-logger-button-multiple-args").then((_arg_47) => (_arg_47.click().then(() => (_arg_46.getText().then((_arg_49) => {
+        const text_1 = _arg_49;
+        console.log(some(concat("Received text from Window Logger Multiple Args Output: ", ...text_1)));
+        Expect_isTrue(isMatch(/^\[Window \d+-\d+\]:Hello from Renderer!, 42, true$/gu, text_1))("Window Logger should log correct message with multiple args");
+        return Promise.resolve();
+    })))))))))));
+    it("Window Logger fromValue logs multiple args correctly", () => PromiseBuilder__Run_212F1D4B(promise, PromiseBuilder__Delay_62FBFDE1(promise, () => (browser.$("#window-logger-from-value-output-multiple-args").then((_arg_51) => (browser.$("#window-logger-from-value-button-multiple-args").then((_arg_52) => (_arg_52.click().then(() => (_arg_51.getText().then((_arg_54) => {
+        const text_2 = _arg_54;
+        console.log(some(concat("Received text from Window Logger fromValue Multiple Args Output: ", ...text_2)));
+        Expect_isTrue(isMatch(/^\[Direct-\d+\]:Hello from Renderer!, 42, true$/gu, text_2))("Window Logger fromValue should log correct message with multiple args");
         return Promise.resolve();
     })))))))))));
 });

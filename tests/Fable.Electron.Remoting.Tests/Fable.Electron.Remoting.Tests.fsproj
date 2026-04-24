@@ -21,6 +21,7 @@
         <Compile Include="src\preload.fs" />
         <Compile Include="src\renderer.fs" />
         <Compile Include="test\specs\test.e2e.fs" />
+        <Compile Include="test\specs\unmount.e2e.fs" />
         <Content Include="wdio.conf.js" />
     </ItemGroup>
 
