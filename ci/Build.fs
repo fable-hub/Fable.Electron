@@ -141,7 +141,20 @@ Target.create Ops.push (fun _ ->
     Target.deactivateFinal Ops.gitnet)
 
 Target.create Ops.generateApiDocs (ignore >> ApiDocs.validateDir >> ApiDocs.build)
-Target.create Ops.setupTest (fun _ -> Electron.installTests Args.npmCi)
+Target.create Ops.setupTest (fun _ ->
+    // If the CI fails because of a lock file error, then we'll do a standard install first
+    // to update the lock file, try again, and then fallback again to a clean install if that also fails.
+    try Electron.installTests Args.npmCi with
+    | e when
+        Args.npmCi
+        && (e.Message.Contains("code EUSAGE")
+            || e.Message.Contains("Please update your lock file with `npm install`")) ->
+        try
+        Electron.installTests false
+        with
+        | _ -> Electron.installTests true
+    | _ -> reraise()
+)
 
 Target.create Ops.test
 <| function
