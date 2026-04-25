@@ -34,6 +34,13 @@ The example below should log 'Move' when the browser window is moved.
 Unlike the Two-Way IPC, the signatures for One-Way are treated synchronously.
 :::
 
+:::note Disposable Handlers
+For UI lifecycles (for example React unmount), prefer `Remoting.buildProxyReceiverDisposable` on the renderer.
+It returns a disposer with signature `unit -> unit` that unsubscribes all registered listeners for that handler registration.
+
+The returned disposer is idempotent, so calling it more than once is safe.
+:::
+
 <Tabs>
 <TabItem value={"shared"} label={"Shared.fs"}>
 ```fsharp showLineNumbers
@@ -76,9 +83,9 @@ let createWindow() =
     mainWindow.webContents.openDevTools(Enums.WebContents.OpenDevTools.Options.Mode.Right)
     // highlight-start
     let sendMsg =
-        Remoting.init
+        Remoting.createIpc ()
         |> Remoting.withWindow mainWindow
-        |> Remoting.buildClient<Shared.ExampleMainToRenderer>
+        |> Remoting.buildProxySender<Shared.ExampleMainToRenderer>
     mainWindow.onMove(fun _ ->
         sendMsg.LogMove "Moved!" 0
     )
@@ -104,9 +111,9 @@ app.onWindowAllClosed(fun () ->
 ```fsharp showLineNumbers
 open Fable.Electron.Playground.Shared
 open Fable.Electron.Remoting.Preload
-    
+
 // highlight-start
-Remoting.init
+Remoting.createIpc ()
 |> Remoting.buildBridge<ExampleMainToRenderer>
 // highlight-end
 ```
@@ -120,15 +127,29 @@ open Browser.Dom
 importSideEffects "./index.css"
 
 console.log "This message is being logged by 'renderer.js', included via VITE"
-    
+
 // highlight-start
 let handler = { Shared.LogMove = fun t i -> console.log t }
-Remoting.init
-|> Remoting.buildHandler handler
+let disposeHandler =
+    Remoting.createIpc ()
+    |> Remoting.buildProxyReceiverDisposable handler
+
+// Later, when unmounting / tearing down subscriptions:
+disposeHandler ()
+disposeHandler () // safe: second call is a no-op
 // highlight-end
 ```
 </TabItem>
 </Tabs>
+
+If you do not need a disposer, use `Remoting.buildProxyReceiver`.
+It registers the handler and discards the returned disposal function.
+
+```fsharp
+let handler = { Shared.LogMove = fun t i -> console.log t }
+Remoting.createIpc ()
+|> Remoting.buildProxyReceiver handler
+```
 
 :::warning
 The API for `Fable.Electron.Remoting` is highly likely to change

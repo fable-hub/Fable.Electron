@@ -34,6 +34,8 @@ Be aware that each of `Main`, `Renderer` and `Preload` have their own `Fable.Ele
 ## Build Names
 
 The Remoting build names follow a common pattern:
-* When a router is initiating communication, it is the client, and the build command will be `Remoting.buildClient`
-* When a router is receiving communication, it is the handler, and the build command will be `Remoting.buildHandler`
+* When a router is initiating communication, it is the sender/client, and the build command will be `Remoting.buildProxySender`
+* When a router is receiving communication, it is the handler.
+	* `Remoting.buildProxyReceiver` registers the handler and returns `unit`.
+	* `Remoting.buildProxyReceiverDisposable` registers the handler and returns `unit -> unit` for unmount/cleanup flows.
 * When a router acts as a bridge (the preload script), the command is a derivative of `Remoting.buildBridge` (`Remoting.buildTwoWayBridge` in the case of the two way IPC)

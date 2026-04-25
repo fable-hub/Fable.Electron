@@ -21,31 +21,34 @@ open Fable.SimpleJson
 /// <summary>
 /// Configuration of Proxy routers
 /// </summary>
-type RemotingConfig =
-    {
-        /// <summary>
-        /// Used in the ApiNameMap to create the property name on the window that the proxy
-        /// is exposed through.
-        /// </summary>
-        ApiNameBase: string
-        /// <summary>
-        /// A map that takes the <c>ApiNameBase</c> and the <c>TypeName</c> of the implementation to
-        /// create the name of the property on the window that the proxy is exposed through.
-        /// </summary>
-        ApiNameMap: string -> string -> string
-        /// <summary>
-        /// A function that takes the <c>Type</c> name and the <c>Field</c> name to create a channel
-        /// name which messages are proxied through.
-        /// </summary>
-        ChannelNameMap: string -> string -> string
-    }
+type RemotingConfig = {
+    /// <summary>
+    /// Used in the ApiNameMap to create the property name on the window that the proxy
+    /// is exposed through.
+    /// </summary>
+    ApiNameBase: string
+    /// <summary>
+    /// A map that takes the <c>ApiNameBase</c> and the <c>TypeName</c> of the implementation to
+    /// create the name of the property on the window that the proxy is exposed through.
+    /// </summary>
+    ApiNameMap: string -> string -> string
+    /// <summary>
+    /// A function that takes the <c>Type</c> name and the <c>Field</c> name to create a channel
+    /// name which messages are proxied through.
+    /// </summary>
+    ChannelNameMap: string -> string -> string
+}
 //%REMOTING_TYPE%END%
 [<Erase>]
 module Remoting =
-    let init =
-        { ApiNameBase = "FABLE_REMOTING"
-          ApiNameMap = fun baseName typeName -> sprintf $"%s{baseName}_{typeName}"
-          ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}" }
+    let createIpc () = {
+        ApiNameBase = "FABLE_REMOTING"
+        ApiNameMap = fun baseName typeName -> sprintf $"%s{baseName}_{typeName}"
+        ChannelNameMap = fun typeName fieldName -> sprintf $"%s{typeName}:%s{fieldName}"
+    }
+
+    [<System.Obsolete("This method will be replaced by `createIpc()`. Please use that instead.")>]
+    let init = createIpc ()
 
     let withApiNameBase apiName config = { config with ApiNameBase = apiName }
     let withApiNameMap func config = { config with ApiNameMap = func }
@@ -75,16 +78,16 @@ module private Proxy =
         fun arg0 arg1 arg2 arg3 arg4 arg5 arg6 arg7 ->
             let inputArguments =
                 if funcNeedParameters then
-                    Array.take
-                        argumentCount
-                        [| box arg0
-                           box arg1
-                           box arg2
-                           box arg3
-                           box arg4
-                           box arg5
-                           box arg6
-                           box arg7 |]
+                    Array.take argumentCount [|
+                        box arg0
+                        box arg1
+                        box arg2
+                        box arg3
+                        box arg4
+                        box arg5
+                        box arg6
+                        box arg7
+                    |]
                 else
                     [||]
 
@@ -100,48 +103,49 @@ type Remoting =
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
 
-            let recordFields =
-                [| for field in fields do
-                       let normalize n =
-                           let fn = Proxy.proxyFetch recordType.Name field config
+            let recordFields = [|
+                for field in fields do
+                    let normalize n =
+                        let fn = Proxy.proxyFetch recordType.Name field config
 
-                           match n with
-                           | 0 -> box (fn null null null null null null null null)
-                           | 1 -> box (fun a -> fn a null null null null null null null)
-                           | 2 ->
-                               let proxyF a b = fn a b null null null null null null
-                               unbox (System.Func<_, _, _> proxyF)
-                           | 3 ->
-                               let proxyF a b c = fn a b c null null null null null
-                               unbox (System.Func<_, _, _, _> proxyF)
-                           | 4 ->
-                               let proxyF a b c d = fn a b c d null null null null
-                               unbox (System.Func<_, _, _, _, _> proxyF)
-                           | 5 ->
-                               let proxyF a b c d e = fn a b c d e null null null
-                               unbox (System.Func<_, _, _, _, _, _> proxyF)
-                           | 6 ->
-                               let proxyF a b c d e f = fn a b c d e f null null
-                               unbox (System.Func<_, _, _, _, _, _, _> proxyF)
-                           | 7 ->
-                               let proxyF a b c d e f g = fn a b c d e f g null
-                               unbox (System.Func<_, _, _, _, _, _, _, _> proxyF)
-                           | 8 ->
-                               let proxyF a b c d e f g h = fn a b c d e f g h
-                               unbox (System.Func<_, _, _, _, _, _, _, _, _> proxyF)
-                           | _ ->
-                               failwithf
-                                   $"Cannot generate proxy function for %s{field.FieldName}. \
+                        match n with
+                        | 0 -> box (fn null null null null null null null null)
+                        | 1 -> box (fun a -> fn a null null null null null null null)
+                        | 2 ->
+                            let proxyF a b = fn a b null null null null null null
+                            unbox (System.Func<_, _, _> proxyF)
+                        | 3 ->
+                            let proxyF a b c = fn a b c null null null null null
+                            unbox (System.Func<_, _, _, _> proxyF)
+                        | 4 ->
+                            let proxyF a b c d = fn a b c d null null null null
+                            unbox (System.Func<_, _, _, _, _> proxyF)
+                        | 5 ->
+                            let proxyF a b c d e = fn a b c d e null null null
+                            unbox (System.Func<_, _, _, _, _, _> proxyF)
+                        | 6 ->
+                            let proxyF a b c d e f = fn a b c d e f null null
+                            unbox (System.Func<_, _, _, _, _, _, _> proxyF)
+                        | 7 ->
+                            let proxyF a b c d e f g = fn a b c d e f g null
+                            unbox (System.Func<_, _, _, _, _, _, _, _> proxyF)
+                        | 8 ->
+                            let proxyF a b c d e f g h = fn a b c d e f g h
+                            unbox (System.Func<_, _, _, _, _, _, _, _, _> proxyF)
+                        | _ ->
+                            failwithf
+                                $"Cannot generate proxy function for %s{field.FieldName}. \
                                 Only up to 8 arguments are supported. Consider using a record type as input"
 
-                       let argumentCount =
-                           match field.FieldType with
-                           | TypeInfo.Async _ -> 0
-                           | TypeInfo.Promise _ -> 0
-                           | TypeInfo.Func getArgs -> Array.length (getArgs ()) - 1
-                           | _ -> 0
+                    let argumentCount =
+                        match field.FieldType with
+                        | TypeInfo.Async _ -> 0
+                        | TypeInfo.Promise _ -> 0
+                        | TypeInfo.Func getArgs -> Array.length (getArgs ()) - 1
+                        | _ -> 0
 
-                       normalize argumentCount |]
+                    normalize argumentCount
+            |]
 
             let proxy = FSharpValue.MakeRecord(recordType, recordFields)
             contextBridge.exposeInMainWorld (config.ApiNameMap config.ApiNameBase resolvedType.Name, proxy)
@@ -160,17 +164,27 @@ type Remoting =
         | TypeInfo.Record getFields ->
             let fields, recordType = getFields ()
 
-            let recordFields =
-                [| for field in fields do
-                       let fieldName = field.FieldName
-                       let channelName = makeChannelName fieldName
+            let recordFields = [|
+                for field in fields do
+                    let fieldName = field.FieldName
+                    let channelName = makeChannelName fieldName
 
-                       let func =
-                           emitJsExpr
-                               channelName
-                               "(callback) => ipcRenderer.on($0, (_event, ...args) => callback(...args))"
+                    let func =
+                        emitJsExpr
+                            channelName
+                            "(callback) => {
+                                let disposed = false;
+                                const listener = (_event, ...args) => callback(...args);
+                                ipcRenderer.on($0, listener);
+                                return () => {
+                                    if (disposed) { return; }
+                                    disposed = true;
+                                    ipcRenderer.removeListener($0, listener);
+                                };
+                            }"
 
-                       box func |]
+                    box func
+            |]
 
             let proxy = FSharpValue.MakeRecord(recordType, recordFields)
             contextBridge.exposeInMainWorld (bridgeName, proxy)
