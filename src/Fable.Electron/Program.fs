@@ -19,9 +19,12 @@ module Types =
             /// <param name="sharedTexturePixelFormat">The requested output format of the shared texture. Defaults to <c>argb</c>. The name is originated from Chromium <c>media::VideoPixelFormat</c> enum
             /// suffix and only subset of them are supported. The actual output pixel format and color space of the texture should
             /// refer to <c>OffscreenSharedTexture</c> object in the <c>paint</c> event.</param>
+            /// <param name="deviceScaleFactor">The device scale factor of the offscreen rendering output. If not set, will use primary display's scale factor as
+            /// default.</param>
             (
                 ?useSharedTexture: bool,
-                ?sharedTexturePixelFormat: Enums.Types.WebPreferences.Offscreen.SharedTexturePixelFormat
+                ?sharedTexturePixelFormat: Enums.Types.WebPreferences.Offscreen.SharedTexturePixelFormat,
+                ?deviceScaleFactor: float
             ) =
             class
             end
@@ -41,6 +44,12 @@ module Types =
             [<Erase; Experimental("Experimental according to Electron")>]
             member val sharedTexturePixelFormat: Enums.Types.WebPreferences.Offscreen.SharedTexturePixelFormat =
                 Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// The device scale factor of the offscreen rendering output. If not set, will use primary display's scale factor as default.
+            /// </summary>
+            [<Erase; Experimental("Experimental according to Electron")>]
+            member val deviceScaleFactor: float = Unchecked.defaultof<_> with get, set
 
         [<JS.Pojo>]
         type DefaultFontFamily
@@ -606,6 +615,7 @@ module Types =
             /// <param name="corsEnabled">Default false.</param>
             /// <param name="stream">Default false.</param>
             /// <param name="codeCache">Enable V8 code cache for the scheme, only works when <c>standard</c> is also set to true. Default false.</param>
+            /// <param name="allowExtensions">Allow Chrome extensions to be used on pages served over this protocol. Default false.</param>
             (
                 ?standard: bool,
                 ?secure: bool,
@@ -614,7 +624,8 @@ module Types =
                 ?supportFetchAPI: bool,
                 ?corsEnabled: bool,
                 ?stream: bool,
-                ?codeCache: bool
+                ?codeCache: bool,
+                ?allowExtensions: bool
             ) =
             class
             end
@@ -666,6 +677,12 @@ module Types =
             /// </summary>
             [<Erase>]
             member val codeCache: bool = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// Allow Chrome extensions to be used on pages served over this protocol. Default false.
+            /// </summary>
+            [<Erase>]
+            member val allowExtensions: bool = Unchecked.defaultof<_> with get, set
 
     module BrowserWindowConstructorOptions =
         [<JS.Pojo>]
@@ -25326,8 +25343,8 @@ module Main =
             /// was opened as a login item that should restore the state from the previous session. This indicates that the app
             /// should restore the windows that were open the last time the app was closed. This setting is not available on
             /// MAS builds or on macOS 13 and up.</param>
-            /// <param name="status">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || can be one of
-            /// <c>not-registered</c>, <c>enabled</c>, <c>requires-approval</c>, or <c>not-found</c>.</param>
+            /// <param name="status">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || can be <c>not-registered</c>, <c>enabled</c>,
+            /// <c>requires-approval</c>, or <c>not-found</c>.</param>
             /// <param name="executableWillLaunchAtLogin">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || <c>true</c> if app is
             /// set to open at login and its run key is not deactivated. This differs from <c>openAtLogin</c> as it ignores the
             /// <c>args</c> option, this property will be true if the given executable would be launched at login with <b>any</b> arguments.</param>
@@ -25352,7 +25369,7 @@ module Main =
                 #endif
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
                 ,
-                status: string
+                status: Main.Enums.App.GetLoginItemSettings.Status
                 #endif
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
                 ,
@@ -25415,10 +25432,10 @@ module Main =
             #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
             /// <summary>
             /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
-            /// can be one of <c>not-registered</c>, <c>enabled</c>, <c>requires-approval</c>, or <c>not-found</c>.
+            /// can be <c>not-registered</c>, <c>enabled</c>, <c>requires-approval</c>, or <c>not-found</c>.
             /// </summary>
             [<Erase>]
-            member val status: string = Unchecked.defaultof<_> with get, set
+            member val status: Main.Enums.App.GetLoginItemSettings.Status = Unchecked.defaultof<_> with get, set
             #endif
 
             #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
@@ -25450,7 +25467,7 @@ module Main =
                 /// app that corresponds to a registry entry.</param>
                 /// <param name="args">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || the command-line arguments to
                 /// pass to the executable.</param>
-                /// <param name="scope">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || one of <c>user</c> or
+                /// <param name="scope">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || can be <c>user</c> or
                 /// <c>machine</c>. Indicates whether the registry entry is under <c>HKEY_CURRENT USER</c> or <c>HKEY_LOCAL_MACHINE</c>.</param>
                 /// <param name="enabled">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || <c>true</c> if the app
                 /// registry key is startup approved and therefore shows as <c>enabled</c> in Task Manager and Windows settings.</param>
@@ -25468,7 +25485,7 @@ module Main =
                     #endif
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
                     ,
-                    scope: string
+                    scope: Main.Enums.App.GetLoginItemSettings.LaunchItems.Scope
                     #endif
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
                     ,
@@ -25508,10 +25525,11 @@ module Main =
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
                 /// <summary>
                 /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
-                /// one of <c>user</c> or <c>machine</c>. Indicates whether the registry entry is under <c>HKEY_CURRENT USER</c> or <c>HKEY_LOCAL_MACHINE</c>.
+                /// can be <c>user</c> or <c>machine</c>. Indicates whether the registry entry is under <c>HKEY_CURRENT USER</c> or <c>HKEY_LOCAL_MACHINE</c>.
                 /// </summary>
                 [<Erase>]
-                member val scope: string = Unchecked.defaultof<_> with get, set
+                member val scope: Main.Enums.App.GetLoginItemSettings.LaunchItems.Scope =
+                    Unchecked.defaultof<_> with get, set
                 #endif
 
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
@@ -25526,9 +25544,9 @@ module Main =
 
             [<JS.Pojo>]
             type Options
-                /// <param name="type">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be one of
-                /// <c>mainAppService</c>, <c>agentService</c>, <c>daemonService</c>, or <c>loginItemService</c>. Defaults to <c>mainAppService</c>. Only available on macOS 13 and up. See app.setLoginItemSettings for more information
-                /// about each type.</param>
+                /// <param name="type">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be <c>mainAppService</c>, <c>agentService</c>,
+                /// <c>daemonService</c>, or <c>loginItemService</c>. Defaults to <c>mainAppService</c>. Only available on macOS 13 and up. See app.setLoginItemSettings for more information about each
+                /// type.</param>
                 /// <param name="serviceName">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The name of the
                 /// service. Required if <c>type</c> is non-default. Only available on macOS 13 and up.</param>
                 /// <param name="path">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || The executable path to
@@ -25537,7 +25555,7 @@ module Main =
                 /// compare against. Defaults to an empty array.</param>
                 (
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
-                    ?``type``: string
+                    ?``type``: Main.Enums.App.GetLoginItemSettings.Options.Type
                     #endif
                     #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
                     ,
@@ -25558,11 +25576,12 @@ module Main =
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
                 /// <summary>
                 /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
-                /// Can be one of <c>mainAppService</c>, <c>agentService</c>, <c>daemonService</c>, or <c>loginItemService</c>. Defaults to <c>mainAppService</c>. Only available on macOS 13 and up. See
-                /// app.setLoginItemSettings for more information about each type.
+                /// Can be <c>mainAppService</c>, <c>agentService</c>, <c>daemonService</c>, or <c>loginItemService</c>. Defaults to <c>mainAppService</c>. Only available on macOS 13 and up. See app.setLoginItemSettings for
+                /// more information about each type.
                 /// </summary>
                 [<Erase>]
-                member val ``type``: string = Unchecked.defaultof<_> with get, set
+                member val ``type``: Main.Enums.App.GetLoginItemSettings.Options.Type =
+                    Unchecked.defaultof<_> with get, set
                 #endif
 
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
@@ -27104,21 +27123,6 @@ module Main =
                         | [<CompiledName("serviceworkers")>] Serviceworkers
                         | [<CompiledName("cachestorage")>] Cachestorage
 
-        module Details =
-            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type Level =
-                | [<CompiledName("info")>] Info
-                | [<CompiledName("warning")>] Warning
-                | [<CompiledName("error")>] Error
-                | [<CompiledName("debug")>] Debug
-
-            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-            type RunningStatus =
-                | [<CompiledName("starting")>] Starting
-                | [<CompiledName("running")>] Running
-                | [<CompiledName("stopping")>] Stopping
-                | [<CompiledName("stopped")>] Stopped
-
         module ServiceWorkers =
             module ConsoleMessage =
                 module MessageDetails =
@@ -27229,6 +27233,27 @@ module Main =
                 | [<CompiledName("idle")>] Idle
                 | [<CompiledName("locked")>] Locked
                 | [<CompiledName("unknown")>] Unknown
+
+        module Details =
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type Level =
+                | [<CompiledName("info")>] Info
+                | [<CompiledName("warning")>] Warning
+                | [<CompiledName("error")>] Error
+                | [<CompiledName("debug")>] Debug
+
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type RunningStatus =
+                | [<CompiledName("starting")>] Starting
+                | [<CompiledName("running")>] Running
+                | [<CompiledName("stopping")>] Stopping
+                | [<CompiledName("stopped")>] Stopped
+
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type Reason =
+                | [<CompiledName("userCanceled")>] UserCanceled
+                | [<CompiledName("applicationHidden")>] ApplicationHidden
+                | [<CompiledName("timedOut")>] TimedOut
 
         module Notification =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -28082,6 +28107,28 @@ module Main =
                         /// </summary>
                         | [<CompiledName("loginItemService")>] LoginItemService
 
+            module GetLoginItemSettings =
+                module LaunchItems =
+                    [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+                    type Scope =
+                        | [<CompiledName("user")>] User
+                        | [<CompiledName("machine")>] Machine
+
+                [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+                type Status =
+                    | [<CompiledName("not-registered")>] NotRegistered
+                    | [<CompiledName("enabled")>] Enabled
+                    | [<CompiledName("requires-approval")>] RequiresApproval
+                    | [<CompiledName("not-found")>] NotFound
+
+                module Options =
+                    [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+                    type Type =
+                        | [<CompiledName("mainAppService")>] MainAppService
+                        | [<CompiledName("agentService")>] AgentService
+                        | [<CompiledName("daemonService")>] DaemonService
+                        | [<CompiledName("loginItemService")>] LoginItemService
+
             module GetGPUInfo =
                 [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                 type InfoType =
@@ -28190,9 +28237,9 @@ module Main =
     type Details =
         inherit Event
         /// <summary>
-        /// The string the user entered into the inline reply field.
+        /// The reason the notification was closed. This can be 'userCanceled', 'applicationHidden', or 'timedOut'.
         /// </summary>
-        abstract member reply: string with get, set
+        abstract member reason: Main.Enums.Details.Reason with get, set
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ❌</para>
@@ -36723,8 +36770,8 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// The current absolute position of the mouse pointer.<br/><br/>&gt; [!NOTE] The return value is a DIP point, not a screen physical
-        /// point.
+        /// The current absolute position of the mouse pointer.<br/><br/>Not supported on Wayland (Linux).<br/><br/>&gt; [!NOTE] The return value is a DIP point,
+        /// not a screen physical point.
         /// </summary>
         [<Erase>]
         static member inline getCursorScreenPoint() : Point = Unchecked.defaultof<_>
@@ -38026,7 +38073,7 @@ module Main =
         /// but the <c>close</c> event will not be emitted again.
         /// </summary>
         [<Emit("$0.on('close', $1)")>]
-        member inline _.onClose(handler: Event -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onClose(handler: Main.Details -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Emitted when the notification is closed by manual intervention from the user.<br/><br/>This event is not guaranteed to be emitted in
@@ -38036,7 +38083,7 @@ module Main =
         /// but the <c>close</c> event will not be emitted again.
         /// </summary>
         [<Emit("$0.once('close', $1)")>]
-        member inline _.onceClose(handler: Event -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.onceClose(handler: Main.Details -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Emitted when the notification is closed by manual intervention from the user.<br/><br/>This event is not guaranteed to be emitted in
@@ -38046,7 +38093,7 @@ module Main =
         /// but the <c>close</c> event will not be emitted again.
         /// </summary>
         [<Emit("$0.off('close', $1)")>]
-        member inline _.offClose(handler: Event -> unit) : unit = Unchecked.defaultof<_>
+        member inline _.offClose(handler: Main.Details -> unit) : unit = Unchecked.defaultof<_>
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
@@ -39147,7 +39194,7 @@ module Main =
         /// <c>&amp;</c>. For example, <c>&amp;&amp;File</c> would result in <c>&amp;File</c> displayed on the button label.<br/><br/>Passing <c>null</c> will suppress the default menu. On
         /// Windows and Linux, this has the additional effect of removing the menu bar from the window.<br/><br/>&gt; [!NOTE] The default menu
         /// will be created automatically if the app does not set one. It contains standard items such as <c>File</c>, <c>Edit</c>, <c>View</c>,
-        /// <c>Window</c> and <c>Help</c>.
+        /// and <c>Window</c>.
         /// </summary>
         /// <param name="menu"></param>
         [<Erase>]
@@ -39270,13 +39317,13 @@ module Main =
         end
 
         /// <summary>
-        /// A <c>string</c> indicating the item's unique id. This property can be dynamically changed.
+        /// A <c>string</c> indicating the item's unique id.<br/><br/>This property can be dynamically changed.
         /// </summary>
         [<Erase>]
         member val id: string = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// A <c>string</c> indicating the item's visible label.
+        /// A <c>string</c> indicating the item's visible label.<br/><br/>This property can be dynamically changed.
         /// </summary>
         [<Erase>]
         member val label: string = Unchecked.defaultof<_> with get, set
@@ -39328,13 +39375,13 @@ module Main =
 
 
         /// <summary>
-        /// A <c>NativeImage | string</c> (optional) indicating the item's icon, if set.
+        /// A <c>NativeImage | string</c> (optional) indicating the item's icon, if set.<br/><br/>This property can be dynamically changed.
         /// </summary>
         [<Erase>]
         member val icon: U2<Main.NativeImage, string> = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// A <c>string</c> indicating the item's sublabel.
+        /// A <c>string</c> indicating the item's sublabel.<br/><br/>This property can be dynamically changed.
         /// </summary>
         [<Erase>]
         member val sublabel: string = Unchecked.defaultof<_> with get, set
@@ -39349,21 +39396,21 @@ module Main =
 
 
         /// <summary>
-        /// A <c>boolean</c> indicating whether the item is enabled. This property can be dynamically changed.
+        /// A <c>boolean</c> indicating whether the item is enabled.<br/><br/>This property can be dynamically changed.
         /// </summary>
         [<Erase>]
         member val enabled: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// A <c>boolean</c> indicating whether the item is visible. This property can be dynamically changed.
+        /// A <c>boolean</c> indicating whether the item is visible.<br/><br/>This property can be dynamically changed.
         /// </summary>
         [<Erase>]
         member val visible: bool = Unchecked.defaultof<_> with get, set
 
         /// <summary>
-        /// A <c>boolean</c> indicating whether the item is checked. This property can be dynamically changed.<br/><br/>A <c>checkbox</c> menu item will toggle the
-        /// <c>checked</c> property on and off when selected.<br/><br/>A <c>radio</c> menu item will turn on its <c>checked</c> property when clicked, and will
-        /// turn off that property for all adjacent items in the same menu.<br/><br/>You can add a <c>click</c> function for additional behavior.
+        /// A <c>boolean</c> indicating whether the item is checked.<br/><br/>This property can be dynamically changed.<br/><br/>A <c>checkbox</c> menu item will toggle the <c>checked</c>
+        /// property on and off when selected.<br/><br/>A <c>radio</c> menu item will turn on its <c>checked</c> property when clicked, and will turn
+        /// off that property for all adjacent items in the same menu.<br/><br/>You can add a <c>click</c> function for additional behavior.
         /// </summary>
         [<Erase>]
         member val ``checked``: bool = Unchecked.defaultof<_> with get, set
@@ -49905,18 +49952,18 @@ module Main =
         /// _macOS_ _Deprecated_ - <c>true</c> if the app was opened as a login item that should restore the state from the
         /// previous session. This indicates that the app should restore the windows that were open the last time the app was
         /// closed. This setting is not available on MAS builds or on macOS 13 and up.<br/>* <c>status</c> string _macOS_ - can
-        /// be one of <c>not-registered</c>, <c>enabled</c>, <c>requires-approval</c>, or <c>not-found</c>.<br/>* <c>executableWillLaunchAtLogin</c> boolean _Windows_ - <c>true</c> if app is set to open at
-        /// login and its run key is not deactivated. This differs from <c>openAtLogin</c> as it ignores the <c>args</c> option, this property
-        /// will be true if the given executable would be launched at login with <b>any</b> arguments.<br/>* <c>launchItems</c> Object[] _Windows_<br/>  *
-        /// <c>name</c> string _Windows_ - name value of a registry entry.<br/>  * <c>path</c> string _Windows_ - The executable to an
-        /// app that corresponds to a registry entry.<br/>  * <c>args</c> string[] _Windows_ - the command-line arguments to pass to the
-        /// executable.<br/>  * <c>scope</c> string _Windows_ - one of <c>user</c> or <c>machine</c>. Indicates whether the registry entry is under <c>HKEY_CURRENT
-        /// USER</c> or <c>HKEY_LOCAL_MACHINE</c>.<br/>  * <c>enabled</c> boolean _Windows_ - <c>true</c> if the app registry key is startup approved and therefore
-        /// shows as <c>enabled</c> in Task Manager and Windows settings.
+        /// be <c>not-registered</c>, <c>enabled</c>, <c>requires-approval</c>, or <c>not-found</c>.<br/>* <c>executableWillLaunchAtLogin</c> boolean _Windows_ - <c>true</c> if app is set to open at login and
+        /// its run key is not deactivated. This differs from <c>openAtLogin</c> as it ignores the <c>args</c> option, this property will be
+        /// true if the given executable would be launched at login with <b>any</b> arguments.<br/>* <c>launchItems</c> Object[] _Windows_<br/>  * <c>name</c> string
+        /// _Windows_ - name value of a registry entry.<br/>  * <c>path</c> string _Windows_ - The executable to an app that
+        /// corresponds to a registry entry.<br/>  * <c>args</c> string[] _Windows_ - the command-line arguments to pass to the executable.<br/>
+        /// * <c>scope</c> string _Windows_ - can be <c>user</c> or <c>machine</c>. Indicates whether the registry entry is under <c>HKEY_CURRENT USER</c> or
+        /// <c>HKEY_LOCAL_MACHINE</c>.<br/>  * <c>enabled</c> boolean _Windows_ - <c>true</c> if the app registry key is startup approved and therefore shows as
+        /// <c>enabled</c> in Task Manager and Windows settings.
         /// </summary>
-        /// <param name="type">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be one of
-        /// <c>mainAppService</c>, <c>agentService</c>, <c>daemonService</c>, or <c>loginItemService</c>. Defaults to <c>mainAppService</c>. Only available on macOS 13 and up. See app.setLoginItemSettings for more information
-        /// about each type.</param>
+        /// <param name="type">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Can be <c>mainAppService</c>, <c>agentService</c>,
+        /// <c>daemonService</c>, or <c>loginItemService</c>. Defaults to <c>mainAppService</c>. Only available on macOS 13 and up. See app.setLoginItemSettings for more information about each
+        /// type.</param>
         /// <param name="serviceName">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The name of the
         /// service. Required if <c>type</c> is non-default. Only available on macOS 13 and up.</param>
         /// <param name="path">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || The executable path to
@@ -49925,8 +49972,12 @@ module Main =
         /// compare against. Defaults to an empty array.</param>
         [<Erase; ParamObject(0)>]
         static member inline getLoginItemSettings
-            (?``type``: string, ?serviceName: string, ?path: string, ?args: string[])
-            : Main.App.GetLoginItemSettings =
+            (
+                ?``type``: Main.Enums.App.GetLoginItemSettings.Options.Type,
+                ?serviceName: string,
+                ?path: string,
+                ?args: string[]
+            ) : Main.App.GetLoginItemSettings =
             Unchecked.defaultof<_>
         #endif
 
