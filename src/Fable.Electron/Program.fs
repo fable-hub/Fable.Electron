@@ -850,6 +850,40 @@ module Types =
             Unchecked.defaultof<_> with get, set
 
     [<JS.Pojo>]
+    type WebAuthnAccount
+        /// <param name="credentialId">URL-safe base64-encoded (no padding) credential ID of the discoverable credential. Matches <c>PublicKeyCredential.id</c> returned by <c>navigator.credentials.get()</c> in the renderer.</param>
+        /// <param name="userHandle">URL-safe base64-encoded (no padding) user handle (<c>user.id</c>) that was provided when the credential was created.</param>
+        /// <param name="name">Human-palatable identifier for the account (for example, an email address or username).</param>
+        /// <param name="displayName">Human-palatable name for the account, intended for display.</param>
+        (credentialId: string, ?userHandle: string, ?name: string, ?displayName: string) =
+        class
+        end
+
+        /// <summary>
+        /// URL-safe base64-encoded (no padding) credential ID of the discoverable credential. Matches <c>PublicKeyCredential.id</c> returned by <c>navigator.credentials.get()</c> in the renderer.
+        /// </summary>
+        [<Erase>]
+        member val credentialId: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// URL-safe base64-encoded (no padding) user handle (<c>user.id</c>) that was provided when the credential was created.
+        /// </summary>
+        [<Erase>]
+        member val userHandle: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Human-palatable identifier for the account (for example, an email address or username).
+        /// </summary>
+        [<Erase>]
+        member val name: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Human-palatable name for the account, intended for display.
+        /// </summary>
+        [<Erase>]
+        member val displayName: string = Unchecked.defaultof<_> with get, set
+
+    [<JS.Pojo>]
     type WebSource
         /// <param name="code"></param>
         /// <param name="url"></param>
@@ -2320,7 +2354,8 @@ module Types =
     [<JS.Pojo>]
     type SharedTextureHandle
         /// <param name="ntHandle">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || NT HANDLE holds the
-        /// shared texture. Note that this NT HANDLE is local to current process.</param>
+        /// shared texture. Note that this NT HANDLE is local to current process.  Output textures of <c>rgba</c>, <c>bgra</c>, <c>rgbaf16</c> formats
+        /// don't have a keyed mutex on the texture handle, but <c>nv12</c> format texture handles do have a keyed mutex.</param>
         /// <param name="ioSurface">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || IOSurfaceRef holds the shared
         /// texture. Note that this IOSurface is local to current process (not global).</param>
         /// <param name="nativePixmap">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || Structure contains planes of
@@ -2344,7 +2379,9 @@ module Types =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
-        /// NT HANDLE holds the shared texture. Note that this NT HANDLE is local to current process.
+        /// NT HANDLE holds the shared texture. Note that this NT HANDLE is local to current process.  Output textures of
+        /// <c>rgba</c>, <c>bgra</c>, <c>rgbaf16</c> formats don't have a keyed mutex on the texture handle, but <c>nv12</c> format texture handles do have
+        /// a keyed mutex.
         /// </summary>
         [<Erase>]
         member val ntHandle: Buffer = Unchecked.defaultof<_> with get, set
@@ -4754,6 +4791,43 @@ module Types =
         [<Erase>]
         member val version: string = Unchecked.defaultof<_> with get, set
 
+    [<JS.Pojo>]
+    type EnableHeapProfilingOptions
+        /// <param name="mode">Controls which processes are profiled. Equivalent to <c>--memlog</c> in Chrome. Default is <c>all</c>.</param>
+        /// <param name="samplingRate">Controls the sampling interval in bytes. The lower the interval, the more precise the profile is. However it comes
+        /// at the cost of performance. Default is <c>100000</c> (100KB). That is enough to observe allocation sites that make allocations &gt;500KB
+        /// total, where total equals to a single allocation size times the number of such allocations at the same call site.
+        /// Equivalent to <c>--memlog-sampling-rate</c> in Chrome. Must be an integer between <c>1000</c> and <c>10000000</c>.</param>
+        /// <param name="stackMode">Controls the type of metadata recorded for each allocation. Equivalent to <c>--memlog-stack-mode</c> in Chrome. Default is <c>native</c>.</param>
+        (
+            ?mode: Enums.Types.EnableHeapProfilingOptions.Mode,
+            ?samplingRate: float,
+            ?stackMode: Enums.Types.EnableHeapProfilingOptions.StackMode
+        ) =
+        class
+        end
+
+        /// <summary>
+        /// Controls which processes are profiled. Equivalent to <c>--memlog</c> in Chrome. Default is <c>all</c>.
+        /// </summary>
+        [<Erase>]
+        member val mode: Enums.Types.EnableHeapProfilingOptions.Mode = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Controls the sampling interval in bytes. The lower the interval, the more precise the profile is. However it comes at
+        /// the cost of performance. Default is <c>100000</c> (100KB). That is enough to observe allocation sites that make allocations &gt;500KB total,
+        /// where total equals to a single allocation size times the number of such allocations at the same call site. Equivalent
+        /// to <c>--memlog-sampling-rate</c> in Chrome. Must be an integer between <c>1000</c> and <c>10000000</c>.
+        /// </summary>
+        [<Erase>]
+        member val samplingRate: float = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Controls the type of metadata recorded for each allocation. Equivalent to <c>--memlog-stack-mode</c> in Chrome. Default is <c>native</c>.
+        /// </summary>
+        [<Erase>]
+        member val stackMode: Enums.Types.EnableHeapProfilingOptions.StackMode = Unchecked.defaultof<_> with get, set
+
     /// <summary>
     /// The <c>Display</c> object represents a physical display connected to the system. A fake <c>Display</c> may exist on a headless system,
     /// or a <c>Display</c> may correspond to a remote, virtual display.
@@ -7053,6 +7127,58 @@ module Enums =
                 | [<CompiledName("writable")>] Writable
                 | [<CompiledName("readable")>] Readable
 
+        module EnableHeapProfilingOptions =
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type StackMode =
+                /// <summary>
+                /// Instruction addresses from unwinding the stack.
+                /// </summary>
+                | [<CompiledName("native")>] Native
+                /// <summary>
+                /// Instruction addresses from unwinding the stack. Includes the thread name as the first frame.
+                /// </summary>
+                | [<CompiledName("native-with-thread-names")>] NativeWithThreadNames
+
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type Mode =
+                /// <summary>
+                /// Profile all processes.
+                /// </summary>
+                | [<CompiledName("all")>] All
+                /// <summary>
+                /// Profile only the browser process.
+                /// </summary>
+                | [<CompiledName("browser")>] Browser
+                /// <summary>
+                /// Profile only the GPU process.
+                /// </summary>
+                | [<CompiledName("gpu")>] Gpu
+                /// <summary>
+                /// Profile only the browser and GPU processes.
+                /// </summary>
+                | [<CompiledName("minimal")>] Minimal
+                /// <summary>
+                /// Profile at most 1 renderer process. Each renderer process has a fixed probability of being profiled when the renderer process
+                /// is started or, for existing processes, when heap profiling is enabled.
+                /// </summary>
+                | [<CompiledName("renderer-sampling")>] RendererSampling
+                /// <summary>
+                /// Profile all renderer processes.
+                /// </summary>
+                | [<CompiledName("all-renderers")>] AllRenderers
+                /// <summary>
+                /// Each utility process has a fixed probability of being profiled.
+                /// </summary>
+                | [<CompiledName("utility-sampling")>] UtilitySampling
+                /// <summary>
+                /// Profile all utility processes.
+                /// </summary>
+                | [<CompiledName("all-utilities")>] AllUtilities
+                /// <summary>
+                /// Profile all utility processes and the browser process.
+                /// </summary>
+                | [<CompiledName("utility-and-browser")>] UtilityAndBrowser
+
         module Display =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
             type TouchSupport =
@@ -8352,6 +8478,10 @@ module Renderer =
                 /// <param name="footer">string to be printed as page footer.</param>
                 /// <param name="pageSize">Specify page size of the printed document. Can be <c>A3</c>, <c>A4</c>, <c>A5</c>, <c>Legal</c>, <c>Letter</c>, <c>Tabloid</c> or an Object containing
                 /// <c>height</c> in microns.</param>
+                /// <param name="usePrinterDefaultPageSize">Whether to use the system's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is
+                /// provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size
+                /// of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x
+                /// 297mm).</param>
                 (
                     ?silent: bool,
                     ?printBackground: bool,
@@ -8368,7 +8498,8 @@ module Renderer =
                     ?dpi: Record<string, float>,
                     ?header: string,
                     ?footer: string,
-                    ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>
+                    ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>,
+                    ?usePrinterDefaultPageSize: bool
                 ) =
                 class
                 end
@@ -8467,6 +8598,14 @@ module Renderer =
                 [<Erase>]
                 member val pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size> =
                     Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Whether to use the system's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is provided,
+                /// uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size of
+                /// the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x 297mm).
+                /// </summary>
+                [<Erase>]
+                member val usePrinterDefaultPageSize: bool = Unchecked.defaultof<_> with get, set
 
             module Options =
                 [<JS.Pojo>]
@@ -11093,6 +11232,10 @@ module Renderer =
         /// <param name="footer">string to be printed as page footer.</param>
         /// <param name="pageSize">Specify page size of the printed document. Can be <c>A3</c>, <c>A4</c>, <c>A5</c>, <c>Legal</c>, <c>Letter</c>, <c>Tabloid</c> or an Object containing
         /// <c>height</c> in microns.</param>
+        /// <param name="usePrinterDefaultPageSize">Whether to use the system's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is
+        /// provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size
+        /// of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x
+        /// 297mm).</param>
         [<Erase; ParamObject(0)>]
         member inline _.print
             (
@@ -11111,7 +11254,8 @@ module Renderer =
                 ?dpi: Record<string, float>,
                 ?header: string,
                 ?footer: string,
-                ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>
+                ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>,
+                ?usePrinterDefaultPageSize: bool
             ) : Promise<unit> =
             Unchecked.defaultof<_>
 
@@ -15122,6 +15266,9 @@ module Main =
 
         module Session =
             [<Literal; Erase>]
+            let SelectWebauthnAccount = "select-webauthn-account"
+
+            [<Literal; Erase>]
             let UsbDeviceRevoked = "usb-device-revoked"
 
             [<Literal; Erase>]
@@ -16707,7 +16854,7 @@ module Main =
             /// in the inline reply input field.</param>
             /// <param name="sound">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The name of the
             /// sound file to play when the notification is shown.</param>
-            /// <param name="urgency">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
+            /// <param name="urgency">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
             /// the notification. Can be 'normal', 'critical', or 'low'.</param>
             /// <param name="actions">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Actions to add to
             /// the notification. Please read the available actions and limitations in the <c>NotificationAction</c> documentation.</param>
@@ -16741,7 +16888,7 @@ module Main =
                 ,
                 ?sound: string
                 #endif
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
                 ,
                 ?urgency: Main.Enums.Notification.Options.Urgency
                 #endif
@@ -16831,9 +16978,9 @@ module Main =
             member val sound: string = Unchecked.defaultof<_> with get, set
             #endif
 
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
             /// <summary>
-            /// <para>⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌</para>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌</para>
             /// The urgency level of the notification. Can be 'normal', 'critical', or 'low'.
             /// </summary>
             [<Erase>]
@@ -20693,7 +20840,8 @@ module Main =
                 /// <param name="postBody">The post data that will be sent to the new window, along with the appropriate headers that will be
                 /// set. If no post data is to be sent, the value will be <c>null</c>. Only defined when the window is
                 /// being created by a form that set <c>target=_blank</c>.</param>
-                /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.</param>
+                /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's
+                /// WindowOpenDisposition.</param>
                 (
                     url: string,
                     frameName: string,
@@ -20740,7 +20888,7 @@ module Main =
                 member val postBody: PostBody = Unchecked.defaultof<_> with get, set
 
                 /// <summary>
-                /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.
+                /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's WindowOpenDisposition.
                 /// </summary>
                 [<Erase>]
                 member val disposition: Main.Enums.WebContents.DidCreateWindow.Details.Disposition =
@@ -21129,7 +21277,8 @@ module Main =
                     /// <c>https://the-origin/the/current/path/foo</c>.</param>
                     /// <param name="frameName">Name of the window provided in <c>window.open()</c></param>
                     /// <param name="features">Comma separated list of window features provided to <c>window.open()</c>.</param>
-                    /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.</param>
+                    /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's
+                    /// WindowOpenDisposition.</param>
                     /// <param name="referrer">The referrer that will be passed to the new window. May or may not result in the <c>Referer</c> header
                     /// being sent, depending on the referrer policy.</param>
                     /// <param name="postBody">The post data that will be sent to the new window, along with the appropriate headers that will be
@@ -21165,7 +21314,7 @@ module Main =
                     member val features: string = Unchecked.defaultof<_> with get, set
 
                     /// <summary>
-                    /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.
+                    /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's WindowOpenDisposition.
                     /// </summary>
                     [<Erase>]
                     member val disposition: Main.Enums.WebContents.SetWindowOpenHandler.Handler.Details.Disposition =
@@ -21373,6 +21522,10 @@ module Main =
                 /// <param name="footer">string to be printed as page footer.</param>
                 /// <param name="pageSize">Specify page size of the printed document. Can be <c>A0</c>, <c>A1</c>, <c>A2</c>, <c>A3</c>, <c>A4</c>, <c>A5</c>, <c>A6</c>, <c>Legal</c>, <c>Letter</c>, <c>Tabloid</c>
                 /// or an Object containing <c>height</c> and <c>width</c>.</param>
+                /// <param name="usePrinterDefaultPageSize">Whether to use a given printer's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c>
+                /// is provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page
+                /// size of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm
+                /// x 297mm).</param>
                 (
                     ?silent: bool,
                     ?printBackground: bool,
@@ -21389,7 +21542,8 @@ module Main =
                     ?dpi: Record<string, float>,
                     ?header: string,
                     ?footer: string,
-                    ?pageSize: U2<Main.Enums.WebContents.Print.Options.PageSize, Size>
+                    ?pageSize: U2<Main.Enums.WebContents.Print.Options.PageSize, Size>,
+                    ?usePrinterDefaultPageSize: bool
                 ) =
                 class
                 end
@@ -21488,6 +21642,15 @@ module Main =
                 [<Erase>]
                 member val pageSize: U2<Main.Enums.WebContents.Print.Options.PageSize, Size> =
                     Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Whether to use a given printer's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is
+                /// provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size
+                /// of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x
+                /// 297mm).
+                /// </summary>
+                [<Erase>]
+                member val usePrinterDefaultPageSize: bool = Unchecked.defaultof<_> with get, set
 
             module Options =
                 [<JS.Pojo>]
@@ -21761,6 +21924,28 @@ module Main =
                         Promise<unit>
 
     module Session =
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnSelectWebauthnAccount =
+            [<Emit("$0[0]")>]
+            abstract member event: Event with get, set
+
+            [<Emit("$0[1]")>]
+            abstract member details: Main.Session.SelectWebauthnAccount.Details with get, set
+
+            [<Emit("$0[2]")>]
+            abstract member callback: Option<Option<string>> -> unit with get, set
+
         /// <summary>
         /// Emitted after <c>USBDevice.forget()</c> has been called.  This event can be used to help maintain persistent storage of permissions when
         /// <c>setDevicePermissionHandler</c> is used.
@@ -22120,6 +22305,31 @@ module Main =
 
             [<Emit("$0[2]")>]
             abstract member webContents: Main.WebContents with get, set
+
+        module SelectWebauthnAccount =
+            [<JS.Pojo>]
+            type Details
+                /// <param name="relyingPartyId">The relying party identifier from the WebAuthn request.</param>
+                /// <param name="accounts"></param>
+                /// <param name="frame">The frame initiating this event. May be <c>null</c> if accessed after the frame has either navigated or been destroyed.</param>
+                (relyingPartyId: string, accounts: WebAuthnAccount[], frame: Option<Main.WebFrameMain>) =
+                class
+                end
+
+                /// <summary>
+                /// The relying party identifier from the WebAuthn request.
+                /// </summary>
+                [<Erase>]
+                member val relyingPartyId: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val accounts: WebAuthnAccount[] = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// The frame initiating this event. May be <c>null</c> if accessed after the frame has either navigated or been destroyed.
+                /// </summary>
+                [<Erase>]
+                member val frame: Option<Main.WebFrameMain> = Unchecked.defaultof<_> with get, set
 
         module UsbDeviceRevoked =
             [<JS.Pojo>]
@@ -25612,6 +25822,36 @@ module Main =
                 #endif
 
 
+        module ConfigureWebAuthn =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="touchID">Enables the Touch ID / Secure Enclave platform authenticator for Web Authentication requests.</param>
+                (?touchID: Main.App.ConfigureWebAuthn.Options.TouchID) =
+                class
+                end
+
+                /// <summary>
+                /// Enables the Touch ID / Secure Enclave platform authenticator for Web Authentication requests.
+                /// </summary>
+                [<Erase>]
+                member val touchID: Main.App.ConfigureWebAuthn.Options.TouchID = Unchecked.defaultof<_> with get, set
+
+            module Options =
+                [<JS.Pojo>]
+                type TouchID
+                    /// <param name="keychainAccessGroup">The keychain access group that WebAuthn credentials will be stored under. This value <b>must</b> also be present in your
+                    /// app's <c>keychain-access-groups</c> code-signing entitlement, and is typically of the form <c>&lt;TEAM_ID&gt;.&lt;BUNDLE_ID&gt;.webauthn</c>.</param>
+                    (keychainAccessGroup: string) =
+                    class
+                    end
+
+                    /// <summary>
+                    /// The keychain access group that WebAuthn credentials will be stored under. This value <b>must</b> also be present in your app's
+                    /// <c>keychain-access-groups</c> code-signing entitlement, and is typically of the form <c>&lt;TEAM_ID&gt;.&lt;BUNDLE_ID&gt;.webauthn</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val keychainAccessGroup: string = Unchecked.defaultof<_> with get, set
+
         module ConfigureHostResolver =
             [<JS.Pojo>]
             type Options
@@ -26074,10 +26314,25 @@ module Main =
                 module Details =
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Disposition =
+                        /// <summary>
+                        /// Indicates Chromium deems in-window navigation valid for a window open call.
+                        /// </summary>
                         | [<CompiledName("default")>] Default
+                        /// <summary>
+                        /// Corresponds to a left click or shift + middle click.
+                        /// </summary>
                         | [<CompiledName("foreground-tab")>] ForegroundTab
+                        /// <summary>
+                        /// Corresponds to a middle click or ctrl/cmd + click.
+                        /// </summary>
                         | [<CompiledName("background-tab")>] BackgroundTab
+                        /// <summary>
+                        /// Corresponds to a shift + left click.
+                        /// </summary>
                         | [<CompiledName("new-window")>] NewWindow
+                        /// <summary>
+                        /// A catch-all for the remaining Chromium dispositions not handled by Electron.
+                        /// </summary>
                         | [<CompiledName("other")>] Other
 
             module SetImageAnimationPolicy =
@@ -26226,10 +26481,25 @@ module Main =
                     module Details =
                         [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                         type Disposition =
+                            /// <summary>
+                            /// Indicates Chromium deems in-window navigation valid for a window open call.
+                            /// </summary>
                             | [<CompiledName("default")>] Default
+                            /// <summary>
+                            /// Corresponds to a left click or shift + middle click.
+                            /// </summary>
                             | [<CompiledName("foreground-tab")>] ForegroundTab
+                            /// <summary>
+                            /// Corresponds to a middle click or ctrl/cmd + click.
+                            /// </summary>
                             | [<CompiledName("background-tab")>] BackgroundTab
+                            /// <summary>
+                            /// Corresponds to a shift + left click.
+                            /// </summary>
                             | [<CompiledName("new-window")>] NewWindow
+                            /// <summary>
+                            /// A catch-all for the remaining Chromium dispositions not handled by Electron.
+                            /// </summary>
                             | [<CompiledName("other")>] Other
 
             module InsertCSS =
@@ -27559,7 +27829,7 @@ module Main =
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Properties =
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27584,7 +27854,7 @@ module Main =
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Properties =
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27621,7 +27891,7 @@ module Main =
                         /// </summary>
                         | [<CompiledName("multiSelections")>] MultiSelections
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27663,7 +27933,7 @@ module Main =
                         /// </summary>
                         | [<CompiledName("multiSelections")>] MultiSelections
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27701,7 +27971,21 @@ module Main =
                 [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                 type Cause =
                     /// <summary>
-                    /// The cookie was changed directly by a consumer's action.
+                    ///  The cookie was inserted.
+                    /// </summary>
+                    | [<CompiledName("inserted")>] Inserted
+                    /// <summary>
+                    /// The newly inserted cookie overwrote a cookie but did not result in any change. For example, inserting an identical cookie
+                    /// will produce this cause.
+                    /// </summary>
+                    | [<CompiledName("inserted-no-change-overwrite")>] InsertedNoChangeOverwrite
+                    /// <summary>
+                    /// The newly inserted cookie overwrote a cookie but did not result in any value change, but it's web observable (e.g.
+                    /// updates the expiry).
+                    /// </summary>
+                    | [<CompiledName("inserted-no-value-change-overwrite")>] InsertedNoValueChangeOverwrite
+                    /// <summary>
+                    /// The cookie was deleted directly by a consumer's action.
                     /// </summary>
                     | [<CompiledName("explicit")>] Explicit
                     /// <summary>
@@ -31349,10 +31633,11 @@ module Main =
 
         /// <summary>
         /// When a custom <c>pageSize</c> is passed, Chromium attempts to validate platform specific minimum values for <c>width_microns</c> and <c>height_microns</c>. Width and
-        /// height must both be minimum 353 microns but may be higher on some operating systems.<br/><br/>Prints window's web page. When <c>silent</c>
-        /// is set to <c>true</c>, Electron will pick the system's default printer if <c>deviceName</c> is empty and the default settings for
-        /// printing.<br/><br/>Some possible <c>failureReason</c>s for print failure include:<br/><br/>* "Invalid printer settings"<br/>* "Print job canceled"<br/>* "Print job failed"<br/><br/>Use <c>page-break-before: always;</c> CSS style
-        /// to force to print to a new page.<br/><br/>Example usage:
+        /// height must both be minimum 353 microns but may be higher on some operating systems. If a valid <c>pageSize</c> is
+        /// not passed and <c>usePrinterDefaultPageSize</c> is <c>false</c>, an error will be thrown.<br/><br/>Prints window's web page. When <c>silent</c> is set to <c>true</c>,
+        /// Electron will pick the system's default printer if <c>deviceName</c> is empty and the default settings for printing.<br/><br/>Some possible <c>failureReason</c>s for
+        /// print failure include:<br/><br/>* "Invalid printer settings"<br/>* "Print job canceled"<br/>* "Print job failed"<br/><br/>Use <c>page-break-before: always;</c> CSS style to force to print
+        /// to a new page.<br/><br/>Example usage:
         /// </summary>
         /// <param name="options"></param>
         /// <param name="callback"></param>
@@ -31726,6 +32011,13 @@ module Main =
         /// <param name="requestWebContents">Web contents that the id will be registered to.</param>
         [<Erase>]
         member inline _.getMediaSourceId(requestWebContents: Main.WebContents) : string = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// The Chrome DevTools Protocol TargetID associated with this WebContents. This is the reverse of <c>webContents.fromDevToolsTargetId()</c>.<br/><br/>&gt; [!NOTE] This method creates a
+        /// new DevTools agent for this WebContents if one does not already exist.
+        /// </summary>
+        [<Erase>]
+        member inline _.getOrCreateDevToolsTargetId() : string = Unchecked.defaultof<_>
 
         /// <summary>
         /// The operating system <c>pid</c> of the associated renderer process.
@@ -35683,6 +35975,90 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.on('select-webauthn-account', $1)")>]
+        member inline _.onSelectWebauthnAccount
+            (handler: Event -> Main.Session.SelectWebauthnAccount.Details -> Option<Option<string>> -> unit -> unit)
+            : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.on('select-webauthn-account', $1)")>]
+        member inline _.onSelectWebauthnAccount(handler: Main.Session.IOnSelectWebauthnAccount -> unit) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.once('select-webauthn-account', $1)")>]
+        member inline _.onceSelectWebauthnAccount
+            (handler: Event -> Main.Session.SelectWebauthnAccount.Details -> Option<Option<string>> -> unit -> unit)
+            : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.once('select-webauthn-account', $1)")>]
+        member inline _.onceSelectWebauthnAccount(handler: Main.Session.IOnSelectWebauthnAccount -> unit) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.off('select-webauthn-account', $1)")>]
+        member inline _.offSelectWebauthnAccount
+            (handler: Event -> Main.Session.SelectWebauthnAccount.Details -> Option<Option<string>> -> unit -> unit)
+            : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.off('select-webauthn-account', $1)")>]
+        member inline _.offSelectWebauthnAccount(handler: Main.Session.IOnSelectWebauthnAccount -> unit) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
         /// the session's current cache size, in bytes.
         /// </summary>
         [<Erase>]
@@ -37058,7 +37434,9 @@ module Main =
     /// to register it to that session explicitly.<br/><br/><code><br/>const { app, BrowserWindow, net, protocol, session } = require('electron')<br/><br/>const path = require('node:path')<br/>const url
     /// = require('node:url')<br/><br/>app.whenReady().then(() =&gt; {<br/>  const partition = 'persist:example'<br/>  const ses = session.fromPartition(partition)<br/><br/>  ses.protocol.handle('atom', (request) =&gt; {<br/>
     ///   const filePath = request.url.slice('atom://'.length)<br/>    return net.fetch(url.pathToFileURL(path.resolve(__dirname, filePath)).toString())<br/>  })<br/><br/>  const mainWindow = new BrowserWindow({
-    /// webPreferences: { partition } })<br/>})<br/></code>
+    /// webPreferences: { partition } })<br/>})<br/></code><br/><br/>### Protocol names<br/><br/>RFC 3986 defines what a valid protocol name is:<br/><br/>&gt; Scheme names consist of a
+    /// sequence of characters beginning with a letter and followed by any combination of letters, digits, plus ("+"), period ("."), or
+    /// hyphen ("-"). Although schemes are case-insensitive, the canonical form is lowercase […].
     /// </summary>
     [<Import("protocol", "electron")>]
     type protocol =
@@ -37968,7 +38346,7 @@ module Main =
         /// in the inline reply input field.</param>
         /// <param name="sound">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The name of the
         /// sound file to play when the notification is shown.</param>
-        /// <param name="urgency">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
+        /// <param name="urgency">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
         /// the notification. Can be 'normal', 'critical', or 'low'.</param>
         /// <param name="actions">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Actions to add to
         /// the notification. Please read the available actions and limitations in the <c>NotificationAction</c> documentation.</param>
@@ -38003,7 +38381,7 @@ module Main =
             ,
             ?sound: string
             #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
             ,
             ?urgency: Main.Enums.Notification.Options.Urgency
             #endif
@@ -38720,6 +39098,16 @@ module Main =
         /// </summary>
         [<Erase>]
         static member val prefersReducedTransparency: bool = Unchecked.defaultof<_> with get
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// A <c>boolean</c> that indicates whether the user prefers UI that differentiates items using something other than color alone (e.g. shapes
+        /// or labels). This maps to NSWorkspace.accessibilityDisplayShouldDifferentiateWithoutColor.
+        /// </summary>
+        [<Erase>]
+        static member val shouldDifferentiateWithoutColor: bool = Unchecked.defaultof<_> with get
+        #endif
+
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ❌</para>
@@ -39074,9 +39462,10 @@ module Main =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ✔</para>
-    /// <br/><br/>### Class: Menu<br/><br/>&gt; Create native application menus and context menus.<br/><br/>Process: Main<br/><br/>&gt; [!TIP] See also: A detailed guide about how to
-    /// implement menus in your application.<br/><br/>&gt; [!WARNING] Electron's built-in classes cannot be subclassed in user code. For more information, see the
-    /// FAQ.
+    /// <br/><br/>### Class: Menu<br/><br/>&gt; Create application menus and context menus.<br/><br/>Process: Main<br/><br/>The presentation of menus varies depending on the operating system:<br/><br/>* Under
+    /// Windows and Linux, menus are visually similar to Chromium.<br/>* Under macOS, these will be native menus.<br/><br/>&gt; [!TIP] See also: A
+    /// detailed guide about how to implement menus in your application.<br/><br/>&gt; [!WARNING] Electron's built-in classes cannot be subclassed in user code.
+    /// For more information, see the FAQ.
     /// </summary>
     [<Import("Menu", "electron")>]
     type Menu() =
@@ -41282,6 +41671,19 @@ module Main =
         static member inline getTraceBufferUsage() : Promise<Main.ContentTracing.GetTraceBufferUsage> =
             Unchecked.defaultof<_>
 
+        /// <summary>
+        /// Resolves once heap profiling has been enabled.<br/><br/>Enable heap profiling for MemoryInfra traces. Equivalent to the <c>--memlog</c> switch in Chrome.<br/><br/>Only takes
+        /// effect if the <c>disabled-by-default-memory-infra</c> category is included.<br/><br/>Needs to be called before <c>contentTracing.startRecording()</c>.<br/><br/>Usage:<br/><br/>To view the recorded heap dumps:<br/><br/>* Download the breakpad
+        /// symbols for your Electron version from the Electron GitHub releases<br/>* Clone the Electron source code<br/>* In your Chromium checkout for
+        /// Electron, run this command to symbolicate the heap dump:<br/>* Open the symbolicated trace in <c>chrome://tracing</c> (the Perfetto UI does not
+        /// support memory dumps yet)<br/>* Click on one of the <c>M</c> symbols<br/>* Click on a <c>☰</c> triple bar icon (e.g., in
+        /// the <c>malloc</c> column)
+        /// </summary>
+        /// <param name="options"></param>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member inline enableHeapProfiling(?options: EnableHeapProfilingOptions) : Promise<unit> =
+            Unchecked.defaultof<_>
+
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ❌</para>
     /// </summary>
@@ -41843,7 +42245,9 @@ module Main =
     /// order to minimize power consumption.<br/><br/>### Platform notices<br/><br/>* On macOS modal windows will be displayed as sheets attached to the parent
     /// window.<br/>* On macOS the child windows will keep the relative position to parent window when parent window moves, while on
     /// Windows and Linux child windows will not move.<br/>* On Linux the type of modal windows will be changed to <c>dialog</c>.<br/>*
-    /// On Linux many desktop environments do not support hiding a modal window.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
+    /// On Linux many desktop environments do not support hiding a modal window.<br/>* On Wayland (Linux) it is generally not possible
+    /// to programmatically resize windows after creation, or to position, move, focus, or blur windows without user input. If your app
+    /// needs these capabilities, run it in Xwayland by appending the flag <c>--ozone-platform=x11</c>.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
     /// windows.<br/><br/>Process: Main<br/><br/><c>BrowserWindow</c> is an EventEmitter.<br/><br/>It creates a new <c>BrowserWindow</c> with native properties as set by the <c>options</c>.<br/><br/>&gt; [!WARNING] Electron's built-in
     /// classes cannot be subclassed in user code. For more information, see the FAQ.
     /// </summary>
@@ -43079,13 +43483,14 @@ module Main =
         member inline _.close() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Focuses on the window.
+        /// Focuses on the window.<br/><br/>On Wayland (Linux), the desktop environment may show a notification or flash the app icon if the
+        /// window or app is not already focused.
         /// </summary>
         [<Erase>]
         member inline _.focus() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Removes focus from the window.
+        /// Removes focus from the window.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.blur() : unit = Unchecked.defaultof<_>
@@ -43109,7 +43514,7 @@ module Main =
         member inline _.show() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Shows the window but doesn't focus on it.
+        /// Shows the window but doesn't focus on it.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.showInactive() : unit = Unchecked.defaultof<_>
@@ -43270,9 +43675,9 @@ module Main =
 
         /// <summary>
         /// Resizes and moves the window to the supplied bounds. Any properties that are not supplied will default to their current
-        /// values.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray height. The tray height has changed over
-        /// time and depends on the operating system, but is between 20-40px. Passing a value lower than the tray height will
-        /// result in a window that is flush to the tray.
+        /// values.<br/><br/>On Wayland (Linux), has the same limitations as <c>setSize</c> and <c>setPosition</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller
+        /// than the Tray height. The tray height has changed over time and depends on the operating system, but is between
+        /// 20-40px. Passing a value lower than the tray height will result in a window that is flush to the tray.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -43296,7 +43701,8 @@ module Main =
         member inline _.getBackgroundColor() : string = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.
+        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.<br/><br/>On Wayland (Linux), has the same
+        /// limitations as <c>setContentSize</c> and <c>setPosition</c>.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -43332,7 +43738,7 @@ module Main =
 
         /// <summary>
         /// Resizes the window to <c>width</c> and <c>height</c>. If <c>width</c> or <c>height</c> are below any set minimum size constraints the window
-        /// will snap to its minimum size.
+        /// will snap to its minimum size.<br/><br/>On Wayland (Linux), may not work as some window managers restrict programmatic window resizing.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -43347,7 +43753,8 @@ module Main =
         member inline _.getSize() : int[] = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.
+        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.<br/><br/>On Wayland (Linux), may not work as some
+        /// window managers restrict programmatic window resizing.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -43563,19 +43970,19 @@ module Main =
         member inline _.moveAbove(mediaSourceId: string) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to top(z-order) regardless of focus
+        /// Moves window to top(z-order) regardless of focus.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.moveTop() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to the center of the screen.
+        /// Moves window to the center of the screen.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.center() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to <c>x</c> and <c>y</c>.
+        /// Moves window to <c>x</c> and <c>y</c>.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -49342,8 +49749,9 @@ module Main =
         static member inline whenReady() : Promise<unit> = Unchecked.defaultof<_>
 
         /// <summary>
-        /// On Linux, focuses on the first visible window. On macOS, makes the application the active app. On Windows, focuses on
-        /// the application's first window.<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
+        /// On macOS, makes the application the active app. On Windows, focuses on the application's first window. On Linux, either focuses
+        /// on the first visible window (X11) or requests focus but may instead show a notification or flash the app icon
+        /// (Wayland).<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
         /// </summary>
         /// <param name="steal">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Make the receiver the
         /// active app even if another app is currently active.</param>
@@ -49857,6 +50265,24 @@ module Main =
                 ?enableAdditionalDnsQueryTypes: bool
             ) : unit =
             Unchecked.defaultof<_>
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Configures platform authenticators for the Web Authentication API (<c>navigator.credentials.create()</c> / <c>navigator.credentials.get()</c>). Until this is called, <c>PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()</c> resolves to <c>false</c> and
+        /// platform-authenticator requests are not serviced.<br/><br/>When <c>touchID</c> is provided, WebAuthn credentials are stored in the macOS keychain and bound to this
+        /// device's Secure Enclave. Electron automatically generates and persists a per-<c>session</c> metadata secret so that credentials created in one partition are
+        /// not visible to another.<br/><br/>With the matching entitlement in your app's <c>entitlements.plist</c>:<br/><br/>&gt; [!NOTE] Touch ID WebAuthn credentials are device-bound and are
+        /// not synced via iCloud Keychain. They are only available on Macs with a Secure Enclave (Apple silicon, or Intel Macs
+        /// with a T2 chip).
+        /// </summary>
+        /// <param name="touchID">Enables the Touch ID / Secure Enclave platform authenticator for Web Authentication requests.</param>
+        [<Erase; ParamObject(0)>]
+        static member inline configureWebAuthn(?touchID: Main.App.ConfigureWebAuthn.Options.TouchID) : unit =
+            Unchecked.defaultof<_>
+        #endif
+
 
         /// <summary>
         /// Disables hardware acceleration for current app.<br/><br/>This method can only be called before app is ready.
