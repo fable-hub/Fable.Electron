@@ -19,9 +19,9 @@
         <Authors>Shayan Habibi and Contributors</Authors>
         <Copyright>Copyright (c) 2025 Shayan Habibi and Fable-Hub contributors</Copyright>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>40.9.2</Version>
-        <PackageVersion>40.9.2</PackageVersion>
-        <ElectronVersion>40.9.2</ElectronVersion>
+        <Version>42.2.0</Version>
+        <PackageVersion>42.2.0</PackageVersion>
+        <ElectronVersion>42.2.0</ElectronVersion>
         <PackageIcon>feleico-dark.png</PackageIcon>
     </PropertyGroup>
 
