@@ -19,8 +19,7 @@ module Types =
             /// <param name="sharedTexturePixelFormat">The requested output format of the shared texture. Defaults to <c>argb</c>. The name is originated from Chromium <c>media::VideoPixelFormat</c> enum
             /// suffix and only subset of them are supported. The actual output pixel format and color space of the texture should
             /// refer to <c>OffscreenSharedTexture</c> object in the <c>paint</c> event.</param>
-            /// <param name="deviceScaleFactor">The device scale factor of the offscreen rendering output. If not set, will use primary display's scale factor as
-            /// default.</param>
+            /// <param name="deviceScaleFactor">The device scale factor of the offscreen rendering output. If not set, will use <c>1</c> as default.</param>
             (
                 ?useSharedTexture: bool,
                 ?sharedTexturePixelFormat: Enums.Types.WebPreferences.Offscreen.SharedTexturePixelFormat,
@@ -46,7 +45,7 @@ module Types =
                 Unchecked.defaultof<_> with get, set
 
             /// <summary>
-            /// The device scale factor of the offscreen rendering output. If not set, will use primary display's scale factor as default.
+            /// The device scale factor of the offscreen rendering output. If not set, will use <c>1</c> as default.
             /// </summary>
             [<Erase; Experimental("Experimental according to Electron")>]
             member val deviceScaleFactor: float = Unchecked.defaultof<_> with get, set
@@ -848,6 +847,40 @@ module Types =
         [<Erase>]
         member val createWindow: BrowserWindowConstructorOptions -> Main.WebContents =
             Unchecked.defaultof<_> with get, set
+
+    [<JS.Pojo>]
+    type WebAuthnAccount
+        /// <param name="credentialId">URL-safe base64-encoded (no padding) credential ID of the discoverable credential. Matches <c>PublicKeyCredential.id</c> returned by <c>navigator.credentials.get()</c> in the renderer.</param>
+        /// <param name="userHandle">URL-safe base64-encoded (no padding) user handle (<c>user.id</c>) that was provided when the credential was created.</param>
+        /// <param name="name">Human-palatable identifier for the account (for example, an email address or username).</param>
+        /// <param name="displayName">Human-palatable name for the account, intended for display.</param>
+        (credentialId: string, ?userHandle: string, ?name: string, ?displayName: string) =
+        class
+        end
+
+        /// <summary>
+        /// URL-safe base64-encoded (no padding) credential ID of the discoverable credential. Matches <c>PublicKeyCredential.id</c> returned by <c>navigator.credentials.get()</c> in the renderer.
+        /// </summary>
+        [<Erase>]
+        member val credentialId: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// URL-safe base64-encoded (no padding) user handle (<c>user.id</c>) that was provided when the credential was created.
+        /// </summary>
+        [<Erase>]
+        member val userHandle: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Human-palatable identifier for the account (for example, an email address or username).
+        /// </summary>
+        [<Erase>]
+        member val name: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Human-palatable name for the account, intended for display.
+        /// </summary>
+        [<Erase>]
+        member val displayName: string = Unchecked.defaultof<_> with get, set
 
     [<JS.Pojo>]
     type WebSource
@@ -2320,7 +2353,8 @@ module Types =
     [<JS.Pojo>]
     type SharedTextureHandle
         /// <param name="ntHandle">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || NT HANDLE holds the
-        /// shared texture. Note that this NT HANDLE is local to current process.</param>
+        /// shared texture. Note that this NT HANDLE is local to current process.  Output textures of <c>rgba</c>, <c>bgra</c>, <c>rgbaf16</c> formats
+        /// don't have a keyed mutex on the texture handle, but <c>nv12</c> format texture handles do have a keyed mutex.</param>
         /// <param name="ioSurface">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || IOSurfaceRef holds the shared
         /// texture. Note that this IOSurface is local to current process (not global).</param>
         /// <param name="nativePixmap">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || Structure contains planes of
@@ -2344,7 +2378,9 @@ module Types =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
-        /// NT HANDLE holds the shared texture. Note that this NT HANDLE is local to current process.
+        /// NT HANDLE holds the shared texture. Note that this NT HANDLE is local to current process.  Output textures of
+        /// <c>rgba</c>, <c>bgra</c>, <c>rgbaf16</c> formats don't have a keyed mutex on the texture handle, but <c>nv12</c> format texture handles do have
+        /// a keyed mutex.
         /// </summary>
         [<Erase>]
         member val ntHandle: Buffer = Unchecked.defaultof<_> with get, set
@@ -4754,6 +4790,43 @@ module Types =
         [<Erase>]
         member val version: string = Unchecked.defaultof<_> with get, set
 
+    [<JS.Pojo>]
+    type EnableHeapProfilingOptions
+        /// <param name="mode">Controls which processes are profiled. Equivalent to <c>--memlog</c> in Chrome. Default is <c>all</c>.</param>
+        /// <param name="samplingRate">Controls the sampling interval in bytes. The lower the interval, the more precise the profile is. However it comes
+        /// at the cost of performance. Default is <c>100000</c> (100KB). That is enough to observe allocation sites that make allocations &gt;500KB
+        /// total, where total equals to a single allocation size times the number of such allocations at the same call site.
+        /// Equivalent to <c>--memlog-sampling-rate</c> in Chrome. Must be an integer between <c>1000</c> and <c>10000000</c>.</param>
+        /// <param name="stackMode">Controls the type of metadata recorded for each allocation. Equivalent to <c>--memlog-stack-mode</c> in Chrome. Default is <c>native</c>.</param>
+        (
+            ?mode: Enums.Types.EnableHeapProfilingOptions.Mode,
+            ?samplingRate: float,
+            ?stackMode: Enums.Types.EnableHeapProfilingOptions.StackMode
+        ) =
+        class
+        end
+
+        /// <summary>
+        /// Controls which processes are profiled. Equivalent to <c>--memlog</c> in Chrome. Default is <c>all</c>.
+        /// </summary>
+        [<Erase>]
+        member val mode: Enums.Types.EnableHeapProfilingOptions.Mode = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Controls the sampling interval in bytes. The lower the interval, the more precise the profile is. However it comes at
+        /// the cost of performance. Default is <c>100000</c> (100KB). That is enough to observe allocation sites that make allocations &gt;500KB total,
+        /// where total equals to a single allocation size times the number of such allocations at the same call site. Equivalent
+        /// to <c>--memlog-sampling-rate</c> in Chrome. Must be an integer between <c>1000</c> and <c>10000000</c>.
+        /// </summary>
+        [<Erase>]
+        member val samplingRate: float = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// Controls the type of metadata recorded for each allocation. Equivalent to <c>--memlog-stack-mode</c> in Chrome. Default is <c>native</c>.
+        /// </summary>
+        [<Erase>]
+        member val stackMode: Enums.Types.EnableHeapProfilingOptions.StackMode = Unchecked.defaultof<_> with get, set
+
     /// <summary>
     /// The <c>Display</c> object represents a physical display connected to the system. A fake <c>Display</c> may exist on a headless system,
     /// or a <c>Display</c> may correspond to a remote, virtual display.
@@ -6567,6 +6640,48 @@ module Types =
         #endif
 
 
+    [<JS.Pojo>]
+    type ActivationArguments
+        /// <param name="type">The type of activation that launched the app: <c>'click'</c>, <c>'action'</c>, or <c>'reply'</c>.</param>
+        /// <param name="arguments">The raw activation arguments string from Windows.</param>
+        /// <param name="actionIndex">For <c>'action'</c> type, the index of the button that was clicked.</param>
+        /// <param name="reply">For <c>'reply'</c> type, the text the user entered in the reply field.</param>
+        /// <param name="userInputs">A dictionary of all user inputs from the notification.</param>
+        (``type``: string, arguments: string, ?actionIndex: float, ?reply: string, ?userInputs: Record<string, string>)
+        =
+        class
+        end
+
+        /// <summary>
+        /// The type of activation that launched the app: <c>'click'</c>, <c>'action'</c>, or <c>'reply'</c>.
+        /// </summary>
+        [<Erase>]
+        member val ``type``: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// The raw activation arguments string from Windows.
+        /// </summary>
+        [<Erase>]
+        member val arguments: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// For <c>'action'</c> type, the index of the button that was clicked.
+        /// </summary>
+        [<Erase>]
+        member val actionIndex: float = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// For <c>'reply'</c> type, the text the user entered in the reply field.
+        /// </summary>
+        [<Erase>]
+        member val reply: string = Unchecked.defaultof<_> with get, set
+
+        /// <summary>
+        /// A dictionary of all user inputs from the notification.
+        /// </summary>
+        [<Erase>]
+        member val userInputs: Record<string, string> = Unchecked.defaultof<_> with get, set
+
 [<Fable.Core.Erase; AutoOpen>]
 module Enums =
     module Types =
@@ -6680,6 +6795,14 @@ module Enums =
                 /// 12bpp with Y plane followed by a 2x2 interleaved UV plane.
                 /// </summary>
                 | [<CompiledName("nv12")>] Nv12
+                /// <summary>
+                /// 16bpp with Y plane followed by a 2x1 interleaved UV plane.
+                /// </summary>
+                | [<CompiledName("nv16")>] Nv16
+                /// <summary>
+                /// 4:2:0 10-bit YUV (little-endian), Y plane followed by a 2x2 interleaved UV plane.
+                /// </summary>
+                | [<CompiledName("p010le")>] P010le
 
         module ResolvedEndpoint =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -7052,6 +7175,58 @@ module Enums =
             type FileAccessType =
                 | [<CompiledName("writable")>] Writable
                 | [<CompiledName("readable")>] Readable
+
+        module EnableHeapProfilingOptions =
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type StackMode =
+                /// <summary>
+                /// Instruction addresses from unwinding the stack.
+                /// </summary>
+                | [<CompiledName("native")>] Native
+                /// <summary>
+                /// Instruction addresses from unwinding the stack. Includes the thread name as the first frame.
+                /// </summary>
+                | [<CompiledName("native-with-thread-names")>] NativeWithThreadNames
+
+            [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+            type Mode =
+                /// <summary>
+                /// Profile all processes.
+                /// </summary>
+                | [<CompiledName("all")>] All
+                /// <summary>
+                /// Profile only the browser process.
+                /// </summary>
+                | [<CompiledName("browser")>] Browser
+                /// <summary>
+                /// Profile only the GPU process.
+                /// </summary>
+                | [<CompiledName("gpu")>] Gpu
+                /// <summary>
+                /// Profile only the browser and GPU processes.
+                /// </summary>
+                | [<CompiledName("minimal")>] Minimal
+                /// <summary>
+                /// Profile at most 1 renderer process. Each renderer process has a fixed probability of being profiled when the renderer process
+                /// is started or, for existing processes, when heap profiling is enabled.
+                /// </summary>
+                | [<CompiledName("renderer-sampling")>] RendererSampling
+                /// <summary>
+                /// Profile all renderer processes.
+                /// </summary>
+                | [<CompiledName("all-renderers")>] AllRenderers
+                /// <summary>
+                /// Each utility process has a fixed probability of being profiled.
+                /// </summary>
+                | [<CompiledName("utility-sampling")>] UtilitySampling
+                /// <summary>
+                /// Profile all utility processes.
+                /// </summary>
+                | [<CompiledName("all-utilities")>] AllUtilities
+                /// <summary>
+                /// Profile all utility processes and the browser process.
+                /// </summary>
+                | [<CompiledName("utility-and-browser")>] UtilityAndBrowser
 
         module Display =
             [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -7485,35 +7660,10 @@ module Renderer =
 
         module UtilityProcess =
             [<Literal; Erase>]
+            let Login = "login"
+
+            [<Literal; Erase>]
             let Error = "error"
-
-    module UtilityProcess =
-        /// <summary>
-        /// Emitted when the child process needs to terminate due to non continuable error from V8.<br/><br/>No matter if you listen to
-        /// the <c>error</c> event, the <c>exit</c> event will be emitted after the child process terminates.
-        /// </summary>
-        [<Experimental("Indicated to be Experimental by Electron");
-          System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
-          AllowNullLiteral;
-          Interface>]
-        type IOnError =
-            /// <summary>
-            /// Type of error. One of the following values:
-            /// </summary>
-            [<Emit("$0[0]")>]
-            abstract member ``type``: Renderer.Enums.UtilityProcess.Error.Type with get, set
-
-            /// <summary>
-            /// Source location from where the error originated.
-            /// </summary>
-            [<Emit("$0[1]")>]
-            abstract member location: string with get, set
-
-            /// <summary>
-            /// <c>Node.js diagnostic report</c>.
-            /// </summary>
-            [<Emit("$0[2]")>]
-            abstract member report: string with get, set
 
     module WebviewTag =
         /// <summary>
@@ -8352,6 +8502,10 @@ module Renderer =
                 /// <param name="footer">string to be printed as page footer.</param>
                 /// <param name="pageSize">Specify page size of the printed document. Can be <c>A3</c>, <c>A4</c>, <c>A5</c>, <c>Legal</c>, <c>Letter</c>, <c>Tabloid</c> or an Object containing
                 /// <c>height</c> in microns.</param>
+                /// <param name="usePrinterDefaultPageSize">Whether to use the system's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is
+                /// provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size
+                /// of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x
+                /// 297mm).</param>
                 (
                     ?silent: bool,
                     ?printBackground: bool,
@@ -8368,7 +8522,8 @@ module Renderer =
                     ?dpi: Record<string, float>,
                     ?header: string,
                     ?footer: string,
-                    ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>
+                    ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>,
+                    ?usePrinterDefaultPageSize: bool
                 ) =
                 class
                 end
@@ -8467,6 +8622,14 @@ module Renderer =
                 [<Erase>]
                 member val pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size> =
                     Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Whether to use the system's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is provided,
+                /// uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size of
+                /// the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x 297mm).
+                /// </summary>
+                [<Erase>]
+                member val usePrinterDefaultPageSize: bool = Unchecked.defaultof<_> with get, set
 
             module Options =
                 [<JS.Pojo>]
@@ -9325,6 +9488,98 @@ module Renderer =
                 /// <param name="words"></param>
                 /// <param name="callback"></param>
                 type SpellCheck = delegate of words: string[] * callback: (string[] -> unit) -> unit
+
+    module UtilityProcess =
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnLogin =
+            [<Emit("$0[0]")>]
+            abstract member authenticationResponseDetails: Renderer.UtilityProcess.Login.AuthenticationResponseDetails with get, set
+
+            [<Emit("$0[1]")>]
+            abstract member authInfo: Renderer.UtilityProcess.Login.AuthInfo with get, set
+
+            [<Emit("$0[2]")>]
+            abstract member callback: Option<string> * Option<string> -> unit with get, set
+
+        /// <summary>
+        /// Emitted when the child process needs to terminate due to non continuable error from V8.<br/><br/>No matter if you listen to
+        /// the <c>error</c> event, the <c>exit</c> event will be emitted after the child process terminates.
+        /// </summary>
+        [<Experimental("Indicated to be Experimental by Electron");
+          System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnError =
+            /// <summary>
+            /// Type of error. One of the following values:
+            /// </summary>
+            [<Emit("$0[0]")>]
+            abstract member ``type``: Renderer.Enums.UtilityProcess.Error.Type with get, set
+
+            /// <summary>
+            /// Source location from where the error originated.
+            /// </summary>
+            [<Emit("$0[1]")>]
+            abstract member location: string with get, set
+
+            /// <summary>
+            /// <c>Node.js diagnostic report</c>.
+            /// </summary>
+            [<Emit("$0[2]")>]
+            abstract member report: string with get, set
+
+        module Login =
+            [<JS.Pojo>]
+            type AuthInfo
+                /// <param name="isProxy"></param>
+                /// <param name="scheme"></param>
+                /// <param name="host"></param>
+                /// <param name="port"></param>
+                /// <param name="realm"></param>
+                (isProxy: bool, scheme: string, host: string, port: int, realm: string) =
+                class
+                end
+
+                [<Erase>]
+                member val isProxy: bool = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val scheme: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val host: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val port: int = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val realm: string = Unchecked.defaultof<_> with get, set
+
+            [<JS.Pojo>]
+            type AuthenticationResponseDetails
+                /// <param name="url"></param>
+                /// <param name="pid"></param>
+                (url: URL, pid: float) =
+                class
+                end
+
+                [<Erase>]
+                member val url: URL = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val pid: float = Unchecked.defaultof<_> with get, set
+
+            /// <param name="username"></param>
+            /// <param name="password"></param>
+            type Callback = delegate of ?username: string * ?password: string -> unit
 
     module SharedTexture =
         module SendSharedTexture =
@@ -11093,6 +11348,10 @@ module Renderer =
         /// <param name="footer">string to be printed as page footer.</param>
         /// <param name="pageSize">Specify page size of the printed document. Can be <c>A3</c>, <c>A4</c>, <c>A5</c>, <c>Legal</c>, <c>Letter</c>, <c>Tabloid</c> or an Object containing
         /// <c>height</c> in microns.</param>
+        /// <param name="usePrinterDefaultPageSize">Whether to use the system's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is
+        /// provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size
+        /// of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x
+        /// 297mm).</param>
         [<Erase; ParamObject(0)>]
         member inline _.print
             (
@@ -11111,7 +11370,8 @@ module Renderer =
                 ?dpi: Record<string, float>,
                 ?header: string,
                 ?footer: string,
-                ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>
+                ?pageSize: U2<Renderer.Enums.WebviewTag.Print.Options.PageSize, Size>,
+                ?usePrinterDefaultPageSize: bool
             ) : Promise<unit> =
             Unchecked.defaultof<_>
 
@@ -11736,6 +11996,84 @@ module Renderer =
         /// </summary>
         [<Emit("$0.off('message', $1)")>]
         member inline _.offMessage(handler: obj -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.on('login', $1)")>]
+        member inline _.onLogin
+            (
+                handler:
+                    Renderer.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Renderer.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.on('login', $1)")>]
+        member inline _.onLogin(handler: Renderer.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.once('login', $1)")>]
+        member inline _.onceLogin
+            (
+                handler:
+                    Renderer.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Renderer.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.once('login', $1)")>]
+        member inline _.onceLogin(handler: Renderer.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.off('login', $1)")>]
+        member inline _.offLogin
+            (
+                handler:
+                    Renderer.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Renderer.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.off('login', $1)")>]
+        member inline _.offLogin(handler: Renderer.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Send a message to the child process, optionally transferring ownership of zero or more <c>MessagePortMain</c> objects.<br/><br/>For example:
@@ -12926,6 +13264,9 @@ module Utility =
     module Constants =
         module UtilityProcess =
             [<Literal; Erase>]
+            let Login = "login"
+
+            [<Literal; Erase>]
             let Error = "error"
 
         module SystemPreferences =
@@ -12938,34 +13279,6 @@ module Utility =
 
             [<Literal; Erase>]
             let Login = "login"
-
-    module UtilityProcess =
-        /// <summary>
-        /// Emitted when the child process needs to terminate due to non continuable error from V8.<br/><br/>No matter if you listen to
-        /// the <c>error</c> event, the <c>exit</c> event will be emitted after the child process terminates.
-        /// </summary>
-        [<Experimental("Indicated to be Experimental by Electron");
-          System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
-          AllowNullLiteral;
-          Interface>]
-        type IOnError =
-            /// <summary>
-            /// Type of error. One of the following values:
-            /// </summary>
-            [<Emit("$0[0]")>]
-            abstract member ``type``: Utility.Enums.UtilityProcess.Error.Type with get, set
-
-            /// <summary>
-            /// Source location from where the error originated.
-            /// </summary>
-            [<Emit("$0[1]")>]
-            abstract member location: string with get, set
-
-            /// <summary>
-            /// <c>Node.js diagnostic report</c>.
-            /// </summary>
-            [<Emit("$0[2]")>]
-            abstract member report: string with get, set
 
     module ParentPort =
         module Message =
@@ -13030,6 +13343,98 @@ module Utility =
                 [<Erase>]
                 member val secureDnsPolicy: Utility.Enums.Net.ResolveHost.Options.SecureDnsPolicy =
                     Unchecked.defaultof<_> with get, set
+
+    module UtilityProcess =
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnLogin =
+            [<Emit("$0[0]")>]
+            abstract member authenticationResponseDetails: Utility.UtilityProcess.Login.AuthenticationResponseDetails with get, set
+
+            [<Emit("$0[1]")>]
+            abstract member authInfo: Utility.UtilityProcess.Login.AuthInfo with get, set
+
+            [<Emit("$0[2]")>]
+            abstract member callback: Option<string> * Option<string> -> unit with get, set
+
+        /// <summary>
+        /// Emitted when the child process needs to terminate due to non continuable error from V8.<br/><br/>No matter if you listen to
+        /// the <c>error</c> event, the <c>exit</c> event will be emitted after the child process terminates.
+        /// </summary>
+        [<Experimental("Indicated to be Experimental by Electron");
+          System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnError =
+            /// <summary>
+            /// Type of error. One of the following values:
+            /// </summary>
+            [<Emit("$0[0]")>]
+            abstract member ``type``: Utility.Enums.UtilityProcess.Error.Type with get, set
+
+            /// <summary>
+            /// Source location from where the error originated.
+            /// </summary>
+            [<Emit("$0[1]")>]
+            abstract member location: string with get, set
+
+            /// <summary>
+            /// <c>Node.js diagnostic report</c>.
+            /// </summary>
+            [<Emit("$0[2]")>]
+            abstract member report: string with get, set
+
+        module Login =
+            [<JS.Pojo>]
+            type AuthInfo
+                /// <param name="isProxy"></param>
+                /// <param name="scheme"></param>
+                /// <param name="host"></param>
+                /// <param name="port"></param>
+                /// <param name="realm"></param>
+                (isProxy: bool, scheme: string, host: string, port: int, realm: string) =
+                class
+                end
+
+                [<Erase>]
+                member val isProxy: bool = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val scheme: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val host: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val port: int = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val realm: string = Unchecked.defaultof<_> with get, set
+
+            [<JS.Pojo>]
+            type AuthenticationResponseDetails
+                /// <param name="url"></param>
+                /// <param name="pid"></param>
+                (url: URL, pid: float) =
+                class
+                end
+
+                [<Erase>]
+                member val url: URL = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val pid: float = Unchecked.defaultof<_> with get, set
+
+            /// <param name="username"></param>
+            /// <param name="password"></param>
+            type Callback = delegate of ?username: string * ?password: string -> unit
 
     module SystemPreferences =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
@@ -13897,6 +14302,84 @@ module Utility =
         /// </summary>
         [<Emit("$0.off('message', $1)")>]
         member inline _.offMessage(handler: obj -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.on('login', $1)")>]
+        member inline _.onLogin
+            (
+                handler:
+                    Utility.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Utility.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.on('login', $1)")>]
+        member inline _.onLogin(handler: Utility.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.once('login', $1)")>]
+        member inline _.onceLogin
+            (
+                handler:
+                    Utility.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Utility.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.once('login', $1)")>]
+        member inline _.onceLogin(handler: Utility.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.off('login', $1)")>]
+        member inline _.offLogin
+            (
+                handler:
+                    Utility.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Utility.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.off('login', $1)")>]
+        member inline _.offLogin(handler: Utility.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
         /// Send a message to the child process, optionally transferring ownership of zero or more <c>MessagePortMain</c> objects.<br/><br/>For example:
@@ -15080,6 +15563,9 @@ module Main =
 
         module UtilityProcess =
             [<Literal; Erase>]
+            let Login = "login"
+
+            [<Literal; Erase>]
             let Error = "error"
 
         module Tray =
@@ -15121,6 +15607,9 @@ module Main =
             let AccentColorChanged = "accent-color-changed"
 
         module Session =
+            [<Literal; Erase>]
+            let SelectWebauthnAccount = "select-webauthn-account"
+
             [<Literal; Erase>]
             let UsbDeviceRevoked = "usb-device-revoked"
 
@@ -15529,6 +16018,43 @@ module Main =
             abstract member newDisplay: Display with get, set
 
     module WebContentsView =
+        module SetBounds =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="animate">If true, the bounds change will be animated. If an object is passed, it can contain the following properties:</param>
+                (?animate: U2<bool, Main.WebContentsView.SetBounds.Options.Animate>) =
+                class
+                end
+
+                /// <summary>
+                /// If true, the bounds change will be animated. If an object is passed, it can contain the following properties:
+                /// </summary>
+                [<Erase>]
+                member val animate: U2<bool, Main.WebContentsView.SetBounds.Options.Animate> =
+                    Unchecked.defaultof<_> with get, set
+
+            module Options =
+                [<JS.Pojo>]
+                type Animate
+                    /// <param name="duration">Duration of the animation in milliseconds. Default is <c>250</c>.</param>
+                    /// <param name="easing">Easing function for the animation. Default is <c>linear</c>.</param>
+                    (?duration: int, ?easing: Main.Enums.WebContentsView.SetBounds.Options.Animate.Easing) =
+                    class
+                    end
+
+                    /// <summary>
+                    /// Duration of the animation in milliseconds. Default is <c>250</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val duration: int = Unchecked.defaultof<_> with get, set
+
+                    /// <summary>
+                    /// Easing function for the animation. Default is <c>linear</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val easing: Main.Enums.WebContentsView.SetBounds.Options.Animate.Easing =
+                        Unchecked.defaultof<_> with get, set
+
         [<JS.Pojo>]
         type Options
             /// <param name="webPreferences">Settings of web page's features.</param>
@@ -15551,148 +16077,42 @@ module Main =
             [<Erase>]
             member val webContents: Main.WebContents = Unchecked.defaultof<_> with get, set
 
-    module UtilityProcess =
-        /// <summary>
-        /// Emitted when the child process needs to terminate due to non continuable error from V8.<br/><br/>No matter if you listen to
-        /// the <c>error</c> event, the <c>exit</c> event will be emitted after the child process terminates.
-        /// </summary>
-        [<Experimental("Indicated to be Experimental by Electron");
-          System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
-          AllowNullLiteral;
-          Interface>]
-        type IOnError =
-            /// <summary>
-            /// Type of error. One of the following values:
-            /// </summary>
-            [<Emit("$0[0]")>]
-            abstract member ``type``: Main.Enums.UtilityProcess.Error.Type with get, set
-
-            /// <summary>
-            /// Source location from where the error originated.
-            /// </summary>
-            [<Emit("$0[1]")>]
-            abstract member location: string with get, set
-
-            /// <summary>
-            /// <c>Node.js diagnostic report</c>.
-            /// </summary>
-            [<Emit("$0[2]")>]
-            abstract member report: string with get, set
-
-        module Fork =
+    module View =
+        module SetBounds =
             [<JS.Pojo>]
             type Options
-                /// <param name="env">Environment key-value pairs. Default is <c>process.env</c>.</param>
-                /// <param name="execArgv">List of string arguments passed to the executable.</param>
-                /// <param name="cwd">Current working directory of the child process.</param>
-                /// <param name="stdio">Allows configuring the mode for <c>stdout</c> and <c>stderr</c> of the child process. Default is <c>inherit</c>. String value can be
-                /// one of <c>pipe</c>, <c>ignore</c>, <c>inherit</c>, for more details on these values you can refer to stdio documentation from Node.js. Currently
-                /// this option only supports configuring <c>stdout</c> and <c>stderr</c> to either <c>pipe</c>, <c>inherit</c> or <c>ignore</c>. Configuring <c>stdin</c> to any property other
-                /// than <c>ignore</c> is not supported and will result in an error. For example, the supported values will be processed as
-                /// following:</param>
-                /// <param name="serviceName">Name of the process that will appear in <c>name</c> property of <c>ProcessMetric</c> returned by <c>app.getAppMetrics</c> and <c>child-process-gone</c> event of
-                /// <c>app</c>. Default is <c>Node Utility Process</c>.</param>
-                /// <param name="allowLoadingUnsignedLibraries">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
-                /// utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can be codesigned with <c>com.apple.security.cs.disable-library-validation</c>
-                /// and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically need this capability, it
-                /// is best to leave this disabled. Default is <c>false</c>.</param>
-                /// <param name="disclaim">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
-                /// utility process will disclaim responsibility for the child process. This causes the operating system to consider the child process as
-                /// a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility is disclaimed, the parent
-                /// process will not be attributed for any TCC requests initiated by the child process. This is useful when launching processes
-                /// that run third-party or otherwise untrusted code. Default is <c>false</c>.</param>
-                /// <param name="respondToAuthRequestsFromMainProcess">With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to
-                /// them via the <c>app#login</c> event in the main process instead of the default <c>login</c> event on the <c>ClientRequest</c> object. Default
-                /// is <c>false</c>.</param>
-                (
-                    ?env: obj,
-                    ?execArgv: string[],
-                    ?cwd: string,
-                    ?stdio: U2<Main.Enums.UtilityProcess.Fork.Options.Stdio[], string>,
-                    ?serviceName: string
-                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
-                    ,
-                    ?allowLoadingUnsignedLibraries: bool
-                    #endif
-                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
-                    ,
-                    ?disclaim: bool
-                    #endif
-                    ,
-                    ?respondToAuthRequestsFromMainProcess: bool
-                ) =
+                /// <param name="animate">If true, the bounds change will be animated. If an object is passed, it can contain the following properties:</param>
+                (?animate: U2<bool, Main.View.SetBounds.Options.Animate>) =
                 class
                 end
 
                 /// <summary>
-                /// Environment key-value pairs. Default is <c>process.env</c>.
+                /// If true, the bounds change will be animated. If an object is passed, it can contain the following properties:
                 /// </summary>
                 [<Erase>]
-                member val env: obj = Unchecked.defaultof<_> with get, set
-
-                /// <summary>
-                /// List of string arguments passed to the executable.
-                /// </summary>
-                [<Erase>]
-                member val execArgv: string[] = Unchecked.defaultof<_> with get, set
-
-                /// <summary>
-                /// Current working directory of the child process.
-                /// </summary>
-                [<Erase>]
-                member val cwd: string = Unchecked.defaultof<_> with get, set
-
-                /// <summary>
-                /// Allows configuring the mode for <c>stdout</c> and <c>stderr</c> of the child process. Default is <c>inherit</c>. String value can be one
-                /// of <c>pipe</c>, <c>ignore</c>, <c>inherit</c>, for more details on these values you can refer to stdio documentation from Node.js. Currently this
-                /// option only supports configuring <c>stdout</c> and <c>stderr</c> to either <c>pipe</c>, <c>inherit</c> or <c>ignore</c>. Configuring <c>stdin</c> to any property other than
-                /// <c>ignore</c> is not supported and will result in an error. For example, the supported values will be processed as following:
-                /// </summary>
-                [<Erase>]
-                member val stdio: U2<Main.Enums.UtilityProcess.Fork.Options.Stdio[], string> =
-                    Unchecked.defaultof<_> with get, set
-
-                /// <summary>
-                /// Name of the process that will appear in <c>name</c> property of <c>ProcessMetric</c> returned by <c>app.getAppMetrics</c> and <c>child-process-gone</c> event of <c>app</c>.
-                /// Default is <c>Node Utility Process</c>.
-                /// </summary>
-                [<Erase>]
-                member val serviceName: string = Unchecked.defaultof<_> with get, set
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
-                /// <summary>
-                /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
-                /// With this flag, the utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can
-                /// be codesigned with <c>com.apple.security.cs.disable-library-validation</c> and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically
-                /// need this capability, it is best to leave this disabled. Default is <c>false</c>.
-                /// </summary>
-                [<Erase>]
-                member val allowLoadingUnsignedLibraries: bool = Unchecked.defaultof<_> with get, set
-                #endif
-
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
-                /// <summary>
-                /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
-                /// With this flag, the utility process will disclaim responsibility for the child process. This causes the operating system to consider
-                /// the child process as a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility
-                /// is disclaimed, the parent process will not be attributed for any TCC requests initiated by the child process. This is
-                /// useful when launching processes that run third-party or otherwise untrusted code. Default is <c>false</c>.
-                /// </summary>
-                [<Erase>]
-                member val disclaim: bool = Unchecked.defaultof<_> with get, set
-                #endif
-
-
-                /// <summary>
-                /// With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to them
-                /// via the <c>app#login</c> event in the main process instead of the default <c>login</c> event on the <c>ClientRequest</c> object. Default is
-                /// <c>false</c>.
-                /// </summary>
-                [<Erase>]
-                member val respondToAuthRequestsFromMainProcess: bool = Unchecked.defaultof<_> with get, set
+                member val animate: U2<bool, Main.View.SetBounds.Options.Animate> = Unchecked.defaultof<_> with get, set
 
             module Options =
                 [<JS.Pojo>]
-                type Env() = class end
+                type Animate
+                    /// <param name="duration">Duration of the animation in milliseconds. Default is <c>250</c>.</param>
+                    /// <param name="easing">Easing function for the animation. Default is <c>linear</c>.</param>
+                    (?duration: int, ?easing: Main.Enums.View.SetBounds.Options.Animate.Easing) =
+                    class
+                    end
+
+                    /// <summary>
+                    /// Duration of the animation in milliseconds. Default is <c>250</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val duration: int = Unchecked.defaultof<_> with get, set
+
+                    /// <summary>
+                    /// Easing function for the animation. Default is <c>linear</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val easing: Main.Enums.View.SetBounds.Options.Animate.Easing =
+                        Unchecked.defaultof<_> with get, set
 
     module Tray =
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
@@ -16476,6 +16896,31 @@ module Main =
             [<Erase>]
             member val ``end``: unit -> unit = Unchecked.defaultof<_> with get, set
 
+    module SafeStorage =
+        [<JS.Pojo>]
+        type DecryptStringAsync
+            /// <param name="shouldReEncrypt">whether data that has just been returned from the decrypt operation should be re-encrypted, as the key has been
+            /// rotated or a new  key is available that provides a different security level. If <c>true</c>, you should call <c>decryptStringAsync</c>
+            /// again to receive the new decrypted string.</param>
+            /// <param name="result">the decrypted string.</param>
+            (shouldReEncrypt: bool, result: string) =
+            class
+            end
+
+            /// <summary>
+            /// whether data that has just been returned from the decrypt operation should be re-encrypted, as the key has been rotated
+            /// or a new  key is available that provides a different security level. If <c>true</c>, you should call <c>decryptStringAsync</c> again
+            /// to receive the new decrypted string.
+            /// </summary>
+            [<Erase>]
+            member val shouldReEncrypt: bool = Unchecked.defaultof<_> with get, set
+
+            /// <summary>
+            /// the decrypted string.
+            /// </summary>
+            [<Erase>]
+            member val result: string = Unchecked.defaultof<_> with get, set
+
     module Process =
         [<JS.Pojo>]
         type GetSystemMemoryInfo
@@ -16635,9 +17080,9 @@ module Main =
             member val doesZapGarbage: bool = Unchecked.defaultof<_> with get, set
 
     module Notification =
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
-        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
         /// Emitted when an error is encountered while creating and showing the native notification.
         /// </summary>
         [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
@@ -16691,6 +17136,16 @@ module Main =
 
         [<JS.Pojo>]
         type Options
+            /// <param name="id">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || A unique identifier for
+            /// the notification. On macOS, maps to <c>UNNotificationRequest</c>'s <c>identifier</c> property. On Windows, maps to the toast notification's <c>Tag</c> property. Defaults to
+            /// a random UUID if not provided or if an empty string is passed. Use this identifier with <c>Notification.remove()</c> to remove
+            /// specific delivered notifications, or with <c>Notification.getHistory()</c> to identify them.</param>
+            /// <param name="groupId">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || A string identifier used
+            /// to visually group notifications together in Notification Center / Action Center. On macOS, maps to <c>UNNotificationContent</c>'s <c>threadIdentifier</c> property. On Windows,
+            /// maps to the toast notification's <c>Group</c> property. Use this identifier with <c>Notification.removeGroup()</c> to remove all notifications in a group.</param>
+            /// <param name="groupTitle">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || A title for the
+            /// notification group header. When both <c>groupId</c> and <c>groupTitle</c> are specified, Windows will display a header above the notification that groups
+            /// related notifications together. Maps to the toast notification's <c>header</c> element.</param>
             /// <param name="title">A title for the notification, which will be displayed at the top of the notification window when it is
             /// shown.</param>
             /// <param name="subtitle">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || A subtitle for the
@@ -16699,23 +17154,35 @@ module Main =
             /// <param name="silent">Whether or not to suppress the OS notification noise when showing the notification.</param>
             /// <param name="icon">An icon to use in the notification. If a string is passed, it must be a valid path to
             /// a local icon file.</param>
-            /// <param name="hasReply">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Whether or not to
+            /// <param name="hasReply">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Whether or not to
             /// add an inline reply option to the notification.</param>
             /// <param name="timeoutType">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌ || The timeout duration of
             /// the notification. Can be 'default' or 'never'.</param>
-            /// <param name="replyPlaceholder">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The placeholder to write
+            /// <param name="replyPlaceholder">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || The placeholder to write
             /// in the inline reply input field.</param>
             /// <param name="sound">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The name of the
             /// sound file to play when the notification is shown.</param>
-            /// <param name="urgency">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
+            /// <param name="urgency">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
             /// the notification. Can be 'normal', 'critical', or 'low'.</param>
-            /// <param name="actions">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Actions to add to
+            /// <param name="actions">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Actions to add to
             /// the notification. Please read the available actions and limitations in the <c>NotificationAction</c> documentation.</param>
             /// <param name="closeButtonText">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || A custom title for
             /// the close button of an alert. An empty string will cause the default localized text to be used.</param>
             /// <param name="toastXml">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || A custom description of
             /// the Notification on Windows superseding all properties above. Provides full customization of design and behavior of the notification.</param>
             (
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+                ?id: string
+                #endif
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+                ,
+                ?groupId: string
+                #endif
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+                ,
+                ?groupTitle: string
+                #endif
+                ,
                 ?title: string
                 #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
                 ,
@@ -16725,7 +17192,7 @@ module Main =
                 ?body: string,
                 ?silent: bool,
                 ?icon: U2<string, Main.NativeImage>
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
                 ,
                 ?hasReply: bool
                 #endif
@@ -16733,7 +17200,7 @@ module Main =
                 ,
                 ?timeoutType: Main.Enums.Notification.Options.TimeoutType
                 #endif
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
                 ,
                 ?replyPlaceholder: string
                 #endif
@@ -16741,11 +17208,11 @@ module Main =
                 ,
                 ?sound: string
                 #endif
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
                 ,
                 ?urgency: Main.Enums.Notification.Options.Urgency
                 #endif
-                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
                 ,
                 ?actions: NotificationAction[]
                 #endif
@@ -16761,6 +17228,38 @@ module Main =
             ) =
             class
             end
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+            /// <summary>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
+            /// A unique identifier for the notification. On macOS, maps to <c>UNNotificationRequest</c>'s <c>identifier</c> property. On Windows, maps to the toast notification's
+            /// <c>Tag</c> property. Defaults to a random UUID if not provided or if an empty string is passed. Use this identifier
+            /// with <c>Notification.remove()</c> to remove specific delivered notifications, or with <c>Notification.getHistory()</c> to identify them.
+            /// </summary>
+            [<Erase>]
+            member val id: string = Unchecked.defaultof<_> with get, set
+            #endif
+
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+            /// <summary>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
+            /// A string identifier used to visually group notifications together in Notification Center / Action Center. On macOS, maps to <c>UNNotificationContent</c>'s
+            /// <c>threadIdentifier</c> property. On Windows, maps to the toast notification's <c>Group</c> property. Use this identifier with <c>Notification.removeGroup()</c> to remove all notifications
+            /// in a group.
+            /// </summary>
+            [<Erase>]
+            member val groupId: string = Unchecked.defaultof<_> with get, set
+            #endif
+
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+            /// <summary>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+            /// A title for the notification group header. When both <c>groupId</c> and <c>groupTitle</c> are specified, Windows will display a header above
+            /// the notification that groups related notifications together. Maps to the toast notification's <c>header</c> element.
+            /// </summary>
+            [<Erase>]
+            member val groupTitle: string = Unchecked.defaultof<_> with get, set
+            #endif
+
 
             /// <summary>
             /// A title for the notification, which will be displayed at the top of the notification window when it is shown.
@@ -16795,9 +17294,9 @@ module Main =
             /// </summary>
             [<Erase>]
             member val icon: U2<string, Main.NativeImage> = Unchecked.defaultof<_> with get, set
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
             /// <summary>
-            /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
             /// Whether or not to add an inline reply option to the notification.
             /// </summary>
             [<Erase>]
@@ -16813,9 +17312,9 @@ module Main =
             member val timeoutType: Main.Enums.Notification.Options.TimeoutType = Unchecked.defaultof<_> with get, set
             #endif
 
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
             /// <summary>
-            /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
             /// The placeholder to write in the inline reply input field.
             /// </summary>
             [<Erase>]
@@ -16831,18 +17330,18 @@ module Main =
             member val sound: string = Unchecked.defaultof<_> with get, set
             #endif
 
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
             /// <summary>
-            /// <para>⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌</para>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌</para>
             /// The urgency level of the notification. Can be 'normal', 'critical', or 'low'.
             /// </summary>
             [<Erase>]
             member val urgency: Main.Enums.Notification.Options.Urgency = Unchecked.defaultof<_> with get, set
             #endif
 
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
             /// <summary>
-            /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+            /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
             /// Actions to add to the notification. Please read the available actions and limitations in the <c>NotificationAction</c> documentation.
             /// </summary>
             [<Erase>]
@@ -17291,6 +17790,44 @@ module Main =
                 /// </summary>
                 [<Erase>]
                 member val username: string = Unchecked.defaultof<_> with get, set
+
+    module ImageView =
+        module SetBounds =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="animate">If true, the bounds change will be animated. If an object is passed, it can contain the following properties:</param>
+                (?animate: U2<bool, Main.ImageView.SetBounds.Options.Animate>) =
+                class
+                end
+
+                /// <summary>
+                /// If true, the bounds change will be animated. If an object is passed, it can contain the following properties:
+                /// </summary>
+                [<Erase>]
+                member val animate: U2<bool, Main.ImageView.SetBounds.Options.Animate> =
+                    Unchecked.defaultof<_> with get, set
+
+            module Options =
+                [<JS.Pojo>]
+                type Animate
+                    /// <param name="duration">Duration of the animation in milliseconds. Default is <c>250</c>.</param>
+                    /// <param name="easing">Easing function for the animation. Default is <c>linear</c>.</param>
+                    (?duration: int, ?easing: Main.Enums.ImageView.SetBounds.Options.Animate.Easing) =
+                    class
+                    end
+
+                    /// <summary>
+                    /// Duration of the animation in milliseconds. Default is <c>250</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val duration: int = Unchecked.defaultof<_> with get, set
+
+                    /// <summary>
+                    /// Easing function for the animation. Default is <c>linear</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val easing: Main.Enums.ImageView.SetBounds.Options.Animate.Easing =
+                        Unchecked.defaultof<_> with get, set
 
     module Extensions =
         /// <summary>
@@ -20693,7 +21230,8 @@ module Main =
                 /// <param name="postBody">The post data that will be sent to the new window, along with the appropriate headers that will be
                 /// set. If no post data is to be sent, the value will be <c>null</c>. Only defined when the window is
                 /// being created by a form that set <c>target=_blank</c>.</param>
-                /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.</param>
+                /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's
+                /// WindowOpenDisposition.</param>
                 (
                     url: string,
                     frameName: string,
@@ -20740,7 +21278,7 @@ module Main =
                 member val postBody: PostBody = Unchecked.defaultof<_> with get, set
 
                 /// <summary>
-                /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.
+                /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's WindowOpenDisposition.
                 /// </summary>
                 [<Erase>]
                 member val disposition: Main.Enums.WebContents.DidCreateWindow.Details.Disposition =
@@ -21129,7 +21667,8 @@ module Main =
                     /// <c>https://the-origin/the/current/path/foo</c>.</param>
                     /// <param name="frameName">Name of the window provided in <c>window.open()</c></param>
                     /// <param name="features">Comma separated list of window features provided to <c>window.open()</c>.</param>
-                    /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.</param>
+                    /// <param name="disposition">Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's
+                    /// WindowOpenDisposition.</param>
                     /// <param name="referrer">The referrer that will be passed to the new window. May or may not result in the <c>Referer</c> header
                     /// being sent, depending on the referrer policy.</param>
                     /// <param name="postBody">The post data that will be sent to the new window, along with the appropriate headers that will be
@@ -21165,7 +21704,7 @@ module Main =
                     member val features: string = Unchecked.defaultof<_> with get, set
 
                     /// <summary>
-                    /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>.
+                    /// Can be <c>default</c>, <c>foreground-tab</c>, <c>background-tab</c>, <c>new-window</c> or <c>other</c>. Corresponds to the manner an associated link was clicked. See Chromium's WindowOpenDisposition.
                     /// </summary>
                     [<Erase>]
                     member val disposition: Main.Enums.WebContents.SetWindowOpenHandler.Handler.Details.Disposition =
@@ -21373,6 +21912,10 @@ module Main =
                 /// <param name="footer">string to be printed as page footer.</param>
                 /// <param name="pageSize">Specify page size of the printed document. Can be <c>A0</c>, <c>A1</c>, <c>A2</c>, <c>A3</c>, <c>A4</c>, <c>A5</c>, <c>A6</c>, <c>Legal</c>, <c>Letter</c>, <c>Tabloid</c>
                 /// or an Object containing <c>height</c> and <c>width</c>.</param>
+                /// <param name="usePrinterDefaultPageSize">Whether to use a given printer's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c>
+                /// is provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page
+                /// size of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm
+                /// x 297mm).</param>
                 (
                     ?silent: bool,
                     ?printBackground: bool,
@@ -21389,7 +21932,8 @@ module Main =
                     ?dpi: Record<string, float>,
                     ?header: string,
                     ?footer: string,
-                    ?pageSize: U2<Main.Enums.WebContents.Print.Options.PageSize, Size>
+                    ?pageSize: U2<Main.Enums.WebContents.Print.Options.PageSize, Size>,
+                    ?usePrinterDefaultPageSize: bool
                 ) =
                 class
                 end
@@ -21489,6 +22033,15 @@ module Main =
                 member val pageSize: U2<Main.Enums.WebContents.Print.Options.PageSize, Size> =
                     Unchecked.defaultof<_> with get, set
 
+                /// <summary>
+                /// Whether to use a given printer's default page size. Default is <c>false</c>. Cannot be combined with <c>pageSize</c>. When <c>deviceName</c> is
+                /// provided, uses the default page size of that specific printer. When <c>deviceName</c> is not provided, uses the default page size
+                /// of the system's default printer. If the printer's default page size cannot be retrieved, falls back to A4 (210mm x
+                /// 297mm).
+                /// </summary>
+                [<Erase>]
+                member val usePrinterDefaultPageSize: bool = Unchecked.defaultof<_> with get, set
+
             module Options =
                 [<JS.Pojo>]
                 type PageRanges
@@ -21563,6 +22116,241 @@ module Main =
             /// <param name="success">Indicates success of the print call.</param>
             /// <param name="failureReason">Error description called back if the print fails.</param>
             type Callback = delegate of success: bool * failureReason: string -> unit
+
+    module UtilityProcess =
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnLogin =
+            [<Emit("$0[0]")>]
+            abstract member authenticationResponseDetails: Main.UtilityProcess.Login.AuthenticationResponseDetails with get, set
+
+            [<Emit("$0[1]")>]
+            abstract member authInfo: Main.UtilityProcess.Login.AuthInfo with get, set
+
+            [<Emit("$0[2]")>]
+            abstract member callback: Option<string> * Option<string> -> unit with get, set
+
+        /// <summary>
+        /// Emitted when the child process needs to terminate due to non continuable error from V8.<br/><br/>No matter if you listen to
+        /// the <c>error</c> event, the <c>exit</c> event will be emitted after the child process terminates.
+        /// </summary>
+        [<Experimental("Indicated to be Experimental by Electron");
+          System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnError =
+            /// <summary>
+            /// Type of error. One of the following values:
+            /// </summary>
+            [<Emit("$0[0]")>]
+            abstract member ``type``: Main.Enums.UtilityProcess.Error.Type with get, set
+
+            /// <summary>
+            /// Source location from where the error originated.
+            /// </summary>
+            [<Emit("$0[1]")>]
+            abstract member location: string with get, set
+
+            /// <summary>
+            /// <c>Node.js diagnostic report</c>.
+            /// </summary>
+            [<Emit("$0[2]")>]
+            abstract member report: string with get, set
+
+        module Fork =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="env">Environment key-value pairs. Default is <c>process.env</c>.</param>
+                /// <param name="execArgv">List of string arguments passed to the executable.</param>
+                /// <param name="cwd">Current working directory of the child process.</param>
+                /// <param name="session">Sets the session used by the process for network requests. By default, network requests from the utility process will
+                /// use the system network context which does not have HTTP cache support. Setting a session enables HTTP caching and other
+                /// session-specific network features. See session for more information.</param>
+                /// <param name="partition">Sets the session used by the process according to the session's partition string. If <c>partition</c> starts with <c>persist:</c>, the
+                /// process will use a persistent session available to all pages in the app with the same <c>partition</c>. If there is
+                /// no <c>persist:</c> prefix, the process will use an in-memory session. By assigning the same <c>partition</c>, multiple processes can share the
+                /// same session. If the <c>session</c> option is set, this option is ignored.</param>
+                /// <param name="stdio">Allows configuring the mode for <c>stdout</c> and <c>stderr</c> of the child process. Default is <c>inherit</c>. String value can be
+                /// one of <c>pipe</c>, <c>ignore</c>, <c>inherit</c>, for more details on these values you can refer to stdio documentation from Node.js. Currently
+                /// this option only supports configuring <c>stdout</c> and <c>stderr</c> to either <c>pipe</c>, <c>inherit</c> or <c>ignore</c>. Configuring <c>stdin</c> to any property other
+                /// than <c>ignore</c> is not supported and will result in an error. For example, the supported values will be processed as
+                /// following:</param>
+                /// <param name="serviceName">Name of the process that will appear in <c>name</c> property of <c>ProcessMetric</c> returned by <c>app.getAppMetrics</c> and <c>child-process-gone</c> event of
+                /// <c>app</c>. Default is <c>Node Utility Process</c>.</param>
+                /// <param name="allowLoadingUnsignedLibraries">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
+                /// utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can be codesigned with <c>com.apple.security.cs.disable-library-validation</c>
+                /// and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically need this capability, it
+                /// is best to leave this disabled. Default is <c>false</c>.</param>
+                /// <param name="disclaim">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || With this flag, the
+                /// utility process will disclaim responsibility for the child process. This causes the operating system to consider the child process as
+                /// a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility is disclaimed, the parent
+                /// process will not be attributed for any TCC requests initiated by the child process. This is useful when launching processes
+                /// that run third-party or otherwise untrusted code. Default is <c>false</c>.</param>
+                /// <param name="respondToAuthRequestsFromMainProcess">With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to
+                /// them via the <c>login</c> event on the <c>UtilityProcess</c> instance when a <c>session</c> is provided, or via the <c>app#login</c> event in
+                /// the main process when using the default system network context. Without this flag, auth challenges are handled by the default
+                /// <c>login</c> event on the <c>ClientRequest</c> object. Default is <c>false</c>.</param>
+                (
+                    ?env: obj,
+                    ?execArgv: string[],
+                    ?cwd: string,
+                    ?session: Main.Session,
+                    ?partition: string,
+                    ?stdio: U2<Main.Enums.UtilityProcess.Fork.Options.Stdio[], string>,
+                    ?serviceName: string
+                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                    ,
+                    ?allowLoadingUnsignedLibraries: bool
+                    #endif
+                    #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                    ,
+                    ?disclaim: bool
+                    #endif
+                    ,
+                    ?respondToAuthRequestsFromMainProcess: bool
+                ) =
+                class
+                end
+
+                /// <summary>
+                /// Environment key-value pairs. Default is <c>process.env</c>.
+                /// </summary>
+                [<Erase>]
+                member val env: obj = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// List of string arguments passed to the executable.
+                /// </summary>
+                [<Erase>]
+                member val execArgv: string[] = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Current working directory of the child process.
+                /// </summary>
+                [<Erase>]
+                member val cwd: string = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Sets the session used by the process for network requests. By default, network requests from the utility process will use
+                /// the system network context which does not have HTTP cache support. Setting a session enables HTTP caching and other session-specific
+                /// network features. See session for more information.
+                /// </summary>
+                [<Erase>]
+                member val session: Main.Session = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Sets the session used by the process according to the session's partition string. If <c>partition</c> starts with <c>persist:</c>, the process
+                /// will use a persistent session available to all pages in the app with the same <c>partition</c>. If there is no
+                /// <c>persist:</c> prefix, the process will use an in-memory session. By assigning the same <c>partition</c>, multiple processes can share the same
+                /// session. If the <c>session</c> option is set, this option is ignored.
+                /// </summary>
+                [<Erase>]
+                member val partition: string = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Allows configuring the mode for <c>stdout</c> and <c>stderr</c> of the child process. Default is <c>inherit</c>. String value can be one
+                /// of <c>pipe</c>, <c>ignore</c>, <c>inherit</c>, for more details on these values you can refer to stdio documentation from Node.js. Currently this
+                /// option only supports configuring <c>stdout</c> and <c>stderr</c> to either <c>pipe</c>, <c>inherit</c> or <c>ignore</c>. Configuring <c>stdin</c> to any property other than
+                /// <c>ignore</c> is not supported and will result in an error. For example, the supported values will be processed as following:
+                /// </summary>
+                [<Erase>]
+                member val stdio: U2<Main.Enums.UtilityProcess.Fork.Options.Stdio[], string> =
+                    Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// Name of the process that will appear in <c>name</c> property of <c>ProcessMetric</c> returned by <c>app.getAppMetrics</c> and <c>child-process-gone</c> event of <c>app</c>.
+                /// Default is <c>Node Utility Process</c>.
+                /// </summary>
+                [<Erase>]
+                member val serviceName: string = Unchecked.defaultof<_> with get, set
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                /// <summary>
+                /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+                /// With this flag, the utility process will be launched via the <c>Electron Helper (Plugin).app</c> helper executable on macOS, which can
+                /// be codesigned with <c>com.apple.security.cs.disable-library-validation</c> and <c>com.apple.security.cs.allow-unsigned-executable-memory</c> entitlements. This will allow the utility process to load unsigned libraries. Unless you specifically
+                /// need this capability, it is best to leave this disabled. Default is <c>false</c>.
+                /// </summary>
+                [<Erase>]
+                member val allowLoadingUnsignedLibraries: bool = Unchecked.defaultof<_> with get, set
+                #endif
+
+                #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+                /// <summary>
+                /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+                /// With this flag, the utility process will disclaim responsibility for the child process. This causes the operating system to consider
+                /// the child process as a separate entity for purposes of security policies like Transparency, Consent, and Control (TCC). When responsibility
+                /// is disclaimed, the parent process will not be attributed for any TCC requests initiated by the child process. This is
+                /// useful when launching processes that run third-party or otherwise untrusted code. Default is <c>false</c>.
+                /// </summary>
+                [<Erase>]
+                member val disclaim: bool = Unchecked.defaultof<_> with get, set
+                #endif
+
+
+                /// <summary>
+                /// With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to them
+                /// via the <c>login</c> event on the <c>UtilityProcess</c> instance when a <c>session</c> is provided, or via the <c>app#login</c> event in the
+                /// main process when using the default system network context. Without this flag, auth challenges are handled by the default <c>login</c>
+                /// event on the <c>ClientRequest</c> object. Default is <c>false</c>.
+                /// </summary>
+                [<Erase>]
+                member val respondToAuthRequestsFromMainProcess: bool = Unchecked.defaultof<_> with get, set
+
+            module Options =
+                [<JS.Pojo>]
+                type Env() = class end
+
+        module Login =
+            [<JS.Pojo>]
+            type AuthInfo
+                /// <param name="isProxy"></param>
+                /// <param name="scheme"></param>
+                /// <param name="host"></param>
+                /// <param name="port"></param>
+                /// <param name="realm"></param>
+                (isProxy: bool, scheme: string, host: string, port: int, realm: string) =
+                class
+                end
+
+                [<Erase>]
+                member val isProxy: bool = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val scheme: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val host: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val port: int = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val realm: string = Unchecked.defaultof<_> with get, set
+
+            [<JS.Pojo>]
+            type AuthenticationResponseDetails
+                /// <param name="url"></param>
+                /// <param name="pid"></param>
+                (url: URL, pid: float) =
+                class
+                end
+
+                [<Erase>]
+                member val url: URL = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val pid: float = Unchecked.defaultof<_> with get, set
+
+            /// <param name="username"></param>
+            /// <param name="password"></param>
+            type Callback = delegate of ?username: string * ?password: string -> unit
 
     module TouchBarSegmentedControl =
         [<JS.Pojo>]
@@ -21761,6 +22549,28 @@ module Main =
                         Promise<unit>
 
     module Session =
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never);
+          AllowNullLiteral;
+          Interface>]
+        type IOnSelectWebauthnAccount =
+            [<Emit("$0[0]")>]
+            abstract member event: Event with get, set
+
+            [<Emit("$0[1]")>]
+            abstract member details: Main.Session.SelectWebauthnAccount.Details with get, set
+
+            [<Emit("$0[2]")>]
+            abstract member callback: Option<Option<string>> -> unit with get, set
+
         /// <summary>
         /// Emitted after <c>USBDevice.forget()</c> has been called.  This event can be used to help maintain persistent storage of permissions when
         /// <c>setDevicePermissionHandler</c> is used.
@@ -22120,6 +22930,31 @@ module Main =
 
             [<Emit("$0[2]")>]
             abstract member webContents: Main.WebContents with get, set
+
+        module SelectWebauthnAccount =
+            [<JS.Pojo>]
+            type Details
+                /// <param name="relyingPartyId">The relying party identifier from the WebAuthn request.</param>
+                /// <param name="accounts"></param>
+                /// <param name="frame">The frame initiating this event. May be <c>null</c> if accessed after the frame has either navigated or been destroyed.</param>
+                (relyingPartyId: string, accounts: WebAuthnAccount[], frame: Option<Main.WebFrameMain>) =
+                class
+                end
+
+                /// <summary>
+                /// The relying party identifier from the WebAuthn request.
+                /// </summary>
+                [<Erase>]
+                member val relyingPartyId: string = Unchecked.defaultof<_> with get, set
+
+                [<Erase>]
+                member val accounts: WebAuthnAccount[] = Unchecked.defaultof<_> with get, set
+
+                /// <summary>
+                /// The frame initiating this event. May be <c>null</c> if accessed after the frame has either navigated or been destroyed.
+                /// </summary>
+                [<Erase>]
+                member val frame: Option<Main.WebFrameMain> = Unchecked.defaultof<_> with get, set
 
         module UsbDeviceRevoked =
             [<JS.Pojo>]
@@ -22703,12 +23538,7 @@ module Main =
                 /// <param name="origin">Should follow <c>window.location.origin</c>’s representation <c>scheme://host:port</c>.</param>
                 /// <param name="storages">The types of storages to clear, can be <c>cookies</c>, <c>filesystem</c>, <c>indexdb</c>, <c>localstorage</c>, <c>shadercache</c>, <c>websql</c>, <c>serviceworkers</c>, <c>cachestorage</c>. If not specified,
                 /// clear all storage types.</param>
-                /// <param name="quotas">The types of quotas to clear, can be <c>temporary</c>. If not specified, clear all quotas.</param>
-                (
-                    ?origin: string,
-                    ?storages: Main.Enums.Session.ClearStorageData.Options.Storages[],
-                    ?quotas: Main.Enums.Session.ClearStorageData.Options.Quotas[]
-                ) =
+                (?origin: string, ?storages: Main.Enums.Session.ClearStorageData.Options.Storages[]) =
                 class
                 end
 
@@ -22724,13 +23554,6 @@ module Main =
                 /// </summary>
                 [<Erase>]
                 member val storages: Main.Enums.Session.ClearStorageData.Options.Storages[] =
-                    Unchecked.defaultof<_> with get, set
-
-                /// <summary>
-                /// The types of quotas to clear, can be <c>temporary</c>. If not specified, clear all quotas.
-                /// </summary>
-                [<Erase>]
-                member val quotas: Main.Enums.Session.ClearStorageData.Options.Quotas[] =
                     Unchecked.defaultof<_> with get, set
 
         module FromPath =
@@ -25612,6 +26435,47 @@ module Main =
                 #endif
 
 
+        module ConfigureWebAuthn =
+            [<JS.Pojo>]
+            type Options
+                /// <param name="touchID">Enables the Touch ID / Secure Enclave platform authenticator for Web Authentication requests.</param>
+                (?touchID: Main.App.ConfigureWebAuthn.Options.TouchID) =
+                class
+                end
+
+                /// <summary>
+                /// Enables the Touch ID / Secure Enclave platform authenticator for Web Authentication requests.
+                /// </summary>
+                [<Erase>]
+                member val touchID: Main.App.ConfigureWebAuthn.Options.TouchID = Unchecked.defaultof<_> with get, set
+
+            module Options =
+                [<JS.Pojo>]
+                type TouchID
+                    /// <param name="keychainAccessGroup">The keychain access group that WebAuthn credentials will be stored under. This value <b>must</b> also be present in your
+                    /// app's <c>keychain-access-groups</c> code-signing entitlement, and is typically of the form <c>&lt;TEAM_ID&gt;.&lt;BUNDLE_ID&gt;.webauthn</c>.</param>
+                    /// <param name="promptReason">Customizes the reason text shown in the macOS Touch ID prompt. macOS renders the prompt as <c>"&lt;App Name&gt;" is
+                    /// trying to &lt;promptReason&gt;</c>, so the value should be a lowercase sentence fragment. An optional <c>$1</c> placeholder is replaced with the
+                    /// relying party ID (e.g. <c>example.com</c>) of the request being authenticated. Defaults to <c>verify your identity on $1</c>.</param>
+                    (keychainAccessGroup: string, ?promptReason: string) =
+                    class
+                    end
+
+                    /// <summary>
+                    /// The keychain access group that WebAuthn credentials will be stored under. This value <b>must</b> also be present in your app's
+                    /// <c>keychain-access-groups</c> code-signing entitlement, and is typically of the form <c>&lt;TEAM_ID&gt;.&lt;BUNDLE_ID&gt;.webauthn</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val keychainAccessGroup: string = Unchecked.defaultof<_> with get, set
+
+                    /// <summary>
+                    /// Customizes the reason text shown in the macOS Touch ID prompt. macOS renders the prompt as <c>"&lt;App Name&gt;" is trying
+                    /// to &lt;promptReason&gt;</c>, so the value should be a lowercase sentence fragment. An optional <c>$1</c> placeholder is replaced with the relying
+                    /// party ID (e.g. <c>example.com</c>) of the request being authenticated. Defaults to <c>verify your identity on $1</c>.
+                    /// </summary>
+                    [<Erase>]
+                    member val promptReason: string = Unchecked.defaultof<_> with get, set
+
         module ConfigureHostResolver =
             [<JS.Pojo>]
             type Options
@@ -26074,10 +26938,25 @@ module Main =
                 module Details =
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Disposition =
+                        /// <summary>
+                        /// Indicates Chromium deems in-window navigation valid for a window open call.
+                        /// </summary>
                         | [<CompiledName("default")>] Default
+                        /// <summary>
+                        /// Corresponds to a left click or shift + middle click.
+                        /// </summary>
                         | [<CompiledName("foreground-tab")>] ForegroundTab
+                        /// <summary>
+                        /// Corresponds to a middle click or ctrl/cmd + click.
+                        /// </summary>
                         | [<CompiledName("background-tab")>] BackgroundTab
+                        /// <summary>
+                        /// Corresponds to a shift + left click.
+                        /// </summary>
                         | [<CompiledName("new-window")>] NewWindow
+                        /// <summary>
+                        /// A catch-all for the remaining Chromium dispositions not handled by Electron.
+                        /// </summary>
                         | [<CompiledName("other")>] Other
 
             module SetImageAnimationPolicy =
@@ -26226,10 +27105,25 @@ module Main =
                     module Details =
                         [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                         type Disposition =
+                            /// <summary>
+                            /// Indicates Chromium deems in-window navigation valid for a window open call.
+                            /// </summary>
                             | [<CompiledName("default")>] Default
+                            /// <summary>
+                            /// Corresponds to a left click or shift + middle click.
+                            /// </summary>
                             | [<CompiledName("foreground-tab")>] ForegroundTab
+                            /// <summary>
+                            /// Corresponds to a middle click or ctrl/cmd + click.
+                            /// </summary>
                             | [<CompiledName("background-tab")>] BackgroundTab
+                            /// <summary>
+                            /// Corresponds to a shift + left click.
+                            /// </summary>
                             | [<CompiledName("new-window")>] NewWindow
+                            /// <summary>
+                            /// A catch-all for the remaining Chromium dispositions not handled by Electron.
+                            /// </summary>
                             | [<CompiledName("other")>] Other
 
             module InsertCSS =
@@ -26238,6 +27132,28 @@ module Main =
                     type CssOrigin =
                         | [<CompiledName("user")>] User
                         | [<CompiledName("author")>] Author
+
+        module WebContentsView =
+            module SetBounds =
+                module Options =
+                    module Animate =
+                        [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+                        type Easing =
+                            | [<CompiledName("linear")>] Linear
+                            | [<CompiledName("ease-in")>] EaseIn
+                            | [<CompiledName("ease-out")>] EaseOut
+                            | [<CompiledName("ease-in-out")>] EaseInOut
+
+        module View =
+            module SetBounds =
+                module Options =
+                    module Animate =
+                        [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+                        type Easing =
+                            | [<CompiledName("linear")>] Linear
+                            | [<CompiledName("ease-in")>] EaseIn
+                            | [<CompiledName("ease-out")>] EaseOut
+                            | [<CompiledName("ease-in-out")>] EaseInOut
 
         module UtilityProcess =
             module Error =
@@ -27110,9 +28026,6 @@ module Main =
             module ClearStorageData =
                 module Options =
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
-                    type Quotas = | [<CompiledName("temporary")>] Temporary
-
-                    [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Storages =
                         | [<CompiledName("cookies")>] Cookies
                         | [<CompiledName("filesystem")>] Filesystem
@@ -27505,6 +28418,17 @@ module Main =
                     | [<CompiledName("moveTabToNewWindow")>] MoveTabToNewWindow
                     | [<CompiledName("windowMenu")>] WindowMenu
 
+        module ImageView =
+            module SetBounds =
+                module Options =
+                    module Animate =
+                        [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
+                        type Easing =
+                            | [<CompiledName("linear")>] Linear
+                            | [<CompiledName("ease-in")>] EaseIn
+                            | [<CompiledName("ease-out")>] EaseOut
+                            | [<CompiledName("ease-in-out")>] EaseInOut
+
         module DownloadItem =
             module Done =
                 [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
@@ -27559,7 +28483,7 @@ module Main =
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Properties =
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27584,7 +28508,7 @@ module Main =
                     [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                     type Properties =
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27621,7 +28545,7 @@ module Main =
                         /// </summary>
                         | [<CompiledName("multiSelections")>] MultiSelections
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27663,7 +28587,7 @@ module Main =
                         /// </summary>
                         | [<CompiledName("multiSelections")>] MultiSelections
                         /// <summary>
-                        /// Show hidden files in dialog.
+                        /// Show hidden files in dialog. Deprecated on Linux.
                         /// </summary>
                         | [<CompiledName("showHiddenFiles")>] ShowHiddenFiles
                         /// <summary>
@@ -27701,7 +28625,21 @@ module Main =
                 [<StringEnum(CaseRules.None); RequireQualifiedAccess>]
                 type Cause =
                     /// <summary>
-                    /// The cookie was changed directly by a consumer's action.
+                    ///  The cookie was inserted.
+                    /// </summary>
+                    | [<CompiledName("inserted")>] Inserted
+                    /// <summary>
+                    /// The newly inserted cookie overwrote a cookie but did not result in any change. For example, inserting an identical cookie
+                    /// will produce this cause.
+                    /// </summary>
+                    | [<CompiledName("inserted-no-change-overwrite")>] InsertedNoChangeOverwrite
+                    /// <summary>
+                    /// The newly inserted cookie overwrote a cookie but did not result in any value change, but it's web observable (e.g.
+                    /// updates the expiry).
+                    /// </summary>
+                    | [<CompiledName("inserted-no-value-change-overwrite")>] InsertedNoValueChangeOverwrite
+                    /// <summary>
+                    /// The cookie was deleted directly by a consumer's action.
                     /// </summary>
                     | [<CompiledName("explicit")>] Explicit
                     /// <summary>
@@ -28201,6 +29139,10 @@ module Main =
                     /// </summary>
                     | [<CompiledName("appData")>] AppData
                     | [<CompiledName("assets")>] Assets
+                    /// <summary>
+                    /// specific files within a subdirectory of <c>userData</c> (e.g., <c>path.join(app.getPath('userData'), 'my-app-data')</c>) rather than directly in <c>userData</c> itself, to avoid naming conflicts
+                    /// with Chromium's own subdirectories (such as <c>Cache</c>, <c>GPUCache</c>, and <c>Local Storage</c>).
+                    /// </summary>
                     | [<CompiledName("userData")>] UserData
                     | [<CompiledName("sessionData")>] SessionData
                     | [<CompiledName("temp")>] Temp
@@ -31349,10 +32291,11 @@ module Main =
 
         /// <summary>
         /// When a custom <c>pageSize</c> is passed, Chromium attempts to validate platform specific minimum values for <c>width_microns</c> and <c>height_microns</c>. Width and
-        /// height must both be minimum 353 microns but may be higher on some operating systems.<br/><br/>Prints window's web page. When <c>silent</c>
-        /// is set to <c>true</c>, Electron will pick the system's default printer if <c>deviceName</c> is empty and the default settings for
-        /// printing.<br/><br/>Some possible <c>failureReason</c>s for print failure include:<br/><br/>* "Invalid printer settings"<br/>* "Print job canceled"<br/>* "Print job failed"<br/><br/>Use <c>page-break-before: always;</c> CSS style
-        /// to force to print to a new page.<br/><br/>Example usage:
+        /// height must both be minimum 353 microns but may be higher on some operating systems. If a valid <c>pageSize</c> is
+        /// not passed and <c>usePrinterDefaultPageSize</c> is <c>false</c>, an error will be thrown.<br/><br/>Prints window's web page. When <c>silent</c> is set to <c>true</c>,
+        /// Electron will pick the system's default printer if <c>deviceName</c> is empty and the default settings for printing.<br/><br/>Some possible <c>failureReason</c>s for
+        /// print failure include:<br/><br/>* "Invalid printer settings"<br/>* "Print job canceled"<br/>* "Print job failed"<br/><br/>Use <c>page-break-before: always;</c> CSS style to force to print
+        /// to a new page.<br/><br/>Example usage:
         /// </summary>
         /// <param name="options"></param>
         /// <param name="callback"></param>
@@ -31728,6 +32671,13 @@ module Main =
         member inline _.getMediaSourceId(requestWebContents: Main.WebContents) : string = Unchecked.defaultof<_>
 
         /// <summary>
+        /// The Chrome DevTools Protocol TargetID associated with this WebContents. This is the reverse of <c>webContents.fromDevToolsTargetId()</c>.<br/><br/>&gt; [!NOTE] This method creates a
+        /// new DevTools agent for this WebContents if one does not already exist.
+        /// </summary>
+        [<Erase>]
+        member inline _.getOrCreateDevToolsTargetId() : string = Unchecked.defaultof<_>
+
+        /// <summary>
         /// The operating system <c>pid</c> of the associated renderer process.
         /// </summary>
         [<Erase>]
@@ -32004,8 +32954,12 @@ module Main =
         /// <summary>
         /// </summary>
         /// <param name="bounds">New bounds of the View.</param>
-        [<Erase>]
-        member inline _.setBounds(bounds: Rectangle) : unit = Unchecked.defaultof<_>
+        /// <param name="animate">If true, the bounds change will be animated. If an object is passed, it can contain the following properties:</param>
+        [<Erase; ParamObject(1)>]
+        member inline _.setBounds
+            (bounds: Rectangle, ?animate: U2<bool, Main.WebContentsView.SetBounds.Options.Animate>)
+            : unit =
+            Unchecked.defaultof<_>
 
         /// <summary>
         /// The bounds of this View, relative to its parent.
@@ -32113,8 +33067,10 @@ module Main =
         /// <summary>
         /// </summary>
         /// <param name="bounds">New bounds of the View.</param>
-        [<Erase>]
-        member inline _.setBounds(bounds: Rectangle) : unit = Unchecked.defaultof<_>
+        /// <param name="animate">If true, the bounds change will be animated. If an object is passed, it can contain the following properties:</param>
+        [<Erase; ParamObject(1)>]
+        member inline _.setBounds(bounds: Rectangle, ?animate: U2<bool, Main.View.SetBounds.Options.Animate>) : unit =
+            Unchecked.defaultof<_>
 
         /// <summary>
         /// The bounds of this View, relative to its parent.
@@ -32271,6 +33227,84 @@ module Main =
         member inline _.offMessage(handler: obj -> unit) : unit = Unchecked.defaultof<_>
 
         /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.on('login', $1)")>]
+        member inline _.onLogin
+            (
+                handler:
+                    Main.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Main.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.on('login', $1)")>]
+        member inline _.onLogin(handler: Main.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.once('login', $1)")>]
+        member inline _.onceLogin
+            (
+                handler:
+                    Main.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Main.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.once('login', $1)")>]
+        member inline _.onceLogin(handler: Main.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.off('login', $1)")>]
+        member inline _.offLogin
+            (
+                handler:
+                    Main.UtilityProcess.Login.AuthenticationResponseDetails
+                        -> Main.UtilityProcess.Login.AuthInfo
+                        -> Option<string> * Option<string> -> unit
+                        -> unit
+            ) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when the utility process encounters an HTTP 401 or 407 authentication challenge, if the process was created with both
+        /// <c>respondToAuthRequestsFromMainProcess: true</c> and a <c>session</c> option. The <c>callback</c> should be called with credentials to respond to the challenge. Calling <c>callback</c>
+        /// without arguments will cancel the request.<br/><br/>This behaves the same as the <c>login</c> event on <c>app</c> but is scoped to the
+        /// individual utility process instance.
+        /// </summary>
+        [<Emit("$0.off('login', $1)")>]
+        member inline _.offLogin(handler: Main.UtilityProcess.IOnLogin -> unit) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
         /// Send a message to the child process, optionally transferring ownership of zero or more <c>MessagePortMain</c> objects.<br/><br/>For example:
         /// </summary>
         /// <param name="message"></param>
@@ -32327,6 +33361,13 @@ module Main =
         /// <param name="env">Environment key-value pairs. Default is <c>process.env</c>.</param>
         /// <param name="execArgv">List of string arguments passed to the executable.</param>
         /// <param name="cwd">Current working directory of the child process.</param>
+        /// <param name="session">Sets the session used by the process for network requests. By default, network requests from the utility process will
+        /// use the system network context which does not have HTTP cache support. Setting a session enables HTTP caching and other
+        /// session-specific network features. See session for more information.</param>
+        /// <param name="partition">Sets the session used by the process according to the session's partition string. If <c>partition</c> starts with <c>persist:</c>, the
+        /// process will use a persistent session available to all pages in the app with the same <c>partition</c>. If there is
+        /// no <c>persist:</c> prefix, the process will use an in-memory session. By assigning the same <c>partition</c>, multiple processes can share the
+        /// same session. If the <c>session</c> option is set, this option is ignored.</param>
         /// <param name="stdio">Allows configuring the mode for <c>stdout</c> and <c>stderr</c> of the child process. Default is <c>inherit</c>. String value can be
         /// one of <c>pipe</c>, <c>ignore</c>, <c>inherit</c>, for more details on these values you can refer to stdio documentation from Node.js. Currently
         /// this option only supports configuring <c>stdout</c> and <c>stderr</c> to either <c>pipe</c>, <c>inherit</c> or <c>ignore</c>. Configuring <c>stdin</c> to any property other
@@ -32344,8 +33385,9 @@ module Main =
         /// process will not be attributed for any TCC requests initiated by the child process. This is useful when launching processes
         /// that run third-party or otherwise untrusted code. Default is <c>false</c>.</param>
         /// <param name="respondToAuthRequestsFromMainProcess">With this flag, all HTTP 401 and 407 network requests created via the net module will allow responding to
-        /// them via the <c>app#login</c> event in the main process instead of the default <c>login</c> event on the <c>ClientRequest</c> object. Default
-        /// is <c>false</c>.</param>
+        /// them via the <c>login</c> event on the <c>UtilityProcess</c> instance when a <c>session</c> is provided, or via the <c>app#login</c> event in
+        /// the main process when using the default system network context. Without this flag, auth challenges are handled by the default
+        /// <c>login</c> event on the <c>ClientRequest</c> object. Default is <c>false</c>.</param>
         [<Erase; ParamObject(2)>]
         static member inline fork
             (
@@ -32354,6 +33396,8 @@ module Main =
                 ?env: obj,
                 ?execArgv: string[],
                 ?cwd: string,
+                ?session: Main.Session,
+                ?partition: string,
                 ?stdio: U2<Main.Enums.UtilityProcess.Fork.Options.Stdio[], string>,
                 ?serviceName: string,
                 ?allowLoadingUnsignedLibraries: bool,
@@ -35683,6 +36727,90 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.on('select-webauthn-account', $1)")>]
+        member inline _.onSelectWebauthnAccount
+            (handler: Event -> Main.Session.SelectWebauthnAccount.Details -> Option<Option<string>> -> unit -> unit)
+            : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.on('select-webauthn-account', $1)")>]
+        member inline _.onSelectWebauthnAccount(handler: Main.Session.IOnSelectWebauthnAccount -> unit) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.once('select-webauthn-account', $1)")>]
+        member inline _.onceSelectWebauthnAccount
+            (handler: Event -> Main.Session.SelectWebauthnAccount.Details -> Option<Option<string>> -> unit -> unit)
+            : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.once('select-webauthn-account', $1)")>]
+        member inline _.onceSelectWebauthnAccount(handler: Main.Session.IOnSelectWebauthnAccount -> unit) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.off('select-webauthn-account', $1)")>]
+        member inline _.offSelectWebauthnAccount
+            (handler: Event -> Main.Session.SelectWebauthnAccount.Details -> Option<Option<string>> -> unit -> unit)
+            : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Emitted when a call to <c>navigator.credentials.get()</c> resolves multiple discoverable WebAuthn credentials and the user must choose one. <c>callback</c> should be
+        /// called with the <c>credentialId</c> of the selected account; passing no arguments — or a <c>credentialId</c> that does not match one
+        /// of the provided accounts — will cancel the request and the page will receive a <c>NotAllowedError</c>. If no listener is
+        /// registered for this event, the request is cancelled with the same error. The credential request remains pending until the listener
+        /// invokes the callback, so always invoke it exactly once — typically from a <c>try { … } finally { callback(…)
+        /// }</c> block.<br/><br/>On macOS, the Touch ID platform authenticator surfaces accounts via this event once it has been configured with <c>app.configureWebAuthn</c>.
+        /// The event may also fire on other platforms when a roaming FIDO2 authenticator returns multiple discoverable credentials.
+        /// </summary>
+        [<Emit("$0.off('select-webauthn-account', $1)")>]
+        member inline _.offSelectWebauthnAccount(handler: Main.Session.IOnSelectWebauthnAccount -> unit) : unit =
+            Unchecked.defaultof<_>
+
+        /// <summary>
         /// the session's current cache size, in bytes.
         /// </summary>
         [<Erase>]
@@ -35700,14 +36828,10 @@ module Main =
         /// <param name="origin">Should follow <c>window.location.origin</c>’s representation <c>scheme://host:port</c>.</param>
         /// <param name="storages">The types of storages to clear, can be <c>cookies</c>, <c>filesystem</c>, <c>indexdb</c>, <c>localstorage</c>, <c>shadercache</c>, <c>websql</c>, <c>serviceworkers</c>, <c>cachestorage</c>. If not specified,
         /// clear all storage types.</param>
-        /// <param name="quotas">The types of quotas to clear, can be <c>temporary</c>. If not specified, clear all quotas.</param>
         [<Erase; ParamObject(0)>]
         member inline _.clearStorageData
-            (
-                ?origin: string,
-                ?storages: Main.Enums.Session.ClearStorageData.Options.Storages[],
-                ?quotas: Main.Enums.Session.ClearStorageData.Options.Quotas[]
-            ) : Promise<unit> =
+            (?origin: string, ?storages: Main.Enums.Session.ClearStorageData.Options.Storages[])
+            : Promise<unit> =
             Unchecked.defaultof<_>
 
         /// <summary>
@@ -36863,18 +37987,29 @@ module Main =
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ✔</para>
     /// &gt; Allows access to simple encryption and decryption of strings for storage on the local machine.<br/><br/>Process: Main<br/><br/>This module adds extra
     /// protection to data being stored on disk by using OS-provided cryptography systems. Current security semantics for each platform are outlined
-    /// below.<br/><br/>* **macOS**: Encryption keys are stored for your app in Keychain Access in a way that prevents other applications from
-    /// loading them without user override. Therefore, content is protected from other users and other apps running in the same userspace.<br/>*
-    /// **Windows**: Encryption keys are generated via DPAPI. As per the Windows documentation: "Typically, only a user with the same logon
-    /// credential as the user who encrypted the data can typically decrypt the data". Therefore, content is protected from other users
-    /// on the same machine, but not from other apps running in the same userspace.<br/>* **Linux**: Encryption keys are generated and
-    /// stored in a secret store that varies depending on your window manager and system setup. Options currently supported are <c>kwallet</c>,
-    /// <c>kwallet5</c>, <c>kwallet6</c> and <c>gnome-libsecret</c>, but more may be available in future versions of Electron. As such, the security semantics of
-    /// content protected via the <c>safeStorage</c> API vary between window managers and secret stores.<br/>  * Note that not all Linux
-    /// setups have an available secret store. If no secret store is available, items stored in using the <c>safeStorage</c> API will
-    /// be unprotected as they are encrypted via hardcoded plaintext password. You can detect when this happens when <c>safeStorage.getSelectedStorageBackend()</c> returns <c>basic_text</c>.<br/><br/>Note
-    /// that on Mac, access to the system Keychain is required and these calls can block the current thread to collect
-    /// user input. The same is true for Linux, if a password management tool is available.
+    /// below.<br/><br/>&gt; [!NOTE] We recommend using the asynchronous API (<c>encryptStringAsync</c>/<c>decryptStringAsync</c>) over the synchronous API. The async API is non-blocking, supports key
+    /// rotation, and handles temporary unavailability gracefully. The synchronous API may be deprecated in a future version of Electron.<br/><br/>### Platform-Specific Key
+    /// Providers<br/><br/><br/><br/>### Synchronous API<br/><br/>* **macOS**: Encryption keys are stored for your app in Keychain Access in a way that prevents other
+    /// applications from loading them without user override. Therefore, content is protected from other users and other apps running in the
+    /// same userspace.<br/>* **Windows**: Encryption keys are generated via DPAPI. As per the Windows documentation: "Typically, only a user with the
+    /// same logon credential as the user who encrypted the data can typically decrypt the data". Therefore, content is protected from
+    /// other users on the same machine, but not from other apps running in the same userspace.<br/>* **Linux**: Encryption keys are
+    /// generated and stored in a secret store that varies depending on your window manager and system setup. Options currently supported
+    /// are <c>kwallet</c>, <c>kwallet5</c>, <c>kwallet6</c> and <c>gnome-libsecret</c>, but more may be available in future versions of Electron. As such, the security
+    /// semantics of content protected via the <c>safeStorage</c> API vary between window managers and secret stores.<br/>  * Note that not
+    /// all Linux setups have an available secret store. If no secret store is available, items stored in using the <c>safeStorage</c>
+    /// API will be unprotected as they are encrypted via hardcoded plaintext password. You can detect when this happens when <c>safeStorage.getSelectedStorageBackend()</c>
+    /// returns <c>basic_text</c>.<br/><br/>Note that on macOS, access to the system Keychain is required and these calls can block the current thread
+    /// to collect user input. The same is true for Linux, if a password management tool is available.<br/><br/>### Asynchronous API<br/><br/>The asynchronous
+    /// API uses pluggable key providers that vary by platform:<br/><br/>* **macOS**: Encryption keys are stored and retrieved from Keychain Access. This
+    /// provides the same security model as the synchronous API, protecting content from other users and other apps running in the
+    /// same userspace.<br/>* **Windows**: Encryption keys are protected via DPAPI. This provides the same security model as the synchronous API, protecting
+    /// content from other users on the same machine but not from other apps running in the same userspace.<br/>* **Linux**: Multiple
+    /// key providers may be available depending on the desktop environment:<br/>  * <c>org.freedesktop.portal.Secret</c>: Uses the Portal Secret D-Bus interface to
+    /// retrieve application-specific secrets. This is the preferred provider for sandboxed environments like Flatpak.<br/>  * Secret Service API: Uses the
+    /// freedesktop.org Secret Service API (e.g., GNOME Keyring) for key storage.<br/>  * A fallback provider is used for environments without
+    /// a secret service available.<br/><br/>Unlike the synchronous API, these operations are non-blocking and support additional features like key rotation (indicated by
+    /// <c>shouldReEncrypt</c>) and temporary unavailability handling (indicated by <c>isTemporarilyUnavailable</c>).
     /// </summary>
     [<Import("safeStorage", "electron")>]
     type safeStorage =
@@ -36890,6 +38025,12 @@ module Main =
         static member inline isEncryptionAvailable() : bool = Unchecked.defaultof<_>
 
         /// <summary>
+        /// Whether encryption is available for asynchronous safeStorage operations.
+        /// </summary>
+        [<Erase>]
+        static member inline isAsyncEncryptionAvailable() : Promise<bool> = Unchecked.defaultof<_>
+
+        /// <summary>
         /// An array of bytes representing the encrypted string.<br/><br/>This function will throw an error if encryption fails.
         /// </summary>
         /// <param name="plainText"></param>
@@ -36897,12 +38038,29 @@ module Main =
         static member inline encryptString(plainText: string) : Buffer = Unchecked.defaultof<_>
 
         /// <summary>
-        /// the decrypted string. Decrypts the encrypted buffer obtained  with <c>safeStorage.encryptString</c> back into a string.<br/><br/>This function will throw an error
-        /// if decryption fails.
+        /// the decrypted string. Decrypts the encrypted buffer obtained  with <c>safeStorage.encryptString</c> back into a string.
         /// </summary>
         /// <param name="encrypted"></param>
         [<Erase>]
         static member inline decryptString(encrypted: Buffer) : string = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// An array of bytes representing the encrypted string.
+        /// </summary>
+        /// <param name="plainText"></param>
+        [<Erase>]
+        static member inline encryptStringAsync(plainText: string) : Promise<Buffer> = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Resolve with an object containing the following:<br/><br/>* <c>shouldReEncrypt</c> boolean - whether data that has just been returned from the decrypt
+        /// operation should be re-encrypted, as the key has been rotated or a new  key is available that provides a
+        /// different security level. If <c>true</c>, you should call <c>decryptStringAsync</c> again to receive the new decrypted string.<br/>* <c>result</c> string - the
+        /// decrypted string.
+        /// </summary>
+        /// <param name="encrypted"></param>
+        [<Erase>]
+        static member inline decryptStringAsync(encrypted: Buffer) : Promise<Main.SafeStorage.DecryptStringAsync> =
+            Unchecked.defaultof<_>
 
         /// <summary>
         /// This function on Linux will force the module to use an in memory password for creating symmetric key that is
@@ -37058,7 +38216,9 @@ module Main =
     /// to register it to that session explicitly.<br/><br/><code><br/>const { app, BrowserWindow, net, protocol, session } = require('electron')<br/><br/>const path = require('node:path')<br/>const url
     /// = require('node:url')<br/><br/>app.whenReady().then(() =&gt; {<br/>  const partition = 'persist:example'<br/>  const ses = session.fromPartition(partition)<br/><br/>  ses.protocol.handle('atom', (request) =&gt; {<br/>
     ///   const filePath = request.url.slice('atom://'.length)<br/>    return net.fetch(url.pathToFileURL(path.resolve(__dirname, filePath)).toString())<br/>  })<br/><br/>  const mainWindow = new BrowserWindow({
-    /// webPreferences: { partition } })<br/>})<br/></code>
+    /// webPreferences: { partition } })<br/>})<br/></code><br/><br/>### Protocol names<br/><br/>RFC 3986 defines what a valid protocol name is:<br/><br/>&gt; Scheme names consist of a
+    /// sequence of characters beginning with a letter and followed by any combination of letters, digits, plus ("+"), period ("."), or
+    /// hyphen ("-"). Although schemes are case-insensitive, the canonical form is lowercase […].
     /// </summary>
     [<Import("protocol", "electron")>]
     type protocol =
@@ -37945,13 +39105,54 @@ module Main =
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ✔</para>
     /// &gt; Create OS desktop notifications<br/><br/>Process: Main<br/><br/>&gt; [!NOTE] If you want to show notifications from a renderer process you should use
-    /// the web Notifications API<br/><br/>### Class: Notification<br/><br/>&gt; Create OS desktop notifications<br/><br/>Process: Main<br/><br/><c>Notification</c> is an EventEmitter.<br/><br/>It creates a new <c>Notification</c> with native
-    /// properties as set by the <c>options</c>.<br/><br/>&gt; [!WARNING] Electron's built-in classes cannot be subclassed in user code. For more information, see
-    /// the FAQ.<br/><br/>### Static Methods<br/><br/>The <c>Notification</c> class has the following static methods:<br/><br/>### <c>Notification.isSupported()</c><br/><br/>Returns <c>boolean</c> - Whether or not desktop notifications are
-    /// supported on the current system
+    /// the web Notifications API<br/><br/>&gt; [!NOTE] On MacOS, notifications use the UNNotification API as their underlying framework. This API requires an
+    /// application to be code-signed in order for notifications to appear. Unsigned binaries will emit a <c>failed</c> event when notifications are
+    /// called.<br/><br/>### Class: Notification<br/><br/>&gt; Create OS desktop notifications<br/><br/>Process: Main<br/><br/><c>Notification</c> is an EventEmitter.<br/><br/>It creates a new <c>Notification</c> with native properties as set
+    /// by the <c>options</c>.<br/><br/>&gt; [!WARNING] Electron's built-in classes cannot be subclassed in user code. For more information, see the FAQ.<br/><br/>### Static
+    /// Methods<br/><br/>The <c>Notification</c> class has the following static methods:<br/><br/>### <c>Notification.isSupported()</c><br/><br/>Returns <c>boolean</c> - Whether or not desktop notifications are supported on the
+    /// current system<br/><br/>### <c>Notification.handleActivation(callback)</c> _Windows_<br/><br/>* <c>callback</c> Function<br/>  * <c>details</c> ActivationArguments - Details about the notification activation.<br/><br/>Registers a callback to handle
+    /// all notification activations. The callback is invoked whenever a notification is clicked, replied to, or has an action button pressed
+    /// - regardless of whether the original <c>Notification</c> object is still in memory.<br/><br/>This method handles timing automatically:<br/><br/>* If an activation already
+    /// occurred before calling this method, the callback is invoked immediately with those details.<br/>* For all subsequent activations, the callback is
+    /// invoked when they occur.<br/><br/>The callback remains registered until replaced by another call to <c>handleActivation</c>.<br/><br/>This provides a centralized way to handle
+    /// notification interactions that works in all scenarios:<br/><br/>* Cold start (app launched from notification click)<br/>* Notifications persisted in AC that have
+    /// no in-memory representation after app re-start<br/>* Notification object was garbage collected<br/>* Notification object is still in memory (callback is invoked
+    /// in addition to instance events)<br/><br/><code><br/>const { Notification, app } = require('electron')<br/><br/>app.whenReady().then(() =&gt; {<br/>  // Register handler for all notification
+    /// activations<br/>  Notification.handleActivation((details) =&gt; {<br/>    console.log('Notification activated:', details.type)<br/>    if (details.type === 'reply') {<br/>
+    ///     console.log('User reply:', details.reply)<br/>    } else if (details.type === 'action') {<br/>
+    ///   console.log('Action index:', details.actionIndex)<br/>    }<br/>  })<br/>})<br/></code><br/><br/>### <c>Notification.getHistory()</c> _macOS_<br/><br/>Returns <c>Promise&lt;Notification[]&gt;</c> - Resolves with an array of
+    /// <c>Notification</c> objects representing all delivered notifications still present in Notification Center.<br/><br/>Each returned <c>Notification</c> is a live object connected to the
+    /// corresponding delivered notification. Interaction events (<c>click</c>, <c>reply</c>, <c>action</c>, <c>close</c>) will fire on these objects when the user interacts with the
+    /// notification in Notification Center. This is useful after an app restart to re-attach event handlers to notifications from a previous
+    /// session.<br/><br/>The returned notifications have their <c>id</c>, <c>groupId</c>, <c>title</c>, <c>subtitle</c>, and <c>body</c> properties populated from information available in the Notification Center.
+    /// Other properties (e.g., <c>actions</c>, <c>silent</c>, <c>icon</c>) are not available from delivered notifications and will have default values.<br/><br/>&gt; [!NOTE] Like all
+    /// macOS notification APIs, this method requires the application to be code-signed. In unsigned development builds, notifications are not delivered to
+    /// Notification Center and this method will resolve with an empty array.<br/><br/>&gt; [!NOTE] Unlike notifications created with <c>new Notification()</c>, notifications returned
+    /// by <c>getHistory()</c> will remain visible in Notification Center when the object is garbage collected. Calling <c>show()</c> on a restored notification
+    /// will remove the original from Notification Center and post a new one with the same properties.<br/><br/><code><br/>const { Notification, app }
+    /// = require('electron')<br/><br/>app.whenReady().then(async () =&gt; {<br/>  // Restore notifications from a previous session<br/>  const notifications = await Notification.getHistory()<br/>
+    /// for (const n of notifications) {<br/>    console.log(<c>Found delivered notification: ${n.id} - ${n.title}</c>)<br/>    n.on('click', ()
+    /// =&gt; {<br/>      console.log(<c>User clicked: ${n.id}</c>)<br/>    })<br/>    n.on('reply', (event) =&gt;
+    /// {<br/>      console.log(<c>User replied to ${n.id}: ${event.reply}</c>)<br/>    })<br/>  }<br/>  // Keep
+    /// references so events continue to fire<br/>})<br/></code><br/><br/>### <c>Notification.remove(id)</c> _macOS_<br/><br/>* <c>id</c> (string | string[]) - The notification identifier(s) to remove. These correspond
+    /// to the <c>id</c> values set in the <c>Notification</c> constructor.<br/><br/>Removes one or more delivered notifications from Notification Center by their identifier(s).<br/><br/><code><br/>const
+    /// { Notification } = require('electron')<br/><br/>// Remove a single notification<br/>Notification.remove('my-notification-id')<br/><br/>// Remove multiple notifications<br/>Notification.remove(['msg-1', 'msg-2', 'msg-3'])<br/></code><br/><br/>### <c>Notification.removeAll()</c> _macOS_<br/><br/>Removes all of the app's
+    /// delivered notifications from Notification Center.<br/><br/><code><br/>const { Notification } = require('electron')<br/><br/>Notification.removeAll()<br/></code><br/><br/>### <c>Notification.removeGroup(groupId)</c> _macOS_<br/><br/>* <c>groupId</c> string - The group identifier of the
+    /// notifications to remove. This corresponds to the <c>groupId</c> value set in the <c>Notification</c> constructor.<br/><br/>Removes all delivered notifications with the given
+    /// <c>groupId</c> from Notification Center.<br/><br/><code><br/>const { Notification } = require('electron')<br/><br/>// Remove all notifications in the 'chat-thread-1' group<br/>Notification.removeGroup('chat-thread-1')<br/></code>
     /// </summary>
     [<Import("Notification", "electron")>]
     type Notification
+        /// <param name="id">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || A unique identifier for
+        /// the notification. On macOS, maps to <c>UNNotificationRequest</c>'s <c>identifier</c> property. On Windows, maps to the toast notification's <c>Tag</c> property. Defaults to
+        /// a random UUID if not provided or if an empty string is passed. Use this identifier with <c>Notification.remove()</c> to remove
+        /// specific delivered notifications, or with <c>Notification.getHistory()</c> to identify them.</param>
+        /// <param name="groupId">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || A string identifier used
+        /// to visually group notifications together in Notification Center / Action Center. On macOS, maps to <c>UNNotificationContent</c>'s <c>threadIdentifier</c> property. On Windows,
+        /// maps to the toast notification's <c>Group</c> property. Use this identifier with <c>Notification.removeGroup()</c> to remove all notifications in a group.</param>
+        /// <param name="groupTitle">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌ || A title for the
+        /// notification group header. When both <c>groupId</c> and <c>groupTitle</c> are specified, Windows will display a header above the notification that groups
+        /// related notifications together. Maps to the toast notification's <c>header</c> element.</param>
         /// <param name="title">A title for the notification, which will be displayed at the top of the notification window when it is
         /// shown.</param>
         /// <param name="subtitle">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || A subtitle for the
@@ -37960,17 +39161,17 @@ module Main =
         /// <param name="silent">Whether or not to suppress the OS notification noise when showing the notification.</param>
         /// <param name="icon">An icon to use in the notification. If a string is passed, it must be a valid path to
         /// a local icon file.</param>
-        /// <param name="hasReply">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Whether or not to
+        /// <param name="hasReply">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Whether or not to
         /// add an inline reply option to the notification.</param>
         /// <param name="timeoutType">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌ || The timeout duration of
         /// the notification. Can be 'default' or 'never'.</param>
-        /// <param name="replyPlaceholder">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The placeholder to write
+        /// <param name="replyPlaceholder">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || The placeholder to write
         /// in the inline reply input field.</param>
         /// <param name="sound">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || The name of the
         /// sound file to play when the notification is shown.</param>
-        /// <param name="urgency">⚠ OS Compatibility: WIN ❌ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
+        /// <param name="urgency">⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ✔ | MAS ❌ || The urgency level of
         /// the notification. Can be 'normal', 'critical', or 'low'.</param>
-        /// <param name="actions">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Actions to add to
+        /// <param name="actions">⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌ || Actions to add to
         /// the notification. Please read the available actions and limitations in the <c>NotificationAction</c> documentation.</param>
         /// <param name="closeButtonText">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || A custom title for
         /// the close button of an alert. An empty string will cause the default localized text to be used.</param>
@@ -37978,6 +39179,18 @@ module Main =
         /// the Notification on Windows superseding all properties above. Provides full customization of design and behavior of the notification.</param>
         [<ParamObject(0)>]
         (
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+            ?id: string
+            #endif
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+            ,
+            ?groupId: string
+            #endif
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+            ,
+            ?groupTitle: string
+            #endif
+            ,
             ?title: string
             #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
             ,
@@ -37987,7 +39200,7 @@ module Main =
             ?body: string,
             ?silent: bool,
             ?icon: U2<string, Main.NativeImage>
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
             ,
             ?hasReply: bool
             #endif
@@ -37995,7 +39208,7 @@ module Main =
             ,
             ?timeoutType: Main.Enums.Notification.Options.TimeoutType
             #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
             ,
             ?replyPlaceholder: string
             #endif
@@ -38003,11 +39216,11 @@ module Main =
             ,
             ?sound: string
             #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_LIN || ELECTRON_OS_WIN
             ,
             ?urgency: Main.Enums.Notification.Options.Urgency
             #endif
-            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+            #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
             ,
             ?actions: NotificationAction[]
             #endif
@@ -38220,10 +39433,10 @@ module Main =
         member inline _.offAction(handler: Main.Notification.IOnAction -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when an error is encountered while creating and showing the native notification.
         /// </summary>
@@ -38231,10 +39444,10 @@ module Main =
         member inline _.onFailed(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when an error is encountered while creating and showing the native notification.
         /// </summary>
@@ -38242,10 +39455,10 @@ module Main =
         member inline _.onFailed(handler: Main.Notification.IOnFailed -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when an error is encountered while creating and showing the native notification.
         /// </summary>
@@ -38253,10 +39466,10 @@ module Main =
         member inline _.onceFailed(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when an error is encountered while creating and showing the native notification.
         /// </summary>
@@ -38264,10 +39477,10 @@ module Main =
         member inline _.onceFailed(handler: Main.Notification.IOnFailed -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when an error is encountered while creating and showing the native notification.
         /// </summary>
@@ -38275,10 +39488,10 @@ module Main =
         member inline _.offFailed(handler: Event -> string -> unit) : unit = Unchecked.defaultof<_>
         #endif
 
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
         /// </para>
         /// Emitted when an error is encountered while creating and showing the native notification.
         /// </summary>
@@ -38290,7 +39503,9 @@ module Main =
         /// <summary>
         /// Immediately shows the notification to the user. Unlike the web notification API, instantiating a <c>new Notification()</c> does not immediately show
         /// it to the user. Instead, you need to call this method before the OS will display it.<br/><br/>If the notification has
-        /// been shown before, this method will dismiss the previously shown notification and create a new one with identical properties.
+        /// been shown before, this method will dismiss the previously shown notification and create a new one with identical properties.<br/><br/>On macOS,
+        /// calling <c>show()</c> on a notification returned by <c>Notification.getHistory()</c> will remove the original notification from Notification Center and post a new
+        /// one with the same properties.
         /// </summary>
         [<Erase>]
         member inline _.show() : unit = Unchecked.defaultof<_>
@@ -38302,6 +39517,35 @@ module Main =
         /// </summary>
         [<Erase>]
         member inline _.close() : unit = Unchecked.defaultof<_>
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// A <c>string</c> property representing the unique identifier of the notification. This is set at construction time — either from the
+        /// <c>id</c> option or as a generated UUID if none was provided.
+        /// </summary>
+        [<Erase>]
+        member val id: string = Unchecked.defaultof<_> with get
+        #endif
+
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// A <c>string</c> property representing the group identifier of the notification. Notifications with the same <c>groupId</c> will be visually grouped together
+        /// in Notification Center (macOS) or Action Center (Windows).
+        /// </summary>
+        [<Erase>]
+        member val groupId: string = Unchecked.defaultof<_> with get
+        #endif
+
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌</para>
+        /// A <c>string</c> property representing the title of the notification group header.
+        /// </summary>
+        [<Erase>]
+        member val groupTitle: string = Unchecked.defaultof<_> with get
+        #endif
+
 
         /// <summary>
         /// A <c>string</c> property representing the title of the notification.
@@ -38391,6 +39635,79 @@ module Main =
         /// </summary>
         [<Erase>]
         static member inline isSupported() : bool = Unchecked.defaultof<_>
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ✔ | MAC ❌ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Registers a callback to handle all notification activations. The callback is invoked whenever a notification is clicked, replied to, or
+        /// has an action button pressed - regardless of whether the original <c>Notification</c> object is still in memory.<br/><br/>This method handles timing
+        /// automatically:<br/><br/>* If an activation already occurred before calling this method, the callback is invoked immediately with those details.<br/>* For all
+        /// subsequent activations, the callback is invoked when they occur.<br/><br/>The callback remains registered until replaced by another call to <c>handleActivation</c>.<br/><br/>This provides
+        /// a centralized way to handle notification interactions that works in all scenarios:<br/><br/>* Cold start (app launched from notification click)<br/>* Notifications
+        /// persisted in AC that have no in-memory representation after app re-start<br/>* Notification object was garbage collected<br/>* Notification object is still
+        /// in memory (callback is invoked in addition to instance events)
+        /// </summary>
+        /// <param name="callback"></param>
+        [<Erase>]
+        static member inline handleActivation(callback: ActivationArguments -> unit) : unit = Unchecked.defaultof<_>
+        #endif
+
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Resolves with an array of <c>Notification</c> objects representing all delivered notifications still present in Notification Center.<br/><br/>Each returned <c>Notification</c> is a
+        /// live object connected to the corresponding delivered notification. Interaction events (<c>click</c>, <c>reply</c>, <c>action</c>, <c>close</c>) will fire on these objects when
+        /// the user interacts with the notification in Notification Center. This is useful after an app restart to re-attach event handlers
+        /// to notifications from a previous session.<br/><br/>The returned notifications have their <c>id</c>, <c>groupId</c>, <c>title</c>, <c>subtitle</c>, and <c>body</c> properties populated from information
+        /// available in the Notification Center. Other properties (e.g., <c>actions</c>, <c>silent</c>, <c>icon</c>) are not available from delivered notifications and will have
+        /// default values.<br/><br/>&gt; [!NOTE] Like all macOS notification APIs, this method requires the application to be code-signed. In unsigned development builds,
+        /// notifications are not delivered to Notification Center and this method will resolve with an empty array.<br/><br/>&gt; [!NOTE] Unlike notifications created
+        /// with <c>new Notification()</c>, notifications returned by <c>getHistory()</c> will remain visible in Notification Center when the object is garbage collected. Calling
+        /// <c>show()</c> on a restored notification will remove the original from Notification Center and post a new one with the same
+        /// properties.
+        /// </summary>
+        [<Erase>]
+        static member inline getHistory() : Promise<Main.Notification[]> = Unchecked.defaultof<_>
+        #endif
+
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Removes one or more delivered notifications from Notification Center by their identifier(s).
+        /// </summary>
+        /// <param name="id">The notification identifier(s) to remove. These correspond to the <c>id</c> values set in the <c>Notification</c> constructor.</param>
+        [<Erase>]
+        static member inline remove(id: U2<string, string[]>) : unit = Unchecked.defaultof<_>
+        #endif
+
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Removes all of the app's delivered notifications from Notification Center.
+        /// </summary>
+        [<Erase>]
+        static member inline removeAll() : unit = Unchecked.defaultof<_>
+        #endif
+
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Removes all delivered notifications with the given <c>groupId</c> from Notification Center.
+        /// </summary>
+        /// <param name="groupId">The group identifier of the notifications to remove. This corresponds to the <c>groupId</c> value set in the <c>Notification</c> constructor.</param>
+        [<Erase>]
+        static member inline removeGroup(groupId: string) : unit = Unchecked.defaultof<_>
+        #endif
+
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ✔ | Exported ✔</para>
@@ -38720,6 +40037,16 @@ module Main =
         /// </summary>
         [<Erase>]
         static member val prefersReducedTransparency: bool = Unchecked.defaultof<_> with get
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌</para>
+        /// A <c>boolean</c> that indicates whether the user prefers UI that differentiates items using something other than color alone (e.g. shapes
+        /// or labels). This maps to NSWorkspace.accessibilityDisplayShouldDifferentiateWithoutColor.
+        /// </summary>
+        [<Erase>]
+        static member val shouldDifferentiateWithoutColor: bool = Unchecked.defaultof<_> with get
+        #endif
+
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ✔ | Utility ❌ | Exported ❌</para>
@@ -39074,9 +40401,10 @@ module Main =
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ✔</para>
-    /// <br/><br/>### Class: Menu<br/><br/>&gt; Create native application menus and context menus.<br/><br/>Process: Main<br/><br/>&gt; [!TIP] See also: A detailed guide about how to
-    /// implement menus in your application.<br/><br/>&gt; [!WARNING] Electron's built-in classes cannot be subclassed in user code. For more information, see the
-    /// FAQ.
+    /// <br/><br/>### Class: Menu<br/><br/>&gt; Create application menus and context menus.<br/><br/>Process: Main<br/><br/>The presentation of menus varies depending on the operating system:<br/><br/>* Under
+    /// Windows and Linux, menus are visually similar to Chromium.<br/>* Under macOS, these will be native menus.<br/><br/>&gt; [!TIP] See also: A
+    /// detailed guide about how to implement menus in your application.<br/><br/>&gt; [!WARNING] Electron's built-in classes cannot be subclassed in user code.
+    /// For more information, see the FAQ.
     /// </summary>
     [<Import("Menu", "electron")>]
     type Menu() =
@@ -39919,8 +41247,12 @@ module Main =
         /// <summary>
         /// </summary>
         /// <param name="bounds">New bounds of the View.</param>
-        [<Erase>]
-        member inline _.setBounds(bounds: Rectangle) : unit = Unchecked.defaultof<_>
+        /// <param name="animate">If true, the bounds change will be animated. If an object is passed, it can contain the following properties:</param>
+        [<Erase; ParamObject(1)>]
+        member inline _.setBounds
+            (bounds: Rectangle, ?animate: U2<bool, Main.ImageView.SetBounds.Options.Animate>)
+            : unit =
+            Unchecked.defaultof<_>
 
         /// <summary>
         /// The bounds of this View, relative to its parent.
@@ -40029,6 +41361,22 @@ module Main =
         /// </summary>
         [<Erase>]
         static member inline unregisterAll() : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Suspends or resumes global shortcut handling. When suspended, all registered global shortcuts will stop listening for key presses. When resumed,
+        /// all previously registered shortcuts will begin listening again. New shortcut registrations will fail while handling is suspended.<br/><br/>This can be useful
+        /// when you want to temporarily allow the user to press key combinations without your application intercepting them, for example while
+        /// displaying a UI to rebind shortcuts.
+        /// </summary>
+        /// <param name="suspended">Whether global shortcut handling should be suspended.</param>
+        [<Erase>]
+        static member inline setSuspended(suspended: bool) : unit = Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Whether global shortcut handling is currently suspended.
+        /// </summary>
+        [<Erase>]
+        static member inline isSuspended() : bool = Unchecked.defaultof<_>
 
     /// <summary>
     /// <para>⚠ Process Availability: Main ✔ | Renderer ❌ | Utility ❌ | Exported ❌</para>
@@ -41188,7 +42536,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// A promise which resolves when the cookie has been set<br/><br/>Sets a cookie with <c>details</c>.
+        /// A promise which resolves when the cookie has been set.<br/><br/>Sets a cookie with <c>details</c>.
         /// </summary>
         /// <param name="url">The URL to associate the cookie with. The promise will be rejected if the URL is invalid.</param>
         /// <param name="name">The name of the cookie. Empty by default if omitted.</param>
@@ -41218,7 +42566,7 @@ module Main =
             Unchecked.defaultof<_>
 
         /// <summary>
-        /// A promise which resolves when the cookie has been removed<br/><br/>Removes the cookies matching <c>url</c> and <c>name</c>
+        /// A promise which resolves when the cookie has been removed.<br/><br/>Removes the cookies matching <c>url</c> and <c>name</c>.
         /// </summary>
         /// <param name="url">The URL associated with the cookie.</param>
         /// <param name="name">The name of cookie to remove.</param>
@@ -41226,8 +42574,8 @@ module Main =
         member inline _.remove(url: string, name: string) : Promise<unit> = Unchecked.defaultof<_>
 
         /// <summary>
-        /// A promise which resolves when the cookie store has been flushed<br/><br/>Writes any unwritten cookies data to disk<br/><br/>Cookies written by any
-        /// method will not be written to disk immediately, but will be written every 30 seconds or 512 operations<br/><br/>Calling this method
+        /// A promise which resolves when the cookie store has been flushed.<br/><br/>Writes any unwritten cookies data to disk.<br/><br/>Cookies written by any
+        /// method will not be written to disk immediately, but will be written every 30 seconds or 512 operations.<br/><br/>Calling this method
         /// can cause the cookie to be written to disk immediately.
         /// </summary>
         [<Erase>]
@@ -41280,6 +42628,19 @@ module Main =
         /// </summary>
         [<Erase>]
         static member inline getTraceBufferUsage() : Promise<Main.ContentTracing.GetTraceBufferUsage> =
+            Unchecked.defaultof<_>
+
+        /// <summary>
+        /// Resolves once heap profiling has been enabled.<br/><br/>Enable heap profiling for MemoryInfra traces. Equivalent to the <c>--memlog</c> switch in Chrome.<br/><br/>Only takes
+        /// effect if the <c>disabled-by-default-memory-infra</c> category is included.<br/><br/>Needs to be called before <c>contentTracing.startRecording()</c>.<br/><br/>Usage:<br/><br/>To view the recorded heap dumps:<br/><br/>* Download the breakpad
+        /// symbols for your Electron version from the Electron GitHub releases<br/>* Clone the Electron source code<br/>* In your Chromium checkout for
+        /// Electron, run this command to symbolicate the heap dump:<br/>* Open the symbolicated trace in <c>chrome://tracing</c> (the Perfetto UI does not
+        /// support memory dumps yet)<br/>* Click on one of the <c>M</c> symbols<br/>* Click on a <c>☰</c> triple bar icon (e.g., in
+        /// the <c>malloc</c> column)
+        /// </summary>
+        /// <param name="options"></param>
+        [<Erase; Experimental("Experimental according to Electron")>]
+        static member inline enableHeapProfiling(?options: EnableHeapProfilingOptions) : Promise<unit> =
             Unchecked.defaultof<_>
 
     /// <summary>
@@ -41843,7 +43204,9 @@ module Main =
     /// order to minimize power consumption.<br/><br/>### Platform notices<br/><br/>* On macOS modal windows will be displayed as sheets attached to the parent
     /// window.<br/>* On macOS the child windows will keep the relative position to parent window when parent window moves, while on
     /// Windows and Linux child windows will not move.<br/>* On Linux the type of modal windows will be changed to <c>dialog</c>.<br/>*
-    /// On Linux many desktop environments do not support hiding a modal window.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
+    /// On Linux many desktop environments do not support hiding a modal window.<br/>* On Wayland (Linux) it is generally not possible
+    /// to programmatically resize windows after creation, or to position, move, focus, or blur windows without user input. If your app
+    /// needs these capabilities, run it in Xwayland by appending the flag <c>--ozone-platform=x11</c>.<br/><br/>### Class: BrowserWindow extends <c>BaseWindow</c><br/><br/>&gt; Create and control browser
     /// windows.<br/><br/>Process: Main<br/><br/><c>BrowserWindow</c> is an EventEmitter.<br/><br/>It creates a new <c>BrowserWindow</c> with native properties as set by the <c>options</c>.<br/><br/>&gt; [!WARNING] Electron's built-in
     /// classes cannot be subclassed in user code. For more information, see the FAQ.
     /// </summary>
@@ -43079,13 +44442,14 @@ module Main =
         member inline _.close() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Focuses on the window.
+        /// Focuses on the window.<br/><br/>On Wayland (Linux), the desktop environment may show a notification or flash the app icon if the
+        /// window or app is not already focused.
         /// </summary>
         [<Erase>]
         member inline _.focus() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Removes focus from the window.
+        /// Removes focus from the window.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.blur() : unit = Unchecked.defaultof<_>
@@ -43109,7 +44473,7 @@ module Main =
         member inline _.show() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Shows the window but doesn't focus on it.
+        /// Shows the window but doesn't focus on it.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.showInactive() : unit = Unchecked.defaultof<_>
@@ -43270,9 +44634,9 @@ module Main =
 
         /// <summary>
         /// Resizes and moves the window to the supplied bounds. Any properties that are not supplied will default to their current
-        /// values.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller than the Tray height. The tray height has changed over
-        /// time and depends on the operating system, but is between 20-40px. Passing a value lower than the tray height will
-        /// result in a window that is flush to the tray.
+        /// values.<br/><br/>On Wayland (Linux), has the same limitations as <c>setSize</c> and <c>setPosition</c>.<br/><br/>&gt; [!NOTE] On macOS, the y-coordinate value cannot be smaller
+        /// than the Tray height. The tray height has changed over time and depends on the operating system, but is between
+        /// 20-40px. Passing a value lower than the tray height will result in a window that is flush to the tray.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -43296,7 +44660,8 @@ module Main =
         member inline _.getBackgroundColor() : string = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.
+        /// Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.<br/><br/>On Wayland (Linux), has the same
+        /// limitations as <c>setContentSize</c> and <c>setPosition</c>.
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="animate"></param>
@@ -43332,7 +44697,7 @@ module Main =
 
         /// <summary>
         /// Resizes the window to <c>width</c> and <c>height</c>. If <c>width</c> or <c>height</c> are below any set minimum size constraints the window
-        /// will snap to its minimum size.
+        /// will snap to its minimum size.<br/><br/>On Wayland (Linux), may not work as some window managers restrict programmatic window resizing.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -43347,7 +44712,8 @@ module Main =
         member inline _.getSize() : int[] = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.
+        /// Resizes the window's client area (e.g. the web page) to <c>width</c> and <c>height</c>.<br/><br/>On Wayland (Linux), may not work as some
+        /// window managers restrict programmatic window resizing.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -43563,19 +44929,19 @@ module Main =
         member inline _.moveAbove(mediaSourceId: string) : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to top(z-order) regardless of focus
+        /// Moves window to top(z-order) regardless of focus.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.moveTop() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to the center of the screen.
+        /// Moves window to the center of the screen.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         [<Erase>]
         member inline _.center() : unit = Unchecked.defaultof<_>
 
         /// <summary>
-        /// Moves window to <c>x</c> and <c>y</c>.
+        /// Moves window to <c>x</c> and <c>y</c>.<br/><br/>Not supported on Wayland (Linux).
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -49342,13 +50708,25 @@ module Main =
         static member inline whenReady() : Promise<unit> = Unchecked.defaultof<_>
 
         /// <summary>
-        /// On Linux, focuses on the first visible window. On macOS, makes the application the active app. On Windows, focuses on
-        /// the application's first window.<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
+        /// On macOS, makes the application the active app. On Windows, focuses on the application's first window. On Linux, either focuses
+        /// on the first visible window (X11) or requests focus but may instead show a notification or flash the app icon
+        /// (Wayland).<br/><br/>You should seek to use the <c>steal</c> option as sparingly as possible.
         /// </summary>
         /// <param name="steal">⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌ || Make the receiver the
         /// active app even if another app is currently active.</param>
         [<Erase; ParamObject(0)>]
         static member inline focus(steal: bool) : unit = Unchecked.defaultof<_>
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
+        /// <c>true</c> if the application is active (i.e. focused).
+        /// </summary>
+        [<Erase>]
+        static member inline isActive() : bool = Unchecked.defaultof<_>
+        #endif
+
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
         /// <summary>
         /// <para>
@@ -49595,11 +50973,8 @@ module Main =
         /// URL, including <c>://</c> at a minimum (e.g. <c>https://</c>).</param>
         [<Erase>]
         static member inline getApplicationNameForProtocol(url: string) : string = Unchecked.defaultof<_>
-        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC || ELECTRON_OS_WIN
+
         /// <summary>
-        /// <para>
-        /// ⚠ OS Compatibility: WIN ✔ | MAC ✔ | LIN ❌ | MAS ❌
-        /// </para>
         /// Resolve with an object containing the following:<br/><br/>* <c>icon</c> NativeImage - the display icon of the app handling the protocol.<br/>* <c>path</c>
         /// string  - installation path of the app handling the protocol.<br/>* <c>name</c> string - display name of the app handling
         /// the protocol.<br/><br/>This method returns a promise that contains the application name, icon and path of the default handler for the
@@ -49612,8 +50987,6 @@ module Main =
             (url: string)
             : Promise<Main.App.GetApplicationInfoForProtocol> =
             Unchecked.defaultof<_>
-        #endif
-
         #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_WIN
         /// <summary>
         /// <para>
@@ -49857,6 +51230,24 @@ module Main =
                 ?enableAdditionalDnsQueryTypes: bool
             ) : unit =
             Unchecked.defaultof<_>
+        #if !(ELECTRON_OS_LIN || ELECTRON_OS_WIN || ELECTRON_OS_MAC || ELECTRON_OS_MAS) || ELECTRON_OS_MAC
+        /// <summary>
+        /// <para>
+        /// ⚠ OS Compatibility: WIN ❌ | MAC ✔ | LIN ❌ | MAS ❌
+        /// </para>
+        /// Configures platform authenticators for the Web Authentication API (<c>navigator.credentials.create()</c> / <c>navigator.credentials.get()</c>). Until this is called, <c>PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()</c> resolves to <c>false</c> and
+        /// platform-authenticator requests are not serviced.<br/><br/>When <c>touchID</c> is provided, WebAuthn credentials are stored in the macOS keychain and bound to this
+        /// device's Secure Enclave. Electron automatically generates and persists a per-<c>session</c> metadata secret so that credentials created in one partition are
+        /// not visible to another.<br/><br/>With the matching entitlement in your app's <c>entitlements.plist</c>:<br/><br/>&gt; [!NOTE] Touch ID WebAuthn credentials are device-bound and are
+        /// not synced via iCloud Keychain. They are only available on Macs with a Secure Enclave (Apple silicon, or Intel Macs
+        /// with a T2 chip).
+        /// </summary>
+        /// <param name="touchID">Enables the Touch ID / Secure Enclave platform authenticator for Web Authentication requests.</param>
+        [<Erase; ParamObject(0)>]
+        static member inline configureWebAuthn(?touchID: Main.App.ConfigureWebAuthn.Options.TouchID) : unit =
+            Unchecked.defaultof<_>
+        #endif
+
 
         /// <summary>
         /// Disables hardware acceleration for current app.<br/><br/>This method can only be called before app is ready.
