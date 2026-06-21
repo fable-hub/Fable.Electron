@@ -13,9 +13,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 **Scope** | Current Release | Commit Count
 :--- | :---: | :---:
-[**Electron**](#electron) | [40.9.2](https://github.com/fable-hub/Fable.Electron/compare/_%28Electron%29_40.6.0..._%28Electron%29_40.9.2) | 61 commits
-[**Forge**](#forge) | [8.2.0](https://github.com/fable-hub/Fable.Electron/compare/_%28Forge%29_8.1.0..._%28Forge%29_8.2.0) | 36 commits
-[**Remoting**](#remoting) | [7.2.0](https://github.com/fable-hub/Fable.Electron/compare/_%28Remoting%29_7.1.0..._%28Remoting%29_7.2.0) | 48 commits
+[**Electron**](#electron) | [40.9.2](https://github.com/fable-hub/Fable.Electron/compare/_%28Electron%29_40.6.0..._%28Electron%29_40.9.2) | 63 commits
+[**Forge**](#forge) | [8.2.0](https://github.com/fable-hub/Fable.Electron/compare/_%28Forge%29_8.1.0..._%28Forge%29_8.2.0) | 39 commits
+[**Remoting**](#remoting) | [7.2.0](https://github.com/fable-hub/Fable.Electron/compare/_%28Remoting%29_7.1.0..._%28Remoting%29_7.2.0) | 51 commits
 
 
 -----------------------
@@ -23,6 +23,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 # Electron
 
 ### [UNRELEASED](https://github.com/fable-hub/Fable.Electron/compare/_%28Electron%29_40.9.2...HEAD)
+
+* Electron binding update to match v42.4.1 by [@GitHub Action](https://github.com/GitHub Action) with [#7767d](https://github.com/fable-hub/Fable.Electron/commit/7767de6e9bae1a9cb549b38db6bd12682aabf21b)
+  
 
 ### [40.9.2](https://github.com/fable-hub/Fable.Electron/compare/_%28Electron%29_40.6.0..._%28Electron%29_40.9.2) - (2026-04-26)
 
@@ -69,6 +72,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 * Electron binding update to match v39.2.6 by [@GitHub Action](https://github.com/GitHub Action) with [#700bc](https://github.com/fable-hub/Fable.Electron/commit/700bc8a2ce8caa9a6ba48450a70fdf29449ee719)
   
 
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
+  
+
 * Push Tags; Compatibility for Electron 40.1.0 (#34) by [@cabboose](https://github.com/cabboose) with [#80f48](https://github.com/fable-hub/Fable.Electron/commit/80f48953fb03a639aac0edcdd840ef81dc5c7156)
   
 
@@ -95,10 +101,10 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 * release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
   
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
   
 
 * enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
@@ -297,6 +303,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 * improved IpcMainEvent dx - new utilities such as dispose void function returns (#59) by [@cabboose](https://github.com/cabboose) with [#35580](https://github.com/fable-hub/Fable.Electron/commit/35580315f1cf6b09154cb8cdccdc319390a3663a)
   
 
+* Electron binding update to match v42.4.1 by [@GitHub Action](https://github.com/GitHub Action) with [#7767d](https://github.com/fable-hub/Fable.Electron/commit/7767de6e9bae1a9cb549b38db6bd12682aabf21b)
+  
+
 ### [8.2.0](https://github.com/fable-hub/Fable.Electron/compare/_%28Forge%29_8.1.0..._%28Forge%29_8.2.0) - (2026-04-26)
 
 #### <!-- 1 --> Added
@@ -341,6 +350,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 #### <!-- 2 --> Fixed
 
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
+  
+
 * Push Tags; Compatibility for Electron 40.1.0 (#34) by [@cabboose](https://github.com/cabboose) with [#80f48](https://github.com/fable-hub/Fable.Electron/commit/80f48953fb03a639aac0edcdd840ef81dc5c7156)
   
 
@@ -361,10 +373,10 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 * release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
   
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
   
 
 * enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
@@ -391,6 +403,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 #### <!-- 2 --> Fixed
 
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
+  
+
 * Push Tags; Compatibility for Electron 40.1.0 (#34) by [@cabboose](https://github.com/cabboose) with [#80f48](https://github.com/fable-hub/Fable.Electron/commit/80f48953fb03a639aac0edcdd840ef81dc5c7156)
   
 
@@ -411,10 +426,10 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 * release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
   
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
   
 
 * enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
@@ -435,6 +450,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
   
 
 * improved IpcMainEvent dx - new utilities such as dispose void function returns (#59) by [@cabboose](https://github.com/cabboose) with [#35580](https://github.com/fable-hub/Fable.Electron/commit/35580315f1cf6b09154cb8cdccdc319390a3663a)
+  
+
+* Electron binding update to match v42.4.1 by [@GitHub Action](https://github.com/GitHub Action) with [#7767d](https://github.com/fable-hub/Fable.Electron/commit/7767de6e9bae1a9cb549b38db6bd12682aabf21b)
   
 
 ### [7.2.0](https://github.com/fable-hub/Fable.Electron/compare/_%28Remoting%29_7.1.0..._%28Remoting%29_7.2.0) - (2026-04-26)
@@ -475,6 +493,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 #### <!-- 2 --> Fixed
 
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
+  
+
 * Push Tags; Compatibility for Electron 40.1.0 (#34) by [@cabboose](https://github.com/cabboose) with [#80f48](https://github.com/fable-hub/Fable.Electron/commit/80f48953fb03a639aac0edcdd840ef81dc5c7156)
   
 
@@ -504,10 +525,10 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 * release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
   
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
   
 
 * enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
@@ -543,6 +564,9 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 
 #### <!-- 2 --> Fixed
 
+* Electron binding update to match v39.2.7 by [@GitHub Action](https://github.com/GitHub Action) with [#02531](https://github.com/fable-hub/Fable.Electron/commit/02531315d775d90740f96f49770494e50b7b9061)
+  
+
 * Push Tags; Compatibility for Electron 40.1.0 (#34) by [@cabboose](https://github.com/cabboose) with [#80f48](https://github.com/fable-hub/Fable.Electron/commit/80f48953fb03a639aac0edcdd840ef81dc5c7156)
   
 
@@ -572,10 +596,10 @@ which includes [Scopes and Epochs](#epoch-scoped-semver).
 * release CI workflow (#11) (#12) by [@cabboose](https://github.com/cabboose) with [#986ef](https://github.com/fable-hub/Fable.Electron/commit/986effc3d6f02359f7df6d1eda46f6f07d2afe6c)
   
 
-* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
+* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
   
 
-* Revert "feat!: Electron binding update to match v39.2.3" by [@shayanhabibi](https://github.com/shayanhabibi) with [#e8efc](https://github.com/fable-hub/Fable.Electron/commit/e8efc68ab1e0c56cc769bcc2ae1eb9ee27a71578)
+* Revert "[skip ci]" by [@shayanhabibi](https://github.com/shayanhabibi) with [#4e58c](https://github.com/fable-hub/Fable.Electron/commit/4e58cca7b29658a2198c3f5b4e2609afa985bc49)
   
 
 * enable release by [@shayanhabibi](https://github.com/shayanhabibi) with [#564d7](https://github.com/fable-hub/Fable.Electron/commit/564d76f5960d18dba68442bd77439f755d274296)
